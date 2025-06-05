@@ -21,7 +21,6 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-	maven("https://repo.essential.gg/repository/maven-public")
 	maven("https://jitpack.io")
 	maven("https://maven.terraformersmc.com/")
 	mavenCentral()
@@ -36,18 +35,6 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
 	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
-
-	implementation("gg.essential:elementa:704")
-	modImplementation("gg.essential:universalcraft-1.21.5-fabric:401")
-	implementation(include("gg.essential:elementa:704")!!)
-	modImplementation(include("gg.essential:universalcraft-1.21.5-fabric:401")!!)
-
-	// temporary dependencies for material color
-	compileOnly("org.projectlombok:lombok:1.18.38")
-	annotationProcessor("org.projectlombok:lombok:1.18.38")
-
-//	include(modImplementation("io.github.0x3c50.renderer:renderer-fabric:2.0.2")!!)
-//	include(implementation("org.lwjgl:lwjgl-harfbuzz:3.3.3:natives-windows")!!)
 
 	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
 }
