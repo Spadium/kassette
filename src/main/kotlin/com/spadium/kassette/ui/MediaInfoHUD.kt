@@ -37,10 +37,10 @@ class MediaInfoHUD {
         val marqueeVelocity: Float = 1f
         val marqueeScrollThreshold: Float = 1f
         val timeNaught = System.nanoTime()
-        timeDelta = ((timeNaught - previousTime) / 1000000).toDouble()
-        // we treat the marquee's position as a position-velocity thingy!!!
-        // does it work? hell yeah! is there a better way to do it? possibly
-        marqueePositionIndicator += (1 * (timeDelta / 1000))
+        timeDelta = (timeNaught - previousTime).toDouble()
+        // we use a simple algebraic kinematic to help us scroll the marquee!
+        // does it work? hell yeah! is there a better way to do it? definitely
+        marqueePositionIndicator += (1 * (timeDelta / (1000 * 1000000)))
 //        print("$marqueePositionIndicator\n")
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
@@ -101,7 +101,7 @@ private fun DrawContext.drawMarquee(
         )
     } else {
         if (shouldScroll) {
-            marqueeCounter = if (marqueeCounter >= spacingBetween + text.length + 1) 0 else marqueeCounter + 1
+            marqueeCounter = if (marqueeCounter >= spacingBetween + text.length) 0 else marqueeCounter + 1
         }
 
         val startIndex = marqueeCounter
