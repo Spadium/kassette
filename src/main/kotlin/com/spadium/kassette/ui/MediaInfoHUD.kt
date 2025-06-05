@@ -1,16 +1,19 @@
 package com.spadium.kassette.ui
 
-import com.spadium.kassette.Kassette
+import com.spadium.kassette.mixin.DrawContextAccessor
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
+import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.util.Identifier
+import net.minecraft.util.Util
 
 private var timeDelta: Double = 0.0
 private var marqueePositionIndicator: Double = 0.0
+private var marqueePosition: Double = 0.0
 private var previousTime: Long = 0
 
 class MediaInfoHUD {
@@ -21,7 +24,6 @@ class MediaInfoHUD {
 
     fun setup() {
         HudLayerRegistrationCallback.EVENT.register {
-            Kassette.Companion.logger.warn("please dont get called multiple times!!!!!")
             textRenderer = MinecraftClient.getInstance().textRenderer
             it.attachLayerBefore(
                 IdentifiedLayer.HOTBAR_AND_BARS,
@@ -36,12 +38,17 @@ class MediaInfoHUD {
         val targetColor = -0xff0100 // Green
         val marqueeVelocity: Float = 1f
         val marqueeScrollThreshold: Float = 1f
-        val timeNaught = System.nanoTime()
+        val timeNaught2 = System.nanoTime()
+        val timeNaught = Util.getMeasuringTimeNano()
         timeDelta = (timeNaught - previousTime).toDouble()
         // we use a simple algebraic kinematic to help us scroll the marquee!
         // does it work? hell yeah! is there a better way to do it? definitely
-        marqueePositionIndicator += (1 * (timeDelta / (1000 * 1000000)))
-//        print("$marqueePositionIndicator\n")
+        marqueePositionIndicator += (marqueeVelocity * (timeDelta / (1000 * 1000000)))
+        marqueePosition += (marqueeVelocity * (timeDelta / (1000 * 1000000)))
+
+        if (marqueePosition >= 50)
+            marqueePosition = 0.0
+
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
         )
@@ -53,6 +60,12 @@ class MediaInfoHUD {
             true,
             8, 3, (marqueePositionIndicator >= marqueeScrollThreshold)
         )
+        context.drawMarqueeFancy(
+            textRenderer, "asdsaiuduasd9uwea809dudu893u8132hdbsu9uv93rhdfsaujhc8324ur83wesc",
+            0, 0, 0xFFFF00FF.toInt(),
+            true, 32, 3, marqueePosition.toFloat()
+        )
+        println(marqueePosition.toFloat())
         context.drawText(
             textRenderer,
             "Album",
@@ -65,6 +78,7 @@ class MediaInfoHUD {
             100, 48,
             0xFF00FF00.toInt()
         )
+
         if (marqueePositionIndicator >= marqueeScrollThreshold) {
             marqueePositionIndicator = 0.0
         }
@@ -72,6 +86,8 @@ class MediaInfoHUD {
     }
 }
 
+
+//TODO: Cleanup later
 private var marqueeCounter = 0
 
 // simple marquee, might add a "fancy" one later
@@ -112,6 +128,7 @@ private fun DrawContext.drawMarquee(
     }
 }
 
+// fancy marquee, not for actual use right now
 private fun DrawContext.drawMarqueeFancy(
     textRenderer: TextRenderer,
     text: String,
@@ -121,7 +138,7 @@ private fun DrawContext.drawMarqueeFancy(
     shadow: Boolean,
     maxLength: Int,
     spacingBetween: Int,
-    shouldScroll: Boolean
+    offset: Float
 ) {
     var spacing: String = ""
     for (i in 0..spacingBetween) {
@@ -136,6 +153,17 @@ private fun DrawContext.drawMarqueeFancy(
             textRenderer, text,
             x, y, color, shadow
         )
+    } else {
+        this.draw {
+            textRenderer.draw(
+                textToScroll, (x + offset), y.toFloat(),
+                color, shadow, this.matrices.peek().positionMatrix,
+                it,
+                TextRenderer.TextLayerType.NORMAL,
+                0,
+                0xF000F0
+            )
+        }
     }
 }
 

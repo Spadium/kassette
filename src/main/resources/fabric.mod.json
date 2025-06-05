@@ -19,7 +19,16 @@
 				"value": "com.spadium.kassette.Kassette",
 				"adapter": "kotlin"
 			}
-		]
+		],
+		"modmenu": []
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.github_releases": "https://github.com/Spadium/kassette/releases"
+			},
+			"update_checker": true
+		}
 	},
 	"mixins": [
 		"kassette.mixins.json"
