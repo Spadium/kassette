@@ -1,6 +1,7 @@
 package com.spadium.kassette
 
 import com.spadium.kassette.ui.MediaInfoHUD
+import com.spadium.kassette.ui.MediaInfoScreen
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -22,21 +23,20 @@ open class Kassette : ClientModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding(
-				"key.kassette.info", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_P, "category.kassette.kassette"
+			"key.kassette.info",
+			InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_P,
+			"category.kassette.kassette"
 		))
 
 		ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { client: MinecraftClient? ->
 			while (openMediaInfoKeybind.wasPressed()) {
-				client!!.player!!.sendMessage(Text.literal("insert media info screen here!"), false)
-				logger.debug("media screen is supposed to open by now")
+				client!!.setScreen(
+					MediaInfoScreen(Text.literal("blah blah blah"))
+				)
 			}
 		})
 		MediaInfoHUD().setup()
 
-		logger.info("Hello Fabric world!")
-
-		for (axis in 0..2) {
-			logger.info("$axis")
-		}
+		logger.info("Locked and loaded")
 	}
 }

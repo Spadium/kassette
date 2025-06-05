@@ -1,10 +1,6 @@
 package com.spadium.kassette.ui
 
 import com.spadium.kassette.Kassette
-import kotlinx.datetime.DateTimePeriod
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
 import net.minecraft.client.MinecraftClient
@@ -12,7 +8,6 @@ import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.util.Identifier
-import net.minecraft.util.Util
 
 private var timeDelta: Double = 0.0
 private var marqueePositionIndicator: Double = 0.0
@@ -39,8 +34,8 @@ class MediaInfoHUD {
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
         val color = -0x10000 // Red
         val targetColor = -0xff0100 // Green
-        val marqueeVelocity: Int = 1
-        val marqueeScrollThreshold: Int = 1
+        val marqueeVelocity: Float = 1f
+        val marqueeScrollThreshold: Float = 1f
         val timeNaught = System.nanoTime()
         timeDelta = ((timeNaught - previousTime) / 1000000).toDouble()
         // we treat the marquee's position as a position-velocity thingy!!!
@@ -60,7 +55,7 @@ class MediaInfoHUD {
         )
         context.drawText(
             textRenderer,
-            "Albumasdiujasioduasiduasioduasiudas",
+            "Album",
             50, 20,
             0xFFFFFFFF.toInt(),
             true
@@ -106,19 +101,41 @@ private fun DrawContext.drawMarquee(
         )
     } else {
         if (shouldScroll) {
-            marqueeCounter = if (marqueeCounter >= textToScroll.length - maxLength) 0 else marqueeCounter + 1
-        }
-        if (marqueeCounter >= spacingBetween + text.length + 1) {
-            marqueeCounter = 0
+            marqueeCounter = if (marqueeCounter >= spacingBetween + text.length + 1) 0 else marqueeCounter + 1
         }
 
-        var startIndex = marqueeCounter
-        var endIndex = marqueeCounter + maxLength
+        val startIndex = marqueeCounter
+        val endIndex = marqueeCounter + maxLength
 
         val scrolledText = textToScroll.substring(startIndex, endIndex)
-        print("$scrolledText\n")
-        print("MARQUEE - $marqueeCounter [$startIndex, $endIndex] @ ${java.time.LocalTime.now()}\n")
         this.drawText(textRenderer, scrolledText, x, y, color, shadow)
+    }
+}
+
+private fun DrawContext.drawMarqueeFancy(
+    textRenderer: TextRenderer,
+    text: String,
+    x: Int,
+    y: Int,
+    color: Int,
+    shadow: Boolean,
+    maxLength: Int,
+    spacingBetween: Int,
+    shouldScroll: Boolean
+) {
+    var spacing: String = ""
+    for (i in 0..spacingBetween) {
+        spacing += " "
+    }
+
+    val textToScroll: String = "$text$spacing$text$spacing"
+
+    if (text.length <= maxLength) {
+        // Don't bother scrolling when the text can fit within the maximum length before scrolling
+        this.drawText(
+            textRenderer, text,
+            x, y, color, shadow
+        )
     }
 }
 
