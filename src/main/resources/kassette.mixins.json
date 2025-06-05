@@ -3,8 +3,7 @@
 	"package": "com.spadium.kassette.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin",
-		"DrawContextAccessor"
+		"ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
