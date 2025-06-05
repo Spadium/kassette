@@ -1,4 +1,4 @@
-package com.spadium.kassette.spotify.model
+package com.spadium.kassette.media.spotify.model
 
 data class CopyrightObject(
     val text: String, val type: String

@@ -1,4 +1,4 @@
-package com.spadium.kassette.spotify.model
+package com.spadium.kassette.media.spotify.model
 
 data class Artist(
     val externalUrls: Map<String, String>,

@@ -1,4 +1,4 @@
-package com.spadium.kassette.info
+package com.spadium.kassette.media
 
 data class MediaInfo(
     val maximumTime: Long,

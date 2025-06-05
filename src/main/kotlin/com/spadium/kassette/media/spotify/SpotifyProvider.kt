@@ -1,6 +1,6 @@
-package com.spadium.kassette.spotify
+package com.spadium.kassette.media.spotify
 
-import com.spadium.kassette.info.MediaProvider
+import com.spadium.kassette.media.MediaProvider
 
 class SpotifyProvider : MediaProvider() {
     override fun getServiceName(): String {
@@ -8,7 +8,7 @@ class SpotifyProvider : MediaProvider() {
     }
 
     override fun init() {
-        TODO("Not yet implemented")
+
     }
 
     override fun destroy() {

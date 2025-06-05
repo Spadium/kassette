@@ -1,4 +1,4 @@
-package com.spadium.kassette.info
+package com.spadium.kassette.media
 
 abstract class MediaProvider {
     abstract fun getServiceName(): String

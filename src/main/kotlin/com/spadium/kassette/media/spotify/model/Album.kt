@@ -1,7 +1,7 @@
-package com.spadium.kassette.spotify.model
+package com.spadium.kassette.media.spotify.model
 
 data class Album(
-    val albumType: Album.Type,
+    val albumType: Type,
     val totalTracks: Int,
     val availableMarkets: Array<String>,
     val externalUrls: Map<String, String>,
