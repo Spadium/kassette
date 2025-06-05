@@ -37,6 +37,8 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
 	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
+	// temporary until i get to writing my own implementation
+	implementation("com.adamratzman:spotify-api-kotlin-core:4.1.3")
 }
 
 tasks.processResources {
