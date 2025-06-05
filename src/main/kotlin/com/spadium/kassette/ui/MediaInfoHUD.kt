@@ -13,7 +13,6 @@ import net.minecraft.util.Util
 
 private var timeDelta: Double = 0.0
 private var marqueePositionIndicator: Double = 0.0
-private var marqueePosition: Double = 0.0
 private var previousTime: Long = 0
 
 class MediaInfoHUD {
@@ -34,20 +33,14 @@ class MediaInfoHUD {
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
-        val color = -0x10000 // Red
-        val targetColor = -0xff0100 // Green
         val marqueeVelocity: Float = 1f
         val marqueeScrollThreshold: Float = 1f
-        val timeNaught2 = System.nanoTime()
         val timeNaught = Util.getMeasuringTimeNano()
         timeDelta = (timeNaught - previousTime).toDouble()
+
         // we use a simple algebraic kinematic to help us scroll the marquee!
         // does it work? hell yeah! is there a better way to do it? definitely
         marqueePositionIndicator += (marqueeVelocity * (timeDelta / (1000 * 1000000)))
-        marqueePosition += (marqueeVelocity * (timeDelta / (1000 * 1000000)))
-
-        if (marqueePosition >= 50)
-            marqueePosition = 0.0
 
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
@@ -60,12 +53,6 @@ class MediaInfoHUD {
             true,
             8, 3, (marqueePositionIndicator >= marqueeScrollThreshold)
         )
-        context.drawMarqueeFancy(
-            textRenderer, "asdsaiuduasd9uwea809dudu893u8132hdbsu9uv93rhdfsaujhc8324ur83wesc",
-            0, 0, 0xFFFF00FF.toInt(),
-            true, 32, 3, marqueePosition.toFloat()
-        )
-        println(marqueePosition.toFloat())
         context.drawText(
             textRenderer,
             "Album",
