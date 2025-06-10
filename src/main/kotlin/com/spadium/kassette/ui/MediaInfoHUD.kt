@@ -33,12 +33,10 @@ class MediaInfoHUD {
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
         val marqueeVelocity: Float = 1f
         val marqueeScrollThreshold: Float = 1f
-        val timeNaught = Util.getMeasuringTimeNano()
-        timeDelta = (timeNaught - previousTime).toDouble()
-
-        // we use a simple algebraic kinematic to help us scroll the marquee!
-        // does it work? hell yeah! is there a better way to do it? definitely
-        marqueePositionIndicator += (marqueeVelocity * (timeDelta / (1000 * 1000000)))
+        val currentTime = Util.getMeasuringTimeNano()
+        // Delta-Time in seconds
+        timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
+        marqueePositionIndicator += timeDelta
 
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
@@ -67,7 +65,7 @@ class MediaInfoHUD {
         if (marqueePositionIndicator >= marqueeScrollThreshold) {
             marqueePositionIndicator = 0.0
         }
-        previousTime = timeNaught
+        previousTime = currentTime
     }
 }
 
