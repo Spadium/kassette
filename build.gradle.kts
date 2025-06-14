@@ -4,7 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
 	id("fabric-loom")
 	id("maven-publish")
-	id("org.jetbrains.kotlin.jvm") version "2.1.21"
+	kotlin("jvm") version "2.1.21"
+	kotlin("plugin.serialization") version "2.1.21"
 }
 
 version = property("mod_version")!!
@@ -37,6 +38,7 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
 	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 	// temporary until i get to writing my own implementation
 	implementation("com.adamratzman:spotify-api-kotlin-core:4.1.3")
 }
