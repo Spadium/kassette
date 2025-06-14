@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 
 private var timeDelta: Double = 0.0
-private var marqueePositionIndicator: Double = 0.0
+private var positionIndicator: Double = 0.0
 private var previousTime: Long = 0
 
 class MediaInfoHUD {
@@ -31,12 +31,12 @@ class MediaInfoHUD {
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
-        val marqueeVelocity: Float = 1f
-        val marqueeScrollThreshold: Float = 1f
+        val speedFactor: Float = 1f
+        val scrollThreshold: Float = 1f
         val currentTime = Util.getMeasuringTimeNano()
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
-        marqueePositionIndicator += timeDelta
+        positionIndicator += timeDelta / speedFactor
 
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
@@ -47,7 +47,7 @@ class MediaInfoHUD {
             50, 10,
             0xFFFFFFFF.toInt(),
             true,
-            8, 3, (marqueePositionIndicator >= marqueeScrollThreshold)
+            8, 3, (positionIndicator >= scrollThreshold)
         )
         context.drawText(
             textRenderer,
@@ -62,8 +62,8 @@ class MediaInfoHUD {
             0xFF00FF00.toInt()
         )
 
-        if (marqueePositionIndicator >= marqueeScrollThreshold) {
-            marqueePositionIndicator = 0.0
+        if (positionIndicator >= scrollThreshold) {
+            positionIndicator = 0.0
         }
         previousTime = currentTime
     }
@@ -90,7 +90,7 @@ private fun DrawContext.drawMarquee(
         spacing += " "
     }
 
-    val textToScroll: String = "$text$spacing$text$spacing"
+    val textToScroll: String = "$text$spacing$text$spacing$text"
 
     if (text.length <= maxLength) {
         // Don't bother scrolling when the text can fit within the maximum length before scrolling
