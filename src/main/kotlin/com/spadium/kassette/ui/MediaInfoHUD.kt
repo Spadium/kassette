@@ -5,11 +5,14 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.render.state.TextGuiElementRenderState
 import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
+import net.minecraft.text.StringVisitable
 import net.minecraft.util.Identifier
+import net.minecraft.util.Language
 import net.minecraft.util.Util
+import org.joml.Matrix3x2f
 
 private var timeDelta: Double = 0.0
 private var positionIndicator: Double = 0.0
@@ -126,7 +129,6 @@ private fun DrawContext.drawMarqueeFancy(
     spacingBetween: Int,
     offset: Float
 ) {
-    TODO("update to 1.21.6")
     var spacing: String = ""
     for (i in 0..spacingBetween) {
         spacing += " "
@@ -141,16 +143,17 @@ private fun DrawContext.drawMarqueeFancy(
             x, y, color, shadow
         )
     } else {
-//        this.draw {
-//            textRenderer.draw(
-//                textToScroll, (x + offset), y.toFloat(),
-//                color, shadow, this.matrices.peek().positionMatrix,
-//                it,
-//                TextRenderer.TextLayerType.NORMAL,
-//                0,
-//                0xF000F0
-//            )
-//        }
+        // very janky but i dont care
+        enableScissor(
+            x, y,
+            x + textRenderer.getWidth(text),
+            y +16
+        )
+        textRenderer.prepare(
+            text, (x + offset), y.toFloat(), color,
+            shadow, 0
+        )
+        disableScissor()
     }
 }
 
