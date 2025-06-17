@@ -1,11 +1,13 @@
 package com.spadium.kassette.ui
 
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
+import net.minecraft.client.texture.NativeImage
+import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 
@@ -16,18 +18,24 @@ private var previousTime: Long = 0
 class MediaInfoHUD {
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private lateinit var textRenderer: TextRenderer
+    private lateinit var coverArt: NativeImageBackedTexture
+    constructor() {
 
-    constructor()
+    }
 
     fun setup() {
-        HudLayerRegistrationCallback.EVENT.register {
-            textRenderer = MinecraftClient.getInstance().textRenderer
-            it.attachLayerBefore(
-                IdentifiedLayer.HOTBAR_AND_BARS,
-                MEDIA_LAYER,
-                this::render
-            )
-        }
+//        HudLayerRegistrationCallback.EVENT.register {
+//            textRenderer = MinecraftClient.getInstance().textRenderer
+//            it.attachLayerBefore(
+//                IdentifiedLayer.HOTBAR_AND_BARS,
+//                MEDIA_LAYER,
+//                this::render
+//            )
+//        }
+        HudElementRegistry.attachElementBefore(
+            VanillaHudElements.HOTBAR, MEDIA_LAYER,
+            this::render
+        )
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
@@ -123,6 +131,7 @@ private fun DrawContext.drawMarqueeFancy(
     spacingBetween: Int,
     offset: Float
 ) {
+    TODO("update to 1.21.6")
     var spacing: String = ""
     for (i in 0..spacingBetween) {
         spacing += " "
@@ -137,16 +146,16 @@ private fun DrawContext.drawMarqueeFancy(
             x, y, color, shadow
         )
     } else {
-        this.draw {
-            textRenderer.draw(
-                textToScroll, (x + offset), y.toFloat(),
-                color, shadow, this.matrices.peek().positionMatrix,
-                it,
-                TextRenderer.TextLayerType.NORMAL,
-                0,
-                0xF000F0
-            )
-        }
+//        this.draw {
+//            textRenderer.draw(
+//                textToScroll, (x + offset), y.toFloat(),
+//                color, shadow, this.matrices.peek().positionMatrix,
+//                it,
+//                TextRenderer.TextLayerType.NORMAL,
+//                0,
+//                0xF000F0
+//            )
+//        }
     }
 }
 

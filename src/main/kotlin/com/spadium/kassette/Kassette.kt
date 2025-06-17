@@ -1,6 +1,7 @@
 package com.spadium.kassette
 
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.MediaInfoScreen
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -62,5 +63,6 @@ open class Kassette : ClientModInitializer {
 		MediaInfoHUD().setup()
 
 		logger.info("Locked and loaded")
+		AuthenticationCallbackServer()
 	}
 }
