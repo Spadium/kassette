@@ -24,14 +24,6 @@ class MediaInfoHUD {
     }
 
     fun setup() {
-//        HudLayerRegistrationCallback.EVENT.register {
-//            textRenderer = MinecraftClient.getInstance().textRenderer
-//            it.attachLayerBefore(
-//                IdentifiedLayer.HOTBAR_AND_BARS,
-//                MEDIA_LAYER,
-//                this::render
-//            )
-//        }
         HudElementRegistry.attachElementBefore(
             VanillaHudElements.HOTBAR, MEDIA_LAYER,
             this::render
@@ -39,6 +31,9 @@ class MediaInfoHUD {
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
+        if (!::textRenderer.isInitialized)
+            textRenderer = MinecraftClient.getInstance().textRenderer
+
         val speedFactor: Float = 1f
         val scrollThreshold: Float = 1f
         val currentTime = Util.getMeasuringTimeNano()
