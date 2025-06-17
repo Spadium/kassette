@@ -11,6 +11,7 @@ data class Config(
     var spotify: SpotifyConfig,
     var color: Long,
     var borderColor: Long,
+    var callbackPort: UInt = 61008u,
     final var version: UInt = 0u
 ) {
     companion object {
