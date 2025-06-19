@@ -5,18 +5,15 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.render.state.TextGuiElementRenderState
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.texture.NativeImageBackedTexture
-import net.minecraft.text.StringVisitable
 import net.minecraft.util.Identifier
-import net.minecraft.util.Language
 import net.minecraft.util.Util
-import org.joml.Matrix3x2f
 
 private var timeDelta: Double = 0.0
 private var positionIndicator: Double = 0.0
 private var previousTime: Long = 0
+private var fancyOffset: Int = 0
 
 class MediaInfoHUD {
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
@@ -37,19 +34,27 @@ class MediaInfoHUD {
         if (!::textRenderer.isInitialized)
             textRenderer = MinecraftClient.getInstance().textRenderer
 
-        val speedFactor: Float = 1f
+        val speedFactor: Float = 5f
         val scrollThreshold: Float = 1f
-        val currentTime = Util.getMeasuringTimeNano()
+        val currentTime: Long = Util.getMeasuringTimeNano()
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
-        positionIndicator += timeDelta / speedFactor
+        positionIndicator += timeDelta / (1 / speedFactor)
 
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
         )
-        context.drawMarquee(
+//        context.drawMarquee(
+//            textRenderer,
+//            "Artist - Title",
+//            50, 10,
+//            0xFFFFFFFF.toInt(),
+//            true,
+//            8, 3, (positionIndicator >= scrollThreshold)
+//        )
+        context.drawMarqueeFancy(
             textRenderer,
-            "Artist - Title",
+            "123456789",
             50, 10,
             0xFFFFFFFF.toInt(),
             true,
@@ -78,8 +83,8 @@ class MediaInfoHUD {
 
 //TODO: Cleanup later
 private var marqueeCounter = 0
+private var fancyOffset2 = 0
 
-// simple marquee, might add a "fancy" one later
 private fun DrawContext.drawMarquee(
     textRenderer: TextRenderer,
     text: String,
@@ -117,7 +122,7 @@ private fun DrawContext.drawMarquee(
     }
 }
 
-// fancy marquee, not for actual use right now
+// fancy marquee, needs more improvements but is good for general usage
 private fun DrawContext.drawMarqueeFancy(
     textRenderer: TextRenderer,
     text: String,
@@ -127,7 +132,7 @@ private fun DrawContext.drawMarqueeFancy(
     shadow: Boolean,
     maxLength: Int,
     spacingBetween: Int,
-    offset: Float
+    shouldScroll: Boolean
 ) {
     var spacing: String = ""
     for (i in 0..spacingBetween) {
@@ -143,16 +148,17 @@ private fun DrawContext.drawMarqueeFancy(
             x, y, color, shadow
         )
     } else {
+        val textFocus: String = text.substring(0, maxLength)
+        if (shouldScroll) {
+            fancyOffset2 = if (fancyOffset2 >= textRenderer.getWidth("$text$spacing")) 0 else fancyOffset2 + 1
+        }
         // very janky but i dont care
         enableScissor(
             x, y,
-            x + textRenderer.getWidth(text),
-            y +16
+            x + textRenderer.getWidth(textFocus),
+            y + 8
         )
-        textRenderer.prepare(
-            text, (x + offset), y.toFloat(), color,
-            shadow, 0
-        )
+        drawText(textRenderer, textToScroll, x - fancyOffset2, y, color, shadow)
         disableScissor()
     }
 }
