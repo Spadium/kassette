@@ -7,7 +7,7 @@ data class MediaInfo(
     val album: String,
     val artist: String,
     val coverArts: Array<ByteArray>,
-    val provider: MediaProvider
+    val provider: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

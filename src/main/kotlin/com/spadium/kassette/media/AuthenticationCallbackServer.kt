@@ -7,21 +7,27 @@ import java.io.OutputStream
 import java.net.InetSocketAddress
 
 class AuthenticationCallbackServer {
-    var server: HttpServer;
+    var server: HttpServer = HttpServer.create(InetSocketAddress(61008), 0);
 
     constructor() {
-        server = HttpServer.create(InetSocketAddress(61008), 0)
+        server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
-        server.createContext("/favicon.ico", FaviconHandler())
+        server.createContext("/favicon.ico", FileHandler("favicon.ico"))
         server.executor = null
         server.start()
     }
 
-    class FaviconHandler: HttpHandler {
+    class FileHandler: HttpHandler {
+        var file: String;
+
+        constructor(file: String) {
+            this.file = file
+        }
+
         override fun handle(exchange: HttpExchange?) {
             exchange?.sendResponseHeaders(200, 0)
             val outputStream: OutputStream? = exchange?.responseBody
-            outputStream?.write(javaClass.getResourceAsStream("/assets/kassette/favicon.ico")!!.readAllBytes())
+            outputStream?.write(javaClass.getResourceAsStream("/assets/kassette/web/$file")!!.readAllBytes())
             outputStream?.close()
         }
     }

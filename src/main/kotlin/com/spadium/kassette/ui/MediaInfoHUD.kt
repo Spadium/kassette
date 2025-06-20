@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui
 
+import com.spadium.kassette.media.MediaManager
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
@@ -14,6 +15,7 @@ private var timeDelta: Double = 0.0
 private var positionIndicator: Double = 0.0
 private var previousTime: Long = 0
 private var fancyOffset: Int = 0
+private val mediaManager = MediaManager.instance
 
 class MediaInfoHUD {
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
@@ -55,7 +57,7 @@ class MediaInfoHUD {
 //        )
         context.drawMarqueeFancy(
             textRenderer,
-            "123456789",
+            "${mediaManager.info.title} - ${mediaManager.info.artist}",
             50, 10,
             0xFFFFFFFF.toInt(),
             true,
@@ -63,7 +65,7 @@ class MediaInfoHUD {
         )
         context.drawText(
             textRenderer,
-            "Album",
+            mediaManager.info.album,
             50, 20,
             0xFFFFFFFF.toInt(),
             true

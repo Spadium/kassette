@@ -17,7 +17,6 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import org.lwjgl.glfw.GLFW
 import org.slf4j.LoggerFactory
-import java.io.File
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
 
@@ -37,7 +36,7 @@ open class Kassette : ClientModInitializer {
     override fun onInitializeClient() {
 		val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding(
 			"key.kassette.info",
-			InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_P,
+			InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
 			"category.kassette.kassette"
 		))
 
