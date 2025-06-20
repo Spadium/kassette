@@ -7,18 +7,19 @@ import java.io.IOException
 import java.nio.ByteBuffer
 
 class ImageUtils {
-
-
     companion object {
         fun loadGenericImage(bytes: ByteArray): NativeImage {
+            return loadGenericImage(bytes, NativeImage.Format.RGB)
+        }
+
+        fun loadGenericImage(bytes: ByteArray, format: NativeImage.Format): NativeImage {
             val imgBuf = MemoryUtil.memAlloc(bytes.size)
             imgBuf.put(bytes)
             imgBuf.flip()
-            print(imgBuf.getLong(0))
-            return loadStbImage(imgBuf)
+            return loadStbImage(imgBuf, format)
         }
 
-        fun loadStbImage(buf: ByteBuffer): NativeImage {
+        fun loadStbImage(buf: ByteBuffer, format: NativeImage.Format): NativeImage {
             val widthBuf = MemoryUtil.memAllocInt(1)
             val heightBuf = MemoryUtil.memAllocInt(1)
             val channelBuf = MemoryUtil.memAllocInt(1)
@@ -29,7 +30,7 @@ class ImageUtils {
                 throw IOException("Failed to decode image / null buffer! Reason: ${STBImage.stbi_failure_reason()}")
             }
             return NativeImage(
-                NativeImage.Format.RGB,
+                format,
                 widthBuf.get(0), heightBuf.get(0),
                 false, MemoryUtil.memAddress(imgBuf)
             )

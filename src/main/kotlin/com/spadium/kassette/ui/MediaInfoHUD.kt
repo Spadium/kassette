@@ -11,6 +11,7 @@ import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
+import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
@@ -39,15 +40,17 @@ class MediaInfoHUD {
     }
 
     fun setupCoverArt() {
+        val coverArtImage = ImageUtils.loadGenericImage(
+            javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readBytes(),
+            NativeImage.Format.RGB
+        )
         coverArt = NativeImageBackedTexture(
-            "coverart", 128, 128, true
+            "coverart" , coverArtImage.width, coverArtImage.height, true
         )
         try {
-            coverArt.image =  ImageUtils.loadGenericImage(
-                javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readBytes()
-            )
+            coverArt.image = coverArtImage
         } catch (e: IOException) {
-            Kassette.logger.error("Couldn't decode image! ${e.message}")
+            Kassette.logger.error("Couldn't decode cover art! ${e.message}")
             e.printStackTrace()
         }
         coverArt.upload()
