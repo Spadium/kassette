@@ -7,14 +7,23 @@ import java.io.OutputStream
 import java.net.InetSocketAddress
 
 class AuthenticationCallbackServer {
-    var server: HttpServer = HttpServer.create(InetSocketAddress(61008), 0);
+    lateinit var server: HttpServer
 
     constructor() {
+        this.restart()
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))
         server.executor = null
         server.start()
+    }
+
+    fun kill() {
+        server.stop(0)
+    }
+
+    fun restart() {
+        server = HttpServer.create(InetSocketAddress(61008), 0)
     }
 
     class FileHandler: HttpHandler {
