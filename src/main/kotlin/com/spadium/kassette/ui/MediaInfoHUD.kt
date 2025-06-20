@@ -1,10 +1,14 @@
 package com.spadium.kassette.ui
 
+import com.spadium.kassette.Kassette
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.util.ImageUtils
+import kotlinx.io.IOException
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
+import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.texture.NativeImageBackedTexture
@@ -18,6 +22,7 @@ private var fancyOffset: Int = 0
 private val mediaManager = MediaManager.instance
 
 class MediaInfoHUD {
+
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private lateinit var textRenderer: TextRenderer
     private lateinit var coverArt: NativeImageBackedTexture
@@ -33,9 +38,32 @@ class MediaInfoHUD {
         )
     }
 
+    fun setupCoverArt() {
+        coverArt = NativeImageBackedTexture(
+            "coverart", 128, 128, true
+        )
+        try {
+            coverArt.image =  ImageUtils.loadGenericImage(
+                javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readBytes()
+            )
+        } catch (e: IOException) {
+            Kassette.logger.error("Couldn't decode image! ${e.message}")
+            e.printStackTrace()
+        }
+        coverArt.upload()
+
+
+        MinecraftClient.getInstance().textureManager.registerTexture(
+            Identifier.of("kassette:coverart"),
+            coverArt
+        )
+    }
+
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
-        if (!::textRenderer.isInitialized)
+        if (!::textRenderer.isInitialized) {
             textRenderer = MinecraftClient.getInstance().textRenderer
+            setupCoverArt()
+        }
 
         val speedFactor: Float = 5f
         val scrollThreshold: Float = 1f
@@ -46,6 +74,10 @@ class MediaInfoHUD {
 
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
+        )
+        context.drawTexture(
+            RenderPipelines.GUI_TEXTURED,
+            Identifier.of("kassette:coverart"), 2, 2, 0f, 0f, 32, 32, 32, 32
         )
 //        context.drawMarquee(
 //            textRenderer,
