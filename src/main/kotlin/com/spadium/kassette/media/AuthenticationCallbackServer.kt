@@ -21,7 +21,7 @@ class AuthenticationCallbackServer {
         override fun handle(exchange: HttpExchange?) {
             exchange?.sendResponseHeaders(200, 0)
             val outputStream: OutputStream? = exchange?.responseBody
-            outputStream?.write(byteArrayOf())
+            outputStream?.write(javaClass.getResourceAsStream("/assets/kassette/favicon.ico")!!.readAllBytes())
             outputStream?.close()
         }
     }

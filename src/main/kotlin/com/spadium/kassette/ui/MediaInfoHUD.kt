@@ -19,6 +19,7 @@ class MediaInfoHUD {
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private lateinit var textRenderer: TextRenderer
     private lateinit var coverArt: NativeImageBackedTexture
+
     constructor() {
 
     }
