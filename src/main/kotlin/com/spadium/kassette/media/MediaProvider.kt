@@ -6,4 +6,6 @@ abstract class MediaProvider {
     abstract suspend fun init()
 
     abstract fun destroy()
+
+    abstract fun getMedia(): MediaInfo
 }

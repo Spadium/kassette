@@ -3,6 +3,7 @@ package com.spadium.kassette.media.spotify
 import com.adamratzman.spotify.SpotifyAppApi
 import com.adamratzman.spotify.spotifyAppApi
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaProvider
 
 class SpotifyProvider : MediaProvider() {
@@ -20,6 +21,10 @@ class SpotifyProvider : MediaProvider() {
     }
 
     override fun destroy() {
+        TODO("Not yet implemented")
+    }
+
+    override fun getMedia(): MediaInfo {
         TODO("Not yet implemented")
     }
 }

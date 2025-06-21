@@ -1,10 +1,7 @@
 package com.spadium.kassette.ui
 
-import com.spadium.kassette.Kassette
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.util.ImageUtils
 import com.spadium.kassette.util.drawMarqueeFancy
-import kotlinx.io.IOException
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
@@ -12,7 +9,6 @@ import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
@@ -46,20 +42,9 @@ class MediaInfoHUD {
         if (textureManager.getTexture(coverArtIdentifier) != null) {
             textureManager.destroyTexture(coverArtIdentifier)
         }
-
-        val coverArtImage = ImageUtils.loadGenericImage(
-            mediaManager.info.coverArts[0],
-            NativeImage.Format.RGB
-        )
         coverArt = NativeImageBackedTexture(
-            "coverart" , coverArtImage.width, coverArtImage.height, true
+            { "coverart" } , mediaManager.info.coverArt
         )
-        try {
-            coverArt.image = coverArtImage
-        } catch (e: IOException) {
-            Kassette.logger.error("Couldn't decode cover art! ${e.message}")
-            e.printStackTrace()
-        }
         coverArt.upload()
 
         MinecraftClient.getInstance().textureManager.registerTexture(
@@ -71,8 +56,8 @@ class MediaInfoHUD {
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
         if (!::textRenderer.isInitialized) {
             textRenderer = MinecraftClient.getInstance().textRenderer
+            setupCoverArt()
         }
-        setupCoverArt()
 
         val speedFactor: Float = 5f
         val scrollThreshold: Float = 1f

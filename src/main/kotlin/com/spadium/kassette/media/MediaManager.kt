@@ -1,21 +1,18 @@
 package com.spadium.kassette.media
 
 class MediaManager {
-    val info: MediaInfo = MediaInfo(
-        0,
-        0,
-        "Song", "Album", "Artist",
-        arrayOf(
-            javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
-        ),
-        "placeholder"
-    )
+    var provider: MediaProvider = PlaceholderProvider()
+    var info: MediaInfo = provider.getMedia()
 
     companion object {
         val instance: MediaManager = MediaManager()
     }
 
-    private constructor() {
+    fun createThread() {
 
+    }
+
+    private constructor() {
+        createThread()
     }
 }
