@@ -10,7 +10,6 @@ class AuthenticationCallbackServer {
     lateinit var server: HttpServer
 
     constructor() {
-        this.restart()
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))
