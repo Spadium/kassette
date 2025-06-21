@@ -24,7 +24,7 @@ class ImageUtils {
             val heightBuf = MemoryUtil.memAllocInt(1)
             val channelBuf = MemoryUtil.memAllocInt(1)
             val imgBuf = STBImage.stbi_load_from_memory(
-                buf, widthBuf, heightBuf, channelBuf, 4
+                buf, widthBuf, heightBuf, channelBuf, format.channelCount
             )
             if (imgBuf == null) {
                 throw IOException("Failed to decode image / null buffer! Reason: ${STBImage.stbi_failure_reason()}")
