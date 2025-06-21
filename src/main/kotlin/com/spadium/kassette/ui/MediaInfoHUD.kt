@@ -1,7 +1,9 @@
 package com.spadium.kassette.ui
 
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.util.drawMarquee
+import com.spadium.kassette.util.drawMarqueeFancy
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
@@ -23,7 +25,7 @@ class MediaInfoHUD {
     private lateinit var textRenderer: TextRenderer
     private lateinit var coverArt: NativeImageBackedTexture
     private val coverArtIdentifier = Identifier.of("kassette:coverart")
-
+    private val config = Config.getInstance()
     constructor() {
 
     }
@@ -42,7 +44,7 @@ class MediaInfoHUD {
         coverArt = NativeImageBackedTexture(
             { "coverart" }, coverImage
         )
-//        coverArt.upload()
+        coverArt.upload()
         textureManager.registerTexture(
             coverArtIdentifier,
             coverArt
@@ -56,12 +58,11 @@ class MediaInfoHUD {
             return
         }
 
-        val speedFactor: Float = 5f
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
-        positionIndicator += timeDelta / (1 / speedFactor)
+        positionIndicator += timeDelta / (1 / (if (config.fancyText) config.fancyTextSpeed else config.textSpeed) )
 
         context.fill(
             0, 0, 100, 48, 0xFF000000.toInt()
@@ -70,22 +71,27 @@ class MediaInfoHUD {
             RenderPipelines.GUI_TEXTURED,
             Identifier.of("kassette:coverart"), 2, 2, 0f, 0f, 64, 64, 64, 64
         )
-        context.drawMarquee(
-            textRenderer,
-            "Artist - Title",
-            50, 10,
-            0xFFFFFFFF.toInt(),
-            true,
-            8, 3, (positionIndicator >= scrollThreshold)
-        )
-//        context.drawMarqueeFancy(
-//            textRenderer,
-//            "${mediaManager.info.title} - ${mediaManager.info.artist}",
-//            50, 10,
-//            0xFFFFFFFF.toInt(),
-//            true,
-//            8, 3, (positionIndicator >= scrollThreshold)
-//        )
+
+        if (config.fancyText) {
+            context.drawMarqueeFancy(
+                textRenderer,
+                "${mediaManager.info.title} - ${mediaManager.info.artist}",
+                50, 10,
+                0xFFFFFFFF.toInt(),
+                true,
+                8, 3, (positionIndicator >= scrollThreshold)
+            )
+        } else {
+            context.drawMarquee(
+                textRenderer,
+                "Artist - Title",
+                50, 10,
+                0xFFFFFFFF.toInt(),
+                true,
+                8, 3, (positionIndicator >= scrollThreshold)
+            )
+        }
+
         context.drawText(
             textRenderer,
             mediaManager.info.album,
@@ -105,6 +111,3 @@ class MediaInfoHUD {
         previousTime = currentTime
     }
 }
-
-
-//TODO: Cleanup later
