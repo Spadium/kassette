@@ -10,19 +10,29 @@ class AuthenticationCallbackServer {
     lateinit var server: HttpServer
 
     constructor() {
+        restart()
+    }
+
+    fun setup() {
+//        server = HttpServer.create(InetSocketAddress(61008), 0)
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))
         server.executor = null
-        server.start()
     }
 
     fun kill() {
         server.stop(0)
     }
 
+    fun start() {
+        server.start()
+        setup()
+    }
+
     fun restart() {
         server = HttpServer.create(InetSocketAddress(61008), 0)
+        setup()
     }
 
     class FileHandler: HttpHandler {

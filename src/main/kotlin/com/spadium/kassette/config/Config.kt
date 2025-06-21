@@ -11,6 +11,9 @@ data class Config(
     var spotify: SpotifyConfig,
     var color: Long,
     var borderColor: Long,
+    var textSpeed: Float,
+    var fancyTextSpeed: Float,
+    var fancyText: Boolean,
     var callbackPort: UInt = 61008u,
     final var version: UInt = 0u
 ) {
@@ -19,6 +22,9 @@ data class Config(
             SpotifyConfig("", ""),
             0L,
             0L,
+            1f,
+            5f,
+            false,
         )
 
         fun getInstance(): Config {

@@ -8,11 +8,13 @@ class MediaManager {
         val instance: MediaManager = MediaManager()
     }
 
-    fun createThread() {
-
+    class MediaManagerThread(): Thread("Kassette MediaManager") {
+        override fun run() {
+            println("hello thread world!")
+        }
     }
 
     private constructor() {
-        createThread()
+//        MediaManagerThread().start()
     }
 }

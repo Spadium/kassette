@@ -1,7 +1,7 @@
 package com.spadium.kassette.ui
 
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.util.drawMarqueeFancy
+import com.spadium.kassette.util.drawMarquee
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
@@ -16,10 +16,9 @@ import net.minecraft.util.Util
 private var timeDelta: Double = 0.0
 private var positionIndicator: Double = 0.0
 private var previousTime: Long = 0
-private val mediaManager = MediaManager.instance
 
 class MediaInfoHUD {
-
+    private var mediaManager = MediaManager.instance
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private lateinit var textRenderer: TextRenderer
     private lateinit var coverArt: NativeImageBackedTexture
@@ -38,16 +37,13 @@ class MediaInfoHUD {
 
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
+        val coverImage = mediaManager.info.coverArt
 
-        if (textureManager.getTexture(coverArtIdentifier) != null) {
-            textureManager.destroyTexture(coverArtIdentifier)
-        }
         coverArt = NativeImageBackedTexture(
-            { "coverart" } , mediaManager.info.coverArt
+            { "coverart" }, coverImage
         )
-        coverArt.upload()
-
-        MinecraftClient.getInstance().textureManager.registerTexture(
+//        coverArt.upload()
+        textureManager.registerTexture(
             coverArtIdentifier,
             coverArt
         )
@@ -57,6 +53,7 @@ class MediaInfoHUD {
         if (!::textRenderer.isInitialized) {
             textRenderer = MinecraftClient.getInstance().textRenderer
             setupCoverArt()
+            return
         }
 
         val speedFactor: Float = 5f
@@ -71,24 +68,24 @@ class MediaInfoHUD {
         )
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
-            Identifier.of("kassette:coverart"), 2, 2, 0f, 0f, 32, 32, 32, 32
+            Identifier.of("kassette:coverart"), 2, 2, 0f, 0f, 64, 64, 64, 64
         )
-//        context.drawMarquee(
-//            textRenderer,
-//            "Artist - Title",
-//            50, 10,
-//            0xFFFFFFFF.toInt(),
-//            true,
-//            8, 3, (positionIndicator >= scrollThreshold)
-//        )
-        context.drawMarqueeFancy(
+        context.drawMarquee(
             textRenderer,
-            "${mediaManager.info.title} - ${mediaManager.info.artist}",
+            "Artist - Title",
             50, 10,
             0xFFFFFFFF.toInt(),
             true,
             8, 3, (positionIndicator >= scrollThreshold)
         )
+//        context.drawMarqueeFancy(
+//            textRenderer,
+//            "${mediaManager.info.title} - ${mediaManager.info.artist}",
+//            50, 10,
+//            0xFFFFFFFF.toInt(),
+//            true,
+//            8, 3, (positionIndicator >= scrollThreshold)
+//        )
         context.drawText(
             textRenderer,
             mediaManager.info.album,

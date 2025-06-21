@@ -1,7 +1,6 @@
 package com.spadium.kassette.ui
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory
-import com.terraformersmc.modmenu.api.ModMenuApi
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 
@@ -14,6 +13,11 @@ class ConfigScreen : Screen {
 
     constructor(title: Text) : super(title) {
         this.parent = null
+    }
+
+    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.render(context, mouseX, mouseY, deltaTicks)
+
     }
 
     override fun close() {
