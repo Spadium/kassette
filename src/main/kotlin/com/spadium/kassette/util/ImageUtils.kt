@@ -9,7 +9,7 @@ import java.nio.ByteBuffer
 class ImageUtils {
     companion object {
         fun loadGenericImage(bytes: ByteArray): NativeImage {
-            return loadGenericImage(bytes, NativeImage.Format.RGB)
+            return loadGenericImage(bytes, NativeImage.Format.RGBA)
         }
 
         fun loadGenericImage(bytes: ByteArray, format: NativeImage.Format): NativeImage {
@@ -24,7 +24,7 @@ class ImageUtils {
             val heightBuf = MemoryUtil.memAllocInt(1)
             val channelBuf = MemoryUtil.memAllocInt(1)
             val imgBuf = STBImage.stbi_load_from_memory(
-                buf, widthBuf, heightBuf, channelBuf, 0
+                buf, widthBuf, heightBuf, channelBuf, 4
             )
             if (imgBuf == null) {
                 throw IOException("Failed to decode image / null buffer! Reason: ${STBImage.stbi_failure_reason()}")
