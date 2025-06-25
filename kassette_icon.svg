@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1" /><g
+     id="layer3"><rect
+       style="fill:#ffffff;stroke-width:1.00157"
+       id="rect4"
+       width="512"
+       height="512"
+       x="0"
+       y="0" /></g><g
+     id="layer1"><path
+       id="rect1"
+       style="fill:#000000;fill-opacity:1;stroke-width:0.918558"
+       d="m 67.77804,151 c -2.09386,0 -3.7793,1.42276 -3.7793,3.18946 v 203.62108 c 0,1.7667 1.68544,3.18946 3.7793,3.18946 h 376.4414 c 2.09386,0 3.7793,-1.42276 3.7793,-3.18946 V 154.18946 c 0,-1.7667 -1.68544,-3.18946 -3.7793,-3.18946 z m 112.31445,64 a 24,24 0 0 1 24,24 24,24 0 0 1 -24,24 24,24 0 0 1 -24,-24 24,24 0 0 1 24,-24 z m 151.8125,0 a 24,24 0 0 1 24,24 24,24 0 0 1 -24,24 24,24 0 0 1 -24,-24 24,24 0 0 1 24,-24 z" /><path
+       id="rect2"
+       style="fill:#484848;fill-opacity:1;stroke-width:1.02156;stroke-dasharray:none"
+       d="m 375.90499,361 -19.90625,-48 h -200 l -19.90625,48" /><path
+       id="rect3"
+       style="fill:#f9f9f9;stroke-width:1.06"
+       d="m 127.99874,163 v 128 h 256 V 163 Z m 52.09375,44 a 32,32 0 0 1 32,32 32,32 0 0 1 -32,32 32,32 0 0 1 -32,-32 32,32 0 0 1 32,-32 z m 151.8125,0 a 32,32 0 0 1 32,32 32,32 0 0 1 -32,32 32,32 0 0 1 -32,-32 32,32 0 0 1 32,-32 z" /><path
+       d="m 75.99874,163 v 24 H 99.998739 L 86.49874,175 99.998739,163 Z"
+       style="fill:#808080;stroke-width:0.19875"
+       id="path4" /><text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:85.3333px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS Bold';text-align:center;letter-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#1a1a1a;stroke-width:1.00157"
+       x="256"
+       y="121.40031"
+       id="text4"><tspan
+         id="tspan4"
+         x="256"
+         y="121.40031"
+         style="fill:#000000">Kassette</tspan></text></g></svg>
