@@ -1,5 +1,6 @@
 package com.spadium.kassette.config
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -46,6 +47,7 @@ data class Config(
 
     fun save() {}
 
+    @OptIn(ExperimentalSerializationApi::class)
     fun reload() {
         // Config stuff
         val configFile = FabricLoader.getInstance().configDir.resolve("kassette.json")

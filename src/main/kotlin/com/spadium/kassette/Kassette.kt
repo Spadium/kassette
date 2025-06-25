@@ -3,7 +3,6 @@ package com.spadium.kassette
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.MediaInfoScreen
-import kotlinx.serialization.ExperimentalSerializationApi
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -21,7 +20,6 @@ open class Kassette : ClientModInitializer {
 		val logger: Logger = LoggerFactory.getLogger("Kassette")
 	}
 
-	@OptIn(ExperimentalSerializationApi::class)
     override fun onInitializeClient() {
 		val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding(
 			"key.kassette.info",
@@ -39,6 +37,10 @@ open class Kassette : ClientModInitializer {
 		MediaInfoHUD().setup()
 
 		logger.info("Locked and loaded")
-		AuthenticationCallbackServer()
+		try {
+			AuthenticationCallbackServer().start()
+		} catch (e: Exception) {
+			logger.error("Error initializing Kassette's authentication callback!", e)
+		}
 	}
 }

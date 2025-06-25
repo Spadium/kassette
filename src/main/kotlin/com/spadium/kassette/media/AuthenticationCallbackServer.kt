@@ -1,5 +1,6 @@
 package com.spadium.kassette.media
 
+import com.spadium.kassette.config.Config
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
@@ -10,11 +11,10 @@ class AuthenticationCallbackServer {
     lateinit var server: HttpServer
 
     constructor() {
-        restart()
     }
 
     fun setup() {
-//        server = HttpServer.create(InetSocketAddress(61008), 0)
+        server = HttpServer.create(InetSocketAddress(Config.Instance.callbackPort.toInt()), 0)
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))
@@ -26,13 +26,13 @@ class AuthenticationCallbackServer {
     }
 
     fun start() {
-        server.start()
         setup()
+        server.start()
     }
 
     fun restart() {
         server = HttpServer.create(InetSocketAddress(61008), 0)
-        setup()
+        start()
     }
 
     class FileHandler: HttpHandler {
