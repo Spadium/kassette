@@ -4,6 +4,7 @@ import com.spadium.kassette.config.Config
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
+import java.io.InputStream
 import java.io.OutputStream
 import java.net.InetSocketAddress
 
@@ -43,20 +44,21 @@ class AuthenticationCallbackServer {
         }
 
         override fun handle(exchange: HttpExchange?) {
-            exchange?.sendResponseHeaders(200, 0)
-            val outputStream: OutputStream? = exchange?.responseBody
-            outputStream?.write(javaClass.getResourceAsStream("/assets/kassette/web/$file")!!.readAllBytes())
-            outputStream?.close()
+            exchange!!.sendResponseHeaders(200, 0)
+            val outputStream: OutputStream = exchange.responseBody
+            outputStream.write(javaClass.getResourceAsStream("/assets/kassette/web/$file")!!.readAllBytes())
+            outputStream.close()
         }
     }
 
     class AuthCallbackHandler: HttpHandler {
         override fun handle(exchange: HttpExchange?) {
             val response: String = "<h1>you're safe for now</h1>"
-            exchange?.sendResponseHeaders(200, response.length.toLong())
-            val outStream: OutputStream? = exchange?.responseBody
-            outStream?.write(response.toByteArray())
-            outStream?.close()
+            exchange!!.sendResponseHeaders(200, response.length.toLong())
+            val outStream: OutputStream = exchange.responseBody
+            outStream.write(response.toByteArray())
+            outStream.close()
+            println(exchange.requestURI.toString())
         }
     }
 }

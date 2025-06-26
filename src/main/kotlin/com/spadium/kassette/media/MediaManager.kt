@@ -1,5 +1,7 @@
 package com.spadium.kassette.media
 
+import kotlinx.coroutines.delay
+
 class MediaManager {
     var provider: MediaProvider = PlaceholderProvider()
     var info: MediaInfo = provider.getMedia()
@@ -8,13 +10,13 @@ class MediaManager {
         val instance: MediaManager = MediaManager()
     }
 
-    class MediaManagerThread(): Thread("Kassette MediaManager") {
+    inner class MediaManagerThread(): Thread("Kassette MediaManager") {
         override fun run() {
-            println("hello thread world!")
+            this@MediaManager.provider.update()
         }
     }
 
     private constructor() {
-//        MediaManagerThread().start()
+        MediaManagerThread().start()
     }
 }

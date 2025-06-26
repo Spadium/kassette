@@ -2,9 +2,14 @@ package com.spadium.kassette.util
 
 import net.minecraft.client.texture.NativeImage
 import org.lwjgl.stb.STBImage
+import org.lwjgl.stb.STBImageResize
 import org.lwjgl.system.MemoryUtil
 import java.io.IOException
 import java.nio.ByteBuffer
+import java.nio.IntBuffer
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.min
 
 class ImageUtils {
     companion object {

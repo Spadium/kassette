@@ -17,13 +17,17 @@ class PlaceholderProvider: MediaProvider() {
 
     override fun getMedia(): MediaInfo {
         return MediaInfo(
-            0,
-            0,
+            255,
+            128,
             "Song", "Album", "Artist",
             ImageUtils.loadGenericImage(
                 javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
             ),
             "placeholder"
         )
+    }
+
+    override fun update() {
+
     }
 }

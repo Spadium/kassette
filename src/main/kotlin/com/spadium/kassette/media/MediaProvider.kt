@@ -8,4 +8,6 @@ abstract class MediaProvider {
     abstract fun destroy()
 
     abstract fun getMedia(): MediaInfo
+
+    abstract fun update()
 }
