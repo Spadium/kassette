@@ -1,10 +1,12 @@
 package com.spadium.kassette.config
 
+import com.spadium.kassette.Kassette.Companion.logger
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.util.Colors
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
 
@@ -22,22 +24,19 @@ private val json: Json = Json {
 @Serializable
 data class Config(
     var spotify: SpotifyConfig,
-    var color: Long,
-    var borderColor: Long,
-    var textSpeed: Float,
-    var fancyTextSpeed: Float,
-    var fancyText: Boolean,
+    var hud: HUDConfig,
     var callbackPort: UInt = 61008u,
-    final var version: UInt = 0u
+    final val version: UInt = 0u
 ) {
     companion object {
         internal var Instance: Config = Config(
             SpotifyConfig("", ""),
-            0L,
-            0L,
-            1f,
-            5f,
-            false,
+            HUDConfig(
+                128, 48,
+                Colors.BLACK, Colors.GREEN,
+                1, 5, true, true,
+                HUDConfig.ProgressType.BAR
+            )
         )
 
         fun getInstance(): Config {
@@ -53,11 +52,16 @@ data class Config(
         val configFile = FabricLoader.getInstance().configDir.resolve("kassette.json")
 
         if (configFile.exists()) {
-            Config.Instance = json.decodeFromStream<Config>(
-                configFile.toFile().inputStream()
-            )
+            try {
+                Instance = json.decodeFromStream<Config>(
+                    configFile.toFile().inputStream()
+                )
+            } catch (e: Exception) {
+                logger.error("Error loading config! ${e.toString()}")
+            }
+
         } else {
-            val jsonOut = json.encodeToString(Config.Instance)
+            val jsonOut = json.encodeToString(Instance)
             configFile.writeBytes(jsonOut.toByteArray())
         }
     }

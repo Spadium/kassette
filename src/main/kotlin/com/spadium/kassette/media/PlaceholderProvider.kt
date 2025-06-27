@@ -19,7 +19,7 @@ class PlaceholderProvider: MediaProvider() {
         return MediaInfo(
             255,
             128,
-            "Song", "Album", "Artist",
+            "View Kassette settings for more information", "N/A", "Kassette",
             ImageUtils.loadGenericImage(
                 javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
             ),

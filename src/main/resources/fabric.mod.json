@@ -20,7 +20,12 @@
 				"adapter": "kotlin"
 			}
 		],
-		"modmenu": []
+		"modmenu": [
+			{
+				"value": "com.spadium.kassette.config.ModMenuImpl",
+				"adapter": "kotlin"
+			}
+		]
 	},
 	"custom": {
 		"modmenu": {

@@ -22,11 +22,16 @@ private var previousTime: Long = 0
 
 class MediaInfoHUD {
     private var mediaManager = MediaManager.instance
+    private var mediaInfo = mediaManager.info
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private lateinit var textRenderer: TextRenderer
     private lateinit var coverArt: NativeImageBackedTexture
     private val coverArtIdentifier = Identifier.of("kassette:coverart")
     private val config = Config.getInstance()
+    private val hudConfig = config.hud
+    val infoFirstLine = "${mediaInfo.title} - ${mediaInfo.artist}"
+    val infoSecondLine = "${mediaInfo.album}"
+    val isFancy = hudConfig.fancyText
 
     fun setup() {
         HudElementRegistry.attachElementBefore(
@@ -37,7 +42,7 @@ class MediaInfoHUD {
 
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
-        val coverImage = mediaManager.info.coverArt
+        val coverImage = mediaInfo.coverArt
 
         coverArt = NativeImageBackedTexture(
             { "coverart" }, coverImage
@@ -50,25 +55,26 @@ class MediaInfoHUD {
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
+//        val xmlIS = MinecraftClient.getInstance().resourceManager.getResource(Identifier.of("kassette:gui_hud.xml")).get().inputStream
+//        println(xmlIS.readAllBytes().toString(Charsets.UTF_8))
         if (!::textRenderer.isInitialized) {
             textRenderer = MinecraftClient.getInstance().textRenderer
             setupCoverArt()
             return
         }
-        val isFancy = config.fancyText
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
-        val infoFirstLine = "${mediaManager.info.title} - ${mediaManager.info.artist}"
-        val infoSecondLine = "${mediaManager.info.album}"
+
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
-        positionIndicator += timeDelta / (1 / (if (config.fancyText) config.fancyTextSpeed else config.textSpeed) )
-
+        positionIndicator += timeDelta / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble()
+        val maxWidth = MinecraftClient.getInstance().window.scaledWidth
+        val maxHeight = MinecraftClient.getInstance().window.scaledHeight
         context.fill(
             0, 0, 128, 48, 0xFF000000.toInt()
         )
         context.drawTexture(
-            RenderPipelines.GUI,
+            RenderPipelines.GUI_TEXTURED,
             Identifier.of("kassette:coverart"),
             2, 2, 0f, 0f,
             32, 32,

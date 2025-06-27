@@ -4,14 +4,14 @@ import com.spadium.kassette.ui.ConfigScreen
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.text.Text
 
 class ModMenuImpl : ModMenuApi, ConfigScreenFactory<ConfigScreen> {
     override fun getModConfigScreenFactory(): ConfigScreenFactory<*>? {
-
-        return super.getModConfigScreenFactory()
+        return this
     }
 
     override fun create(parent: Screen?): ConfigScreen? {
-        TODO("Not yet implemented")
+        return ConfigScreen(Text.literal("Config"), parent!!)
     }
 }
