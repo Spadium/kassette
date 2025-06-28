@@ -5,26 +5,23 @@ import com.adamratzman.spotify.SpotifyClientApi
 import com.adamratzman.spotify.spotifyAppApi
 import com.adamratzman.spotify.spotifyClientApi
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaProvider
 
 class SpotifyProvider : AccountMediaProvider() {
-    private lateinit var appApi: SpotifyAppApi
     private lateinit var clientApi: SpotifyClientApi
+    private var spotifySettings: SpotifyConfig = Config.Instance.providers.spotify
 
     override fun getServiceName(): String {
         return "Spotify"
     }
 
     override suspend fun init() {
-        appApi = spotifyAppApi(
-            Config.Instance.spotify.clientId,
-            Config.Instance.spotify.clientId
-        ).build()
         clientApi = spotifyClientApi(
-            Config.Instance.spotify.clientId,
-            Config.Instance.spotify.clientId,
+            spotifySettings.clientId,
+            spotifySettings.clientId,
             "127.0.0.1:${Config.Instance.callbackPort}"
         ).build()
     }

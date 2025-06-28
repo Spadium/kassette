@@ -15,6 +15,7 @@ import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
+import net.minecraft.util.math.ColorHelper
 
 private var timeDelta: Double = 0.0
 private var positionIndicator: Double = 0.0
@@ -32,6 +33,18 @@ class MediaInfoHUD {
     val infoFirstLine = "${mediaInfo.title} - ${mediaInfo.artist}"
     val infoSecondLine = "${mediaInfo.album}"
     val isFancy = hudConfig.fancyText
+    val borderColor = ColorHelper.getArgb(
+        hudConfig.backgroundColor[3],
+        hudConfig.borderColor[0],
+        hudConfig.borderColor[1],
+        hudConfig.borderColor[2]
+    )
+    val backgroundColor = ColorHelper.getArgb(
+        hudConfig.backgroundColor[3],
+        hudConfig.backgroundColor[0],
+        hudConfig.backgroundColor[1],
+        hudConfig.backgroundColor[2]
+    )
 
     fun setup() {
         HudElementRegistry.attachElementBefore(
@@ -71,7 +84,7 @@ class MediaInfoHUD {
         val maxWidth = MinecraftClient.getInstance().window.scaledWidth
         val maxHeight = MinecraftClient.getInstance().window.scaledHeight
         context.fill(
-            0, 0, 128, 48, 0xFF000000.toInt()
+            0, 0, hudConfig.width, hudConfig.height, backgroundColor
         )
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
@@ -98,7 +111,7 @@ class MediaInfoHUD {
         context.drawBorder(
             0, 0,
             100, 48,
-            0xFF00FF00.toInt()
+            borderColor
         )
 
         if (positionIndicator >= scrollThreshold) {
@@ -111,7 +124,7 @@ class MediaInfoHUD {
         val progress: Double = (mediaManager.info.currentPosition.toDouble() / mediaManager.info.maximumTime)
         // Progressbar background
         context.fill(
-            0, 0, 100, 10, 0xFFFFFFFF.toInt()
+            0, 0, 100, 10, -1
         )
         // Progressbar
         context.fill(

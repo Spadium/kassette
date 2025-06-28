@@ -5,14 +5,10 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 
 class ConfigScreen : Screen {
-    val parent: Screen?
+    val parent: Screen
 
-    constructor(title: Text, parent: Screen) : super(title) {
+    constructor(parent: Screen) : super(Text.translatable("kassette.options.title")) {
         this.parent = parent
-    }
-
-    constructor(title: Text) : super(title) {
-        this.parent = null
     }
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
@@ -21,6 +17,6 @@ class ConfigScreen : Screen {
     }
 
     override fun close() {
-        this.client!!.setScreen(this.parent!!)
+        this.client!!.setScreen(this.parent)
     }
 }

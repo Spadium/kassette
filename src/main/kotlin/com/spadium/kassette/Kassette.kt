@@ -1,5 +1,6 @@
 package com.spadium.kassette
 
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.MediaInfoScreen
@@ -21,6 +22,14 @@ open class Kassette : ClientModInitializer {
 	}
 
     override fun onInitializeClient() {
+		try {
+			AuthenticationCallbackServer().start()
+		} catch (e: Exception) {
+			logger.error("Error initializing Kassette's authentication callback!", e)
+		}
+
+		Config.Instance.reload()
+
 		val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding(
 			"key.kassette.info",
 			InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
@@ -37,10 +46,5 @@ open class Kassette : ClientModInitializer {
 		MediaInfoHUD().setup()
 
 		logger.info("Locked and loaded")
-		try {
-			AuthenticationCallbackServer().start()
-		} catch (e: Exception) {
-			logger.error("Error initializing Kassette's authentication callback!", e)
-		}
 	}
 }

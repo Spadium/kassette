@@ -6,13 +6,14 @@ import kotlinx.serialization.Serializable
 data class HUDConfig(
     var width: Int,
     var height: Int,
-    var bgColor: Int,
-    var fgColor: Int,
+    val imageSize: Int,
+    var backgroundColor: IntArray,
+    var borderColor: IntArray,
     var textSpeed: Int,
     var fancyTextSpeed: Int,
     var showCover: Boolean,
     var fancyText: Boolean,
-    var progressType: ProgressType
+    var progressType: ProgressType,
 ) {
     @Serializable
     enum class ProgressType {
