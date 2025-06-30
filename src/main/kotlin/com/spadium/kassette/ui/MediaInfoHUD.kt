@@ -22,7 +22,7 @@ private var positionIndicator: Double = 0.0
 private var previousTime: Long = 0
 
 class MediaInfoHUD {
-    private var mediaManager = MediaManager.instance
+    private var mediaManager = MediaManager
     private var mediaInfo = mediaManager.info
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private lateinit var textRenderer: TextRenderer

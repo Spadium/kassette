@@ -2,6 +2,7 @@ package com.spadium.kassette
 
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.AuthenticationCallbackServer
+import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.MediaInfoScreen
 import net.fabricmc.api.ClientModInitializer
@@ -28,7 +29,7 @@ open class Kassette : ClientModInitializer {
 			logger.error("Error initializing Kassette's authentication callback!", e)
 		}
 
-		Config.Instance.reload()
+		Config.getInstance().reload()
 
 		val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(KeyBinding(
 			"key.kassette.info",
@@ -44,7 +45,19 @@ open class Kassette : ClientModInitializer {
 			}
 		})
 		MediaInfoHUD().setup()
+        MediaManagerThread().start()
 
 		logger.info("Locked and loaded")
+	}
+
+	inner class MediaManagerThread(): Thread("Kassette MediaManager") {
+		override fun run() {
+			while (true) {
+				MediaManager.provider.update()
+				if (!MinecraftClient.getInstance().isRunning) {
+					break
+				}
+			}
+		}
 	}
 }

@@ -12,6 +12,6 @@ class ModMenuImpl : ModMenuApi, ConfigScreenFactory<ConfigScreen> {
     }
 
     override fun create(parent: Screen?): ConfigScreen? {
-        return ConfigScreen(parent!!)
+        return ConfigScreen(parent)
     }
 }

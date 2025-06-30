@@ -1,6 +1,8 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.util.ImageUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class PlaceholderProvider: MediaProvider() {
     override fun getServiceName(): String {
@@ -28,6 +30,9 @@ class PlaceholderProvider: MediaProvider() {
     }
 
     override fun update() {
-
+        runBlocking {
+            println("PLACEHOLDER PROVIDER RUNNING!")
+            delay(10000L)
+        }
     }
 }

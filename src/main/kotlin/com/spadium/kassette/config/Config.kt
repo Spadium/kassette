@@ -3,9 +3,10 @@ package com.spadium.kassette.config
 import com.spadium.kassette.Kassette.Companion.logger
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonPrimitive
 import net.fabricmc.loader.api.FabricLoader
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
@@ -15,41 +16,38 @@ import kotlin.io.path.writeBytes
     The only values that are absolutely required are spotify, color, and borderColor
  */
 
+private val configVersion = 0u
 private val json: Json = Json {
     prettyPrint = true
     ignoreUnknownKeys = true
     encodeDefaults = true
 }
+private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.json")
 
 @Serializable
 data class Config(
-    var providers: ProvidersConfig,
-    var hud: HUDConfig,
+    var providers: ProvidersConfig = ProvidersConfig(
+        spotify = SpotifyConfig("", ""),
+    ),
+    var hud: HUDConfig = HUDConfig(
+        width = 128,
+        height = 48,
+        imageSize = 32,
+        backgroundColor = intArrayOf(0,0,0, 255),
+        borderColor = intArrayOf(0,255,0, 255),
+        textSpeed = 1,
+        fancyTextSpeed = 5,
+        showCover = true,
+        fancyText = true,
+        progressType = HUDConfig.ProgressType.BAR
+    ),
     var callbackPort: UInt = 61008u,
-    final val version: UInt = 0u
+    val version: UInt = configVersion
 ) {
-    @Transient
-    private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.json")
 
     companion object {
         @OptIn(ExperimentalUnsignedTypes::class)
-        internal var Instance: Config = Config(
-            providers = ProvidersConfig(
-                spotify = SpotifyConfig("", ""),
-            ),
-            hud = HUDConfig(
-                width = 128,
-                height = 48,
-                imageSize = 32,
-                backgroundColor = intArrayOf(0,0,0, 255),
-                borderColor = intArrayOf(0,255,0, 255),
-                textSpeed = 1,
-                fancyTextSpeed = 5,
-                showCover = true,
-                fancyText = true,
-                progressType = HUDConfig.ProgressType.BAR
-            )
-        )
+        private var Instance: Config = Config()
 
         fun getInstance(): Config {
             return Instance
@@ -65,7 +63,7 @@ data class Config(
 
         colors.forEachIndexed { c, color ->
             if (color.size >= 3 && color.size <= 4) {
-                for (i in 0..color.size) {
+                for (i in 0..color.size-1) {
                     if (color[i] > 255 || color[i] < 0) {
                         throw RuntimeException("Error while processing color (Value $i is too big or less than zero): $c")
                     }
@@ -76,33 +74,36 @@ data class Config(
         }
 
         // Validate version
-        if (version != 0u) {
+        if (version != configVersion) {
             throw RuntimeException("Config version doesn't match supported version!")
         }
     }
 
-    fun save() {}
+    fun save() {
+        val jsonOut = json.encodeToString(this)
+        configFile.writeBytes(jsonOut.toByteArray())
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun load() {
+        val jsonIn: Config = json.decodeFromStream(configFile.toFile().inputStream())
+        providers = jsonIn.providers
+        hud = jsonIn.hud
+        callbackPort = jsonIn.callbackPort
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     fun reload() {
         // Config stuff
         if (configFile.exists()) {
             try {
-                Instance = json.decodeFromStream<Config>(
-                    configFile.toFile().inputStream()
-                )
+                load()
                 validate()
             } catch (e: Exception) {
                 logger.error("Error loading config! ${e.toString()}")
             }
         } else {
-            val jsonOut = json.encodeToString(this)
-            configFile.writeBytes(jsonOut.toByteArray())
+            save()
         }
     }
-
-    @Serializable
-    data class ProvidersConfig(
-        var spotify: SpotifyConfig,
-    )
 }

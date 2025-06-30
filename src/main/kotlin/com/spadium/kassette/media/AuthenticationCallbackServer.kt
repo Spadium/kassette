@@ -10,12 +10,12 @@ import java.net.InetSocketAddress
 
 class AuthenticationCallbackServer {
     lateinit var server: HttpServer
-
+    var config = Config.getInstance()
     constructor() {
     }
 
     fun setup() {
-        server = HttpServer.create(InetSocketAddress(Config.Instance.callbackPort.toInt()), 0)
+        server = HttpServer.create(InetSocketAddress(config.callbackPort.toInt()), 0)
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))
