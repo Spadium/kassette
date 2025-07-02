@@ -78,8 +78,8 @@ data class Config(
 
     fun validate() {
         // Validate colors
-        hud.backgroundColor = checkArray(hud.backgroundColor, 3, 4, 255)
-        hud.borderColor = checkArray(hud.backgroundColor, 3, 4, 255)
+        hud.backgroundColor = checkColorArray(hud.backgroundColor, 3, 4, 255)
+        hud.borderColor = checkColorArray(hud.borderColor, 3, 4, 255)
 
         // Validate version
         if (version != configVersion) {
@@ -87,15 +87,18 @@ data class Config(
         }
     }
 
-    private fun checkArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
-        if (arr.size in minimumSize..maximumSize) {
+    private fun checkColorArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
+        val list = arr.toMutableList()
+        if (arr.size in minimumSize..maximumSize && (maximumSize - minimumSize) == 1) {
             if (arr.size == maximumSize) {
                 return arr
             } else if (arr.size == minimumSize) {
-                return arr + defaultValue
+                list.addLast(defaultValue)
             }
+        } else {
+            throw RuntimeException("Kassette Config: Color array to small/too big!")
         }
-        return arr
+        return list.toIntArray()
     }
 
     fun save() {
