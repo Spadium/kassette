@@ -11,11 +11,12 @@ import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaProvider
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class SpotifyProvider : AccountMediaProvider() {
+class SpotifyProvider : AccountMediaProvider {
     private lateinit var clientApi: SpotifyClientApi
-    private var config = Config.getInstance()
+    private var config = Config.Instance
     private var spotifySettings: SpotifyConfig = config.providers.spotify
     private var infoToReturn: MediaInfo = MediaInfo(
         0L, 0L, "", "", "",
@@ -26,12 +27,14 @@ class SpotifyProvider : AccountMediaProvider() {
         return "Spotify"
     }
 
-    override suspend fun init() {
-        clientApi = spotifyClientApi(
-            spotifySettings.clientId,
-            spotifySettings.clientId,
-            "127.0.0.1:${config.callbackPort}"
-        ).build()
+    override fun init() {
+        runBlocking {
+            clientApi = spotifyClientApi(
+                spotifySettings.clientId,
+                spotifySettings.clientId,
+                "127.0.0.1:${config.callbackPort}"
+            ).build()
+        }
     }
 
     override fun destroy() {

@@ -10,7 +10,7 @@ import java.net.InetSocketAddress
 
 class AuthenticationCallbackServer {
     lateinit var server: HttpServer
-    var config = Config.getInstance()
+    var config = Config.Instance
     constructor() {
     }
 

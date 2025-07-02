@@ -1,13 +1,13 @@
 package com.spadium.kassette.media
 
-abstract class MediaProvider {
-    abstract fun getServiceName(): String
+interface MediaProvider {
+    fun getServiceName(): String
 
-    abstract suspend fun init()
+    fun init()
 
-    abstract fun destroy()
+    fun destroy()
 
-    abstract fun getMedia(): MediaInfo
+    fun getMedia(): MediaInfo
 
-    abstract fun update()
+    fun update()
 }

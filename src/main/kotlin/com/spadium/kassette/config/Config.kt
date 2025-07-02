@@ -10,6 +10,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import net.fabricmc.loader.api.FabricLoader
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
+import kotlin.system.exitProcess
 
 /*
     Config class
@@ -39,7 +40,8 @@ data class Config(
         fancyTextSpeed = 5,
         showCover = true,
         fancyText = true,
-        progressType = HUDConfig.ProgressType.BAR
+        progressType = HUDConfig.ProgressType.BAR,
+        lineSpacing = 1
     ),
     var callbackPort: UInt = 61008u,
     val version: UInt = configVersion
@@ -47,31 +49,37 @@ data class Config(
 
     companion object {
         @OptIn(ExperimentalUnsignedTypes::class)
-        private var Instance: Config = Config()
+        var Instance: Config = Config()
 
-        fun getInstance(): Config {
-            return Instance
+        @OptIn(ExperimentalSerializationApi::class)
+        fun load(): Config {
+            val jsonIn: Config = json.decodeFromStream(configFile.toFile().inputStream())
+            return jsonIn
+        }
+
+        @OptIn(ExperimentalSerializationApi::class)
+        fun reload(): Config {
+            var config = Config()
+            // Config stuff
+            if (configFile.exists()) {
+                try {
+                    config = load()
+                    config.validate()
+                } catch (e: Exception) {
+                    logger.error("Error loading config! ${e.toString()}")
+                    config = Config()
+                }
+            } else {
+                config.save()
+            }
+            return config
         }
     }
 
     fun validate() {
         // Validate colors
-        val colors = arrayOf(
-            hud.backgroundColor,
-            hud.borderColor
-        )
-
-        colors.forEachIndexed { c, color ->
-            if (color.size >= 3 && color.size <= 4) {
-                for (i in 0..color.size-1) {
-                    if (color[i] > 255 || color[i] < 0) {
-                        throw RuntimeException("Error while processing color (Value $i is too big or less than zero): $c")
-                    }
-                }
-            } else {
-                throw RuntimeException("Error while processing color (Too small or too big): $c")
-            }
-        }
+        hud.backgroundColor = checkArray(hud.backgroundColor, 3, 4, 255)
+        hud.borderColor = checkArray(hud.backgroundColor, 3, 4, 255)
 
         // Validate version
         if (version != configVersion) {
@@ -79,31 +87,19 @@ data class Config(
         }
     }
 
+    private fun checkArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
+        if (arr.size in minimumSize..maximumSize) {
+            if (arr.size == maximumSize) {
+                return arr
+            } else if (arr.size == minimumSize) {
+                return arr + defaultValue
+            }
+        }
+        return arr
+    }
+
     fun save() {
         val jsonOut = json.encodeToString(this)
         configFile.writeBytes(jsonOut.toByteArray())
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    fun load() {
-        val jsonIn: Config = json.decodeFromStream(configFile.toFile().inputStream())
-        providers = jsonIn.providers
-        hud = jsonIn.hud
-        callbackPort = jsonIn.callbackPort
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    fun reload() {
-        // Config stuff
-        if (configFile.exists()) {
-            try {
-                load()
-                validate()
-            } catch (e: Exception) {
-                logger.error("Error loading config! ${e.toString()}")
-            }
-        } else {
-            save()
-        }
     }
 }

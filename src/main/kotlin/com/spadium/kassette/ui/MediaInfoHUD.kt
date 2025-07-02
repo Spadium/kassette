@@ -2,6 +2,7 @@ package com.spadium.kassette.ui
 
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.util.ImageUtils
 import com.spadium.kassette.util.drawMarquee
 import com.spadium.kassette.util.drawMarqueeFancy
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
@@ -28,10 +29,8 @@ class MediaInfoHUD {
     private lateinit var textRenderer: TextRenderer
     private lateinit var coverArt: NativeImageBackedTexture
     private val coverArtIdentifier = Identifier.of("kassette:coverart")
-    private val config = Config.getInstance()
+    private val config = Config.Instance
     private val hudConfig = config.hud
-    val infoFirstLine = "${mediaInfo.title} - ${mediaInfo.artist}"
-    val infoSecondLine = "${mediaInfo.album}"
     val isFancy = hudConfig.fancyText
     val borderColor = ColorHelper.getArgb(
         hudConfig.backgroundColor[3],
@@ -55,7 +54,13 @@ class MediaInfoHUD {
 
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
-        val coverImage = mediaInfo.coverArt
+        val coverImage = if (mediaInfo?.coverArt != null) {
+            mediaInfo!!.coverArt
+        } else {
+            ImageUtils.loadGenericImage(
+                javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
+            )
+        }
 
         coverArt = NativeImageBackedTexture(
             { "coverart" }, coverImage
@@ -65,6 +70,22 @@ class MediaInfoHUD {
             coverArtIdentifier,
             coverArt
         )
+    }
+
+    private fun getFirstLine(): String {
+        return if (mediaInfo != null) {
+            "${mediaInfo!!.title} - ${mediaInfo!!.artist}"
+        } else {
+            "Nothing Currently Playing"
+        }
+    }
+
+    private fun getSecondLine(): String {
+        return if (mediaInfo != null) {
+            mediaInfo!!.artist
+        } else {
+            "No Information"
+        }
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
@@ -80,7 +101,7 @@ class MediaInfoHUD {
 
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
-        positionIndicator += timeDelta / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble()
+        positionIndicator += timeDelta / (1 / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble())
         val maxWidth = MinecraftClient.getInstance().window.scaledWidth
         val maxHeight = MinecraftClient.getInstance().window.scaledHeight
         context.fill(
@@ -95,15 +116,15 @@ class MediaInfoHUD {
         )
 
         textWrapper(
-            context, textRenderer, infoFirstLine,
-            50, 10, 0xFFFFFFFF.toInt(),
+            context, textRenderer, getFirstLine(),
+            50, 2 + textRenderer.fontHeight, 0xFFFFFFFF.toInt(),
             true, 8, 3,
             (positionIndicator >= scrollThreshold),
             isFancy
         )
         textWrapper(
-            context, textRenderer, infoSecondLine,
-            50, 20, 0xFFFFFFFF.toInt(),
+            context, textRenderer, getSecondLine(),
+            50, 2 + + textRenderer.fontHeight * 2, 0xFFFFFFFF.toInt(),
             true, 8, 3,
             (positionIndicator >= scrollThreshold), isFancy
         )
@@ -121,7 +142,12 @@ class MediaInfoHUD {
     }
 
     private fun drawProgressBar(context: DrawContext) {
-        val progress: Double = (mediaManager.info.currentPosition.toDouble() / mediaManager.info.maximumTime)
+        val progress: Double = if (mediaManager.info?.currentPosition == null || mediaManager.info?.maximumTime == null) {
+            0.0
+        } else {
+            (mediaManager.info?.currentPosition!!.toDouble() / mediaManager.info?.maximumTime!!)
+        }
+
         // Progressbar background
         context.fill(
             0, 0, 100, 10, -1
