@@ -26,5 +26,5 @@ jobs:
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: kassette_$GITHUB_REF_NAME-$GITHUB_SHA
+          name: kassette $GITHUB_SHA
           path: build/libs/
