@@ -12,12 +12,16 @@ data class HUDConfig(
     var textSpeed: Int,
     var fancyTextSpeed: Int,
     var lineSpacing: Int,
+    var progressBarThickness: Int,
     var showCover: Boolean,
     var fancyText: Boolean,
     var progressType: ProgressType,
 ) {
     @Serializable
     enum class ProgressType {
-        BAR, TEXT, NONE
+        BAR, TEXT, NONE,
+        VERYLONGOPTIONTHATDEFAULTSTOBARMEANTFORDEBUGGINGPLEASEDONTUSE,
+        OTHERVERYLONGOPTIONTHATDEFAULTSTOTEXTMEANTFORDEBUGGINGPLEASEDONTUSE,
+        PLEASEDONTUSETHISVERYLONGOPTIONTHATHASNOPROGRESSTYPEMEANTFORDEBUGGING,
     }
 }

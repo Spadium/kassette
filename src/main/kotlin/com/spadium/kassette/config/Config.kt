@@ -41,7 +41,8 @@ data class Config(
         showCover = true,
         fancyText = true,
         progressType = HUDConfig.ProgressType.BAR,
-        lineSpacing = 1
+        lineSpacing = 1,
+        progressBarThickness = 4
     ),
     var callbackPort: UInt = 61008u,
     val version: UInt = configVersion
