@@ -44,7 +44,12 @@ dependencies {
 }
 
 tasks.processResources {
-	inputs.property("version", project.version)
+	val env = System.getenv()
+	if (env["CI"] == "true" && env["RELEASE_ACTIONS"] != null) {
+		inputs.property("version", "${project.version}-${env.getOrDefault("GITHUB_SHA", "CI_BUILD")}")
+	} else {
+		inputs.property("version", project.version)
+	}
 
 	filesMatching("fabric.mod.json") {
 		expand(
