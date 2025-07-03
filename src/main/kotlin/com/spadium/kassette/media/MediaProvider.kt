@@ -1,13 +1,15 @@
 package com.spadium.kassette.media
 
-interface MediaProvider {
-    fun getServiceName(): String
+abstract class MediaProvider {
+    open var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
 
-    fun init()
+    abstract fun getServiceName(): String
 
-    fun destroy()
+    abstract fun init()
 
-    fun getMedia(): MediaInfo
+    abstract fun destroy()
 
-    fun update()
+    abstract fun getMedia(): MediaInfo
+
+    abstract suspend fun update()
 }

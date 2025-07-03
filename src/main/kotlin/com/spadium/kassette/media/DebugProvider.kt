@@ -1,8 +1,11 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
+import kotlinx.coroutines.delay
 
-class DebugProvider: AccountMediaProvider {
+class DebugProvider: AccountMediaProvider() {
+    override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
+
     override fun initiateLogin() {
         Kassette.logger.debug("MEDIA PROVIDER INITIATE LOGIN")
     }
@@ -26,7 +29,8 @@ class DebugProvider: AccountMediaProvider {
         )
     }
 
-    override fun update() {
-        Kassette.logger.debug("MEDIA PROVIDER UPDATE")
+    override suspend fun update() {
+        delay(500)
+        println("DEBUG UPDATE")
     }
 }

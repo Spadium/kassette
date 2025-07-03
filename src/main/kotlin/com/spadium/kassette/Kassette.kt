@@ -6,6 +6,8 @@ import com.spadium.kassette.media.DebugProvider
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.MediaInfoScreen
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
@@ -16,6 +18,7 @@ import net.minecraft.text.Text
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.concurrent.thread
 
 
 open class Kassette : ClientModInitializer {
@@ -46,18 +49,46 @@ open class Kassette : ClientModInitializer {
 			}
 		})
 		MediaInfoHUD().setup()
-        MediaManagerThread().start()
 		MediaManager.provider = DebugProvider()
+        MediaManager.provider.init()
+		println("UPDATE (${MinecraftClient.getInstance().isRunning})")
+//		MediaManagerThread().start()
+		var hasClientRun = false
+		thread(name = "Kassette MediaManager Thread") {
+			while (true) {
+				if (hasClientRun) {
+					runBlocking {
+						MediaManager.provider.update()
+					}
+					if (!MinecraftClient.getInstance().isRunning) {
+						break
+					}
+				} else {
+					hasClientRun = MinecraftClient.getInstance().isRunning
+				}
+			}
+
+		}
 
 		logger.info("Locked and loaded")
 	}
 
 	inner class MediaManagerThread(): Thread("Kassette MediaManager") {
+		// janky solution to Kassette being initialized before the client can say it has run!
+
 		override fun run() {
+			var hasClientRun = false
+
 			while (true) {
-				MediaManager.provider?.update()
-				if (!MinecraftClient.getInstance().isRunning) {
-					break
+				if (hasClientRun) {
+					runBlocking {
+						MediaManager.provider.update()
+					}
+					if (!MinecraftClient.getInstance().isRunning) {
+						break
+					}
+				} else {
+					hasClientRun = MinecraftClient.getInstance().isRunning
 				}
 			}
 		}

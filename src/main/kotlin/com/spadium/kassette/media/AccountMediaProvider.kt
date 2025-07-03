@@ -1,5 +1,5 @@
 package com.spadium.kassette.media
 
-interface AccountMediaProvider: MediaProvider {
-    fun initiateLogin()
+abstract class AccountMediaProvider: MediaProvider() {
+    abstract fun initiateLogin()
 }

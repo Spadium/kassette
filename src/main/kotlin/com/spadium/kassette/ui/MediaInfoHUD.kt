@@ -17,6 +17,7 @@ import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import net.minecraft.util.math.ColorHelper
+import kotlin.math.floor
 
 private var timeDelta: Double = 0.0
 private var positionIndicator: Double = 0.0
@@ -54,8 +55,8 @@ class MediaInfoHUD {
 
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
-        val coverImage = if (mediaInfo?.coverArt != null) {
-            mediaInfo!!.coverArt
+        val coverImage = if (mediaInfo.coverArt != null) {
+            mediaInfo.coverArt
         } else {
             ImageUtils.loadGenericImage(
                 javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
@@ -73,24 +74,14 @@ class MediaInfoHUD {
     }
 
     private fun getFirstLine(): String {
-        return if (mediaInfo != null) {
-            "${mediaInfo!!.title} - ${mediaInfo!!.artist}"
-        } else {
-            "Nothing Currently Playing"
-        }
+        return "${mediaInfo.title} - ${mediaInfo.artist}"
     }
 
     private fun getSecondLine(): String {
-        return if (mediaInfo != null) {
-            mediaInfo!!.artist
-        } else {
-            "No Information"
-        }
+        return "${mediaInfo.album}"
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
-//        val xmlIS = MinecraftClient.getInstance().resourceManager.getResource(Identifier.of("kassette:gui_hud.xml")).get().inputStream
-//        println(xmlIS.readAllBytes().toString(Charsets.UTF_8))
         if (!::textRenderer.isInitialized) {
             textRenderer = MinecraftClient.getInstance().textRenderer
             setupCoverArt()
@@ -110,9 +101,17 @@ class MediaInfoHUD {
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
             Identifier.of("kassette:coverart"),
-            2, 2, 0f, 0f,
+            2,
+            ((hudConfig.height / 2) - (16)),
+            0f, 0f,
             32, 32,
             32, 32
+        )
+        context.drawTexture(
+            RenderPipelines.GUI_TEXTURED,
+            mediaManager.provider.state.texture,
+            2, ((hudConfig.height / 2) + 8),
+            0f, 0f, 8, 8, 8, 8
         )
 
         textWrapper(
@@ -124,14 +123,14 @@ class MediaInfoHUD {
         )
         textWrapper(
             context, textRenderer, getSecondLine(),
-            50, 2 + + textRenderer.fontHeight * 2, 0xFFFFFFFF.toInt(),
+            50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
             true, 8, 3,
             (positionIndicator >= scrollThreshold), isFancy
         )
         drawProgressBar(context)
         context.drawBorder(
             0, 0,
-            100, 48,
+            hudConfig.width, hudConfig.height,
             borderColor
         )
 
@@ -142,20 +141,23 @@ class MediaInfoHUD {
     }
 
     private fun drawProgressBar(context: DrawContext) {
-        val progress: Double = if (mediaManager.info?.currentPosition == null || mediaManager.info?.maximumTime == null) {
-            0.0
+        val progress: Float = if (mediaManager.info.maximumTime != 0L) {
+            (mediaManager.info.currentPosition / mediaManager.info.maximumTime).toFloat()
         } else {
-            (mediaManager.info?.currentPosition!!.toDouble() / mediaManager.info?.maximumTime!!)
+            0f
         }
+        val progressBarWidth = floor((hudConfig.width - 1) * progress).toInt()
 
         // Progressbar background
         context.fill(
-            0, 0, 100, 10, -1
+            1, 1, hudConfig.width - 1, hudConfig.progressBarThickness, Colors.WHITE
         )
         // Progressbar
-        context.fill(
-            0, 0, (100 * progress).toInt(), 10, Colors.RED
-        )
+        if (progressBarWidth > 0) {
+            context.fill(
+                1, 1, floor((hudConfig.width - 1) * progress).toInt(), hudConfig.progressBarThickness, Colors.RED
+            )
+        }
     }
 
     private fun textWrapper(

@@ -4,7 +4,9 @@ import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
-class PlaceholderProvider: MediaProvider {
+class PlaceholderProvider: MediaProvider() {
+    override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
+
     override fun getServiceName(): String {
         return "placeholder"
     }
@@ -29,10 +31,8 @@ class PlaceholderProvider: MediaProvider {
         )
     }
 
-    override fun update() {
-        runBlocking {
-            println("PLACEHOLDER PROVIDER RUNNING!")
-            delay(10000L)
-        }
+    override suspend fun update() {
+        println("PLACEHOLDER PROVIDER RUNNING!")
+        delay(10000L)
     }
 }

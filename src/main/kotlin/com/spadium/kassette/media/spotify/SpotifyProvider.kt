@@ -14,7 +14,7 @@ import com.spadium.kassette.media.MediaProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class SpotifyProvider : AccountMediaProvider {
+class SpotifyProvider : AccountMediaProvider() {
     private lateinit var clientApi: SpotifyClientApi
     private var config = Config.Instance
     private var spotifySettings: SpotifyConfig = config.providers.spotify
@@ -45,7 +45,7 @@ class SpotifyProvider : AccountMediaProvider {
         return infoToReturn
     }
 
-    override fun update() {
+    override suspend fun update() {
         runBlocking {
             val currentlyPlaying: CurrentlyPlayingObject? = clientApi.player.getCurrentlyPlaying()
             val info = infoToReturn
