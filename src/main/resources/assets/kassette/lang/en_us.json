@@ -3,8 +3,9 @@
   "key.kassette.info": "Show Media Information",
   "kassette.popup.title": "Now Playing",
   "kassette.config.title": "Kassette - Configuration",
+  "kassette.config.login": "Login",
   "kassette.config.button.providers": "Providers",
-  "kassette.config.button.": "",
+  "kassette.config.button.spotify": "Spotify",
   "kassette.config.providers.title": "Kassette - Providers",
   "kassette.config.hud.title": "Kassette - Heads-up Display"
 }

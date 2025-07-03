@@ -9,8 +9,9 @@ import net.minecraft.client.gui.widget.TextWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
+import net.minecraft.util.Util
 
-class ProvidersScreen: Screen {
+class SpotifyScreen: Screen {
     val parent: Screen?
     val layout = ThreePartsLayoutWidget(this, 64, 32)
 
@@ -27,10 +28,10 @@ class ProvidersScreen: Screen {
 
         val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
         sectionButtons.add(
-            KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.spotify"),
-                SpotifyScreen(this)
-            )
+            ButtonWidget.builder(
+                Text.translatable("kassette.config.login"),
+                { button -> Util.getOperatingSystem().open("https://www.google.com") }
+            ).width(150).build()
         )
 
         layout.addFooter(
