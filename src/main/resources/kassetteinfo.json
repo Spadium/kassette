@@ -1,0 +1,6 @@
+{
+    "buildType": "${buildType}",
+    "gitCommitId": "${gitCommitId}",
+    "gitBranchRef": "${gitBranchRef}",
+    "buildDate": "${buildDate}"
+}

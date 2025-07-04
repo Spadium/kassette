@@ -1,4 +1,5 @@
 // very janky because i prefer kotlin over groovy for these scripts and i rewrote them by hand
+import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -45,22 +46,54 @@ dependencies {
 
 tasks.processResources {
 	val env = System.getenv()
-	env.forEach { k, v ->
-		println("$k : $v")
-	}
+
 	if (env["CI"] == "true") {
-		logger.info("Running in CI!")
 		inputs.property(
 			"version",
 			"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
 		)
+		inputs.property(
+			"buildType",
+			"CI"
+		)
+		inputs.property(
+			"gitCommitId",
+			env.getOrDefault("GITHUB_SHA", "N/A")
+		)
+		inputs.property(
+			"gitBranchRef",
+			env.getOrDefault("GITHUB_REF", "N/A")
+		)
 	} else {
 		inputs.property("version", project.version)
+		inputs.property(
+			"buildType",
+			"DEV"
+		)
+		inputs.property(
+			"gitCommitId",
+			"N/A"
+		)
+		inputs.property(
+			"gitBranchRef",
+			"N/A"
+		)
 	}
 
 	filesMatching("fabric.mod.json") {
 		expand(
 			mapOf("version" to inputs.properties["version"])
+		)
+	}
+
+	filesMatching("kassetteinfo.json") {
+		expand(
+			mapOf(
+				"buildType" to inputs.properties.getOrDefault("buildType", "DEV"),
+				"gitCommitId" to inputs.properties.getOrDefault("gitCommitId", "N/A"),
+				"gitBranchRef" to inputs.properties.getOrDefault("gitBranchRef", "N/A"),
+				"buildDate" to Time.currentTimeMillis()
+			)
 		)
 	}
 }
