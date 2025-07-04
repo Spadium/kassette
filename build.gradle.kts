@@ -45,7 +45,9 @@ dependencies {
 
 tasks.processResources {
 	val env = System.getenv()
-
+	env.forEach { k, v ->
+		println("$k : $v")
+	}
 	if (env["CI"] != null) {
 		logger.info("Running in CI!")
 		inputs.property(
