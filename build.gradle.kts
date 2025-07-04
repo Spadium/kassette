@@ -48,11 +48,11 @@ tasks.processResources {
 	env.forEach { k, v ->
 		println("$k : $v")
 	}
-	if (env["CI"] != null) {
+	if (env["CI"] == "true") {
 		logger.info("Running in CI!")
 		inputs.property(
 			"version",
-			"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF", "GIT")}"
+			"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
 		)
 	} else {
 		inputs.property("version", project.version)
