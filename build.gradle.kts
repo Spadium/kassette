@@ -46,8 +46,12 @@ dependencies {
 tasks.processResources {
 	val env = System.getenv()
 
-	if (env["CI"] != null && env["RELEASE_ACTIONS"] != null) {
-		inputs.property("version", "${project.version}-${env["GITHUB_SHA"]}-${env["GITHUB_REF"]}")
+	if (env["CI"] != null) {
+		logger.info("Running in CI!")
+		inputs.property(
+			"version",
+			"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF", "GIT")}"
+		)
 	} else {
 		inputs.property("version", project.version)
 	}
