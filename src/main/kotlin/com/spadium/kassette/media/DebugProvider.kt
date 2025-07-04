@@ -1,22 +1,16 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
-import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
 import java.net.URI
-import java.net.URL
 import javax.net.ssl.HttpsURLConnection
-import kotlin.math.PI
 import kotlin.math.floor
 
 class DebugProvider: AccountMediaProvider() {
     override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
-    private var otherPlaceholder: NativeImage = NativeImage.read(
-        MinecraftClient.getInstance().resourceManager.open(Identifier.of("kassette", "textures/other_placeholder.png"))
-    )
     private var info = MediaInfo(
         60L, 0L, "TITLE", "ALBUM",
         "ARTIST", MediaManager.getDefaultCoverArt(), getServiceName()
@@ -63,25 +57,29 @@ class DebugProvider: AccountMediaProvider() {
             else -> state
         }
 
-        if (state == MediaManager.MediaState.OTHER) {
-            info.coverArt = NativeImage.read(
-                MinecraftClient.getInstance().resourceManager
-                    .open(Identifier.of("kassette", "textures/other_placeholder.png"))
-            )
-        } else if (state == MediaManager.MediaState.PAUSED) {
-            try {
-                val url = URI("https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png").toURL()
-                val uc: HttpsURLConnection = url.openConnection() as HttpsURLConnection
-                val inputStream = uc.inputStream
+        when (state) {
+            MediaManager.MediaState.OTHER -> {
                 info.coverArt = NativeImage.read(
-                    inputStream
+                    MinecraftClient.getInstance().resourceManager
+                        .open(Identifier.of("kassette", "textures/other_placeholder.png"))
                 )
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+            MediaManager.MediaState.PAUSED -> {
+                try {
+                    val url = URI("https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png").toURL()
+                    val uc: HttpsURLConnection = url.openConnection() as HttpsURLConnection
+                    val inputStream = uc.inputStream
+                    info.coverArt = NativeImage.read(
+                        inputStream
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
 
-        } else {
-            info.coverArt = MediaManager.getDefaultCoverArt()
+            }
+            else -> {
+                info.coverArt = MediaManager.getDefaultCoverArt()
+            }
         }
 
         println("DEBUG UPDATE ${info.currentPosition}")
