@@ -13,6 +13,7 @@ class MediaInfoScreen(title: Text) : Screen(title) {
     private val screenHeight = 128
     private var centeredX = 0
     private var centeredY = 0
+
     override fun init() {
         this.addDrawable(
             ButtonWidget.builder(
@@ -36,5 +37,10 @@ class MediaInfoScreen(title: Text) : Screen(title) {
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.render(context, mouseX, mouseY, deltaTicks)
         context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
+        context?.drawTexture(
+            RenderPipelines.GUI_TEXTURED,
+            Identifier.of("kassette", "coverart"),
+            16, 16, 0f, 0f, 128, 128, 128, 128
+        )
     }
 }

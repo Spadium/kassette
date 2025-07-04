@@ -2,7 +2,6 @@ package com.spadium.kassette.ui
 
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.util.ImageUtils
 import com.spadium.kassette.util.drawMarquee
 import com.spadium.kassette.util.drawMarqueeFancy
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
@@ -24,22 +23,23 @@ private var positionIndicator: Double = 0.0
 private var previousTime: Long = 0
 
 class MediaInfoHUD {
-    private var mediaManager = MediaManager
-    private var mediaInfo = mediaManager.info
+    private var mediaInfo = MediaManager.info
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
-    private lateinit var textRenderer: TextRenderer
-    private lateinit var coverArt: NativeImageBackedTexture
+    private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
+    private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(
+        { "coverart" }, MediaManager.getDefaultCoverArt()
+    )
     private val coverArtIdentifier = Identifier.of("kassette:coverart")
     private val config = Config.Instance
     private val hudConfig = config.hud
-    val isFancy = hudConfig.fancyText
-    val borderColor = ColorHelper.getArgb(
+    private val isFancy = hudConfig.fancyText
+    private val borderColor = ColorHelper.getArgb(
         hudConfig.backgroundColor[3],
         hudConfig.borderColor[0],
         hudConfig.borderColor[1],
         hudConfig.borderColor[2]
     )
-    val backgroundColor = ColorHelper.getArgb(
+    private val backgroundColor = ColorHelper.getArgb(
         hudConfig.backgroundColor[3],
         hudConfig.backgroundColor[0],
         hudConfig.backgroundColor[1],
@@ -55,22 +55,19 @@ class MediaInfoHUD {
 
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
-        val coverImage = if (mediaInfo.coverArt != null) {
-            mediaInfo.coverArt
-        } else {
-            ImageUtils.loadGenericImage(
-                javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
+        if (mediaInfo.coverArt != coverArt.image) {
+            val coverImage = mediaInfo.coverArt
+            coverArt.close()
+            coverArt = NativeImageBackedTexture(
+                { "coverart" }, coverImage
+            )
+            coverArt.setFilter(true, true)
+            coverArt.upload()
+            textureManager.registerTexture(
+                coverArtIdentifier,
+                coverArt
             )
         }
-
-        coverArt = NativeImageBackedTexture(
-            { "coverart" }, coverImage
-        )
-        coverArt.upload()
-        textureManager.registerTexture(
-            coverArtIdentifier,
-            coverArt
-        )
     }
 
     private fun getFirstLine(): String {
@@ -82,11 +79,7 @@ class MediaInfoHUD {
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
-        if (!::textRenderer.isInitialized) {
-            textRenderer = MinecraftClient.getInstance().textRenderer
-            setupCoverArt()
-            return
-        }
+        setupCoverArt()
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
 
@@ -109,7 +102,7 @@ class MediaInfoHUD {
         )
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
-            mediaManager.provider.state.texture,
+            MediaManager.provider.state.texture,
             2, ((hudConfig.height / 2) + 8),
             0f, 0f, 8, 8, 8, 8
         )
@@ -141,13 +134,12 @@ class MediaInfoHUD {
     }
 
     private fun drawProgressBar(context: DrawContext) {
-        val progress: Float = if (mediaManager.info.maximumTime != 0L) {
-            (mediaManager.info.currentPosition / mediaManager.info.maximumTime).toFloat()
+        val progress: Double = if (mediaInfo.maximumTime == 0L) {
+            0.0
         } else {
-            0f
+            (mediaInfo.currentPosition.toDouble() / mediaInfo.maximumTime)
         }
         val progressBarWidth = floor((hudConfig.width - 1) * progress).toInt()
-
         // Progressbar background
         context.fill(
             1, 1, hudConfig.width - 1, hudConfig.progressBarThickness, Colors.WHITE

@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui
 
+import com.spadium.kassette.ui.config.AboutScreen
 import com.spadium.kassette.ui.config.ProvidersScreen
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
@@ -10,8 +11,8 @@ import net.minecraft.text.Text
 import java.awt.Button
 
 class ConfigScreen : Screen {
-    val parent: Screen?
-    val layout = ThreePartsLayoutWidget(this, 64, 32)
+    private val parent: Screen?
+    private val layout = ThreePartsLayoutWidget(this, 64, 32)
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.title")) {
         this.parent = parent
@@ -29,6 +30,12 @@ class ConfigScreen : Screen {
             createButtonToScreen(
                 Text.translatable("kassette.config.button.providers"),
                 ProvidersScreen(this)
+            )
+        )
+        sectionButtons.add(
+            createButtonToScreen(
+                Text.translatable("kassette.config.button.about"),
+                AboutScreen(this)
             )
         )
 

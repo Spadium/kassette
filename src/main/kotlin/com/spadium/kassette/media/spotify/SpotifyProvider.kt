@@ -10,6 +10,7 @@ import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
+import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.MediaProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -20,7 +21,7 @@ class SpotifyProvider : AccountMediaProvider() {
     private var spotifySettings: SpotifyConfig = config.providers.spotify
     private var infoToReturn: MediaInfo = MediaInfo(
         0L, 0L, "", "", "",
-        null, getServiceName()
+        MediaManager.getDefaultCoverArt(), getServiceName()
     )
 
     override fun getServiceName(): String {

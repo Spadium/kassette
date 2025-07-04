@@ -8,6 +8,6 @@ data class MediaInfo(
     var title: String,
     var album: String,
     var artist: String,
-    var coverArt: NativeImage?,
+    var coverArt: NativeImage,
     var provider: String
 )

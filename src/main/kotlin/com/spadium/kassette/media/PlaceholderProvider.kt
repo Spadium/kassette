@@ -2,7 +2,6 @@ package com.spadium.kassette.media
 
 import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 class PlaceholderProvider: MediaProvider() {
     override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
@@ -24,9 +23,7 @@ class PlaceholderProvider: MediaProvider() {
             255,
             128,
             "View Kassette settings for more information", "N/A", "Kassette",
-            ImageUtils.loadGenericImage(
-                javaClass.getResourceAsStream("/assets/kassette/placeholder.jpg")!!.readAllBytes()
-            ),
+            MediaManager.getDefaultCoverArt(),
             "placeholder"
         )
     }

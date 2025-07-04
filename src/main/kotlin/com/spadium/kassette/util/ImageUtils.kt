@@ -1,18 +1,33 @@
 package com.spadium.kassette.util
 
+import com.spadium.kassette.Kassette
+import kotlinx.io.bytestring.getByteString
 import net.minecraft.client.texture.NativeImage
+import net.minecraft.util.PngMetadata
+import org.intellij.lang.annotations.MagicConstant
 import org.lwjgl.stb.STBImage
-import org.lwjgl.stb.STBImageResize
 import org.lwjgl.system.MemoryUtil
 import java.io.IOException
 import java.nio.ByteBuffer
-import java.nio.IntBuffer
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.min
+import java.nio.ByteOrder
 
 class ImageUtils {
+
+
     companion object {
+        @JvmStatic
+        fun validateImage(buffer: ByteBuffer, originalOrder: ByteOrder) {
+            buffer.order(ByteOrder.BIG_ENDIAN)
+
+            if (buffer.getLong(0) == -10977661529601466) {
+                buffer.rewind()
+            } else {
+                buffer.rewind()
+                buffer.order(originalOrder)
+                PngMetadata.validate(buffer)
+            }
+        }
+
         fun loadGenericImage(bytes: ByteArray): NativeImage {
             return loadGenericImage(bytes, NativeImage.Format.RGBA)
         }

@@ -1,5 +1,7 @@
 package com.spadium.kassette.media
 
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
 
 object MediaManager {
@@ -12,6 +14,13 @@ object MediaManager {
         set(s) {
             provider.state = s
         }
+
+    fun getDefaultCoverArt(): NativeImage {
+        return NativeImage.read(
+            MinecraftClient.getInstance().resourceManager
+                .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!.readAllBytes()
+        )
+    }
 
     enum class MediaState(val texture: Identifier) {
         PLAYING(Identifier.of("kassette", "textures/gui/status/play.png")),
