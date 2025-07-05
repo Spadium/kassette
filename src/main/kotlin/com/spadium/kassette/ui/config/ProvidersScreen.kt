@@ -19,11 +19,7 @@ class ProvidersScreen: Screen {
     }
 
     override fun init() {
-        val directionalLayout = layout.addHeader(DirectionalLayoutWidget.vertical().spacing(8))
-        directionalLayout.add(
-            TextWidget(title, textRenderer),
-            Positioner::alignHorizontalCenter
-        )
+        layout.addHeader(title, textRenderer)
 
         val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
         sectionButtons.add(

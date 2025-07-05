@@ -21,11 +21,7 @@ class SpotifyScreen: Screen {
     }
 
     override fun init() {
-        val directionalLayout = layout.addHeader(DirectionalLayoutWidget.vertical().spacing(8))
-        directionalLayout.add(
-            TextWidget(title, textRenderer),
-            Positioner::alignHorizontalCenter
-        )
+        layout.addHeader(title, textRenderer)
 
         val gridLayout = GridWidget()
         val gridAdder = gridLayout.createAdder(2)
@@ -45,7 +41,6 @@ class SpotifyScreen: Screen {
                 { button -> close() }
             ).width(200).build()
         )
-
 
         layout.forEachChild { widget ->
             addDrawableChild(widget)
