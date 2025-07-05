@@ -45,9 +45,12 @@ dependencies {
 }
 
 tasks.processResources {
+	// makes sure that all properties are up-to-date
+	outputs.upToDateWhen { false }
 	val env = System.getenv()
 
-	if (env["CI"] == "true") {
+	if (env["CI"] == "true" && env[""]?.isEmpty() == true) {
+		println(env["GITHUB_EVENT_NAME"])
 		inputs.property(
 			"version",
 			"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
