@@ -48,17 +48,28 @@ tasks.processResources {
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
-
+	println(env["GITHUB_EVENT_NAME"])
 	if (env["CI"] == "true") {
-		println(env["GITHUB_EVENT_NAME"])
-		inputs.property(
-			"version",
-			"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
-		)
-		inputs.property(
-			"buildType",
-			"CI"
-		)
+		if (env["GITHUB_EVENT_NAME"] != "release") {
+			inputs.property(
+				"version",
+				"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
+			)
+			inputs.property(
+				"buildType",
+				"CI"
+			)
+		} else {
+			inputs.property(
+				"version",
+				project.version
+			)
+			inputs.property(
+				"buildType",
+				"RELEASE"
+			)
+		}
+
 		inputs.property(
 			"gitCommitId",
 			env.getOrDefault("GITHUB_SHA", "N/A")
