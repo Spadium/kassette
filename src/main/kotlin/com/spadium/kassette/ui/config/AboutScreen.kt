@@ -40,7 +40,7 @@ class AboutScreen: Screen {
     private val aboutInfo: ModInfo = Json.decodeFromStream(javaClass.getResourceAsStream("/kassetteinfo.json")!!)
     private val dateFormat = LocalDateTime.Format {
         date(LocalDate.Formats.ISO); chars("  ")
-        hour(); chars(":"); minute(); chars(":"); second()
+        amPmHour(); chars(":"); minute(); chars(":"); second(); amPmMarker("AM", "PM")
     }
     private val layout = ThreePartsLayoutWidget(this, 32, 32)
 
