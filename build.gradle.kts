@@ -48,7 +48,6 @@ tasks.processResources {
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
-	println(env["GITHUB_EVENT_NAME"])
 	if (env["CI"] == "true") {
 		if (env["GITHUB_EVENT_NAME"] != "release") {
 			inputs.property(
