@@ -49,7 +49,7 @@ tasks.processResources {
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
 
-	if (env["CI"] == "true" && env[""]?.isEmpty() == true) {
+	if (env["CI"] == "true") {
 		println(env["GITHUB_EVENT_NAME"])
 		inputs.property(
 			"version",
