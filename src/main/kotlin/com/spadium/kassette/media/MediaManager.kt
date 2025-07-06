@@ -9,11 +9,8 @@ object MediaManager {
         set(p) {
             p.init()
         }
-    var info: MediaInfo = provider.getMedia()
-    var state: MediaState = MediaState.OTHER
-        set(s) {
-            provider.state = s
-        }
+    val info: MediaInfo = provider.getMedia()
+    val state: MediaState = provider.state
 
     fun getDefaultCoverArt(): NativeImage {
         return NativeImage.read(
@@ -23,9 +20,9 @@ object MediaManager {
     }
 
     enum class MediaState(val texture: Identifier) {
-        PLAYING(Identifier.of("kassette", "textures/gui/status/play.png")),
-        PAUSED(Identifier.of("kassette", "textures/gui/status/pause.png")),
-        LOADING(Identifier.of("kassette", "textures/gui/status/loading.png")),
-        OTHER(Identifier.of("kassette", "textures/gui/status/other.png"))
+        PLAYING(Identifier.of("kassette", "play")),
+        PAUSED(Identifier.of("kassette", "pause")),
+        LOADING(Identifier.of("kassette", "loading")),
+        OTHER(Identifier.of("kassette", "other"))
     }
 }

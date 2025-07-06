@@ -100,11 +100,11 @@ class MediaInfoHUD {
             32, 32,
             32, 32
         )
-        context.drawTexture(
+        context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
             MediaManager.provider.state.texture,
             2, ((hudConfig.height / 2) + 8),
-            0f, 0f, 8, 8, 8, 8
+            8, 8
         )
 
         textWrapper(

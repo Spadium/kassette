@@ -2,6 +2,7 @@ package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
 import kotlinx.coroutines.delay
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
