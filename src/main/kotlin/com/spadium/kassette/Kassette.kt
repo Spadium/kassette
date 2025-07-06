@@ -82,30 +82,6 @@ open class Kassette : ClientModInitializer {
 
 			}
 		}
-//		MediaManagerThread().start()
-		var hasClientRun = false
-
 		logger.info("Locked and loaded")
-	}
-
-	inner class MediaManagerThread(): Thread("Kassette MediaManager") {
-		// janky solution to Kassette being initialized before the client can say it has run!
-
-		override fun run() {
-			var hasClientRun = false
-
-			while (true) {
-				if (hasClientRun) {
-					runBlocking {
-						MediaManager.provider.update()
-					}
-					if (!MinecraftClient.getInstance().isRunning) {
-						break
-					}
-				} else {
-					hasClientRun = MinecraftClient.getInstance().isRunning
-				}
-			}
-		}
 	}
 }
