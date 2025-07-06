@@ -14,6 +14,7 @@ import java.nio.ByteOrder;
 
 @Mixin(NativeImage.class)
 public class NativeImageMixin {
+    // only so i don't have to deal with my own implementation of NativeImage loading, if this causes issues i can simply disable this
     @Redirect(
             method = "read(Lnet/minecraft/client/texture/NativeImage$Format;Ljava/nio/ByteBuffer;)Lnet/minecraft/client/texture/NativeImage;",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/PngMetadata;validate(Ljava/nio/ByteBuffer;)V")
@@ -21,6 +22,5 @@ public class NativeImageMixin {
     private static void validateRedirector(ByteBuffer buf) {
         ByteOrder order = buf.order();
         ImageUtils.validateImage(buf,order);
-
     }
 }
