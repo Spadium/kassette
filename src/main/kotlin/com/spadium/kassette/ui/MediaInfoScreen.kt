@@ -1,21 +1,14 @@
 package com.spadium.kassette.ui
 
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.ui.widgets.IconButtonWidget
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.EmptyWidget
-import net.minecraft.client.gui.widget.GridWidget
-import net.minecraft.client.gui.widget.IconWidget
-import net.minecraft.client.gui.widget.TextIconButtonWidget
-import net.minecraft.client.gui.widget.TextWidget
+import net.minecraft.client.gui.widget.*
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
-import java.awt.Button
 
 class MediaInfoScreen(title: Text) : Screen(title) {
     private val screenWidth = 256
