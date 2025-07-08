@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 
 class PlaceholderProvider: MediaProvider {
     override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
+    override val info: MediaInfo = getMedia()
 
     override fun getServiceName(): String {
         return "placeholder"

@@ -28,6 +28,7 @@ class SpotifyProvider : AccountMediaProvider {
     private var providerState = ProviderState.NONE
     private var nextTokenRefresh: Long = 0
     private var lastImageUrl = ""
+    override var info: MediaInfo = infoToReturn
 
     enum class ProviderState {
         NONE, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN
