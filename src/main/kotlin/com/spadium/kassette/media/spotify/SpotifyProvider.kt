@@ -93,7 +93,7 @@ class SpotifyProvider : AccountMediaProvider {
                     infoToReturn.title = item.name
                     val artistStr = buildString {
                         if (item.artists.size == 1) {
-                            append(item.artists[0])
+                            append(item.artists[0].name)
                         } else {
                             item.artists.forEachIndexed { i, artist ->
                                 if (i == item.artists.size - 1) {
