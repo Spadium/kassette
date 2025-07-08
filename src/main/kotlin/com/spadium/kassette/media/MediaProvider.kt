@@ -8,7 +8,6 @@ abstract class MediaProvider {
     open var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
 
     abstract val info: MediaInfo
-        private set
 
     abstract fun getServiceName(): String
     @Deprecated(
