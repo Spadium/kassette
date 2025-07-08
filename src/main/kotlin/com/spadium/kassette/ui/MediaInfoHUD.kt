@@ -1,7 +1,7 @@
 package com.spadium.kassette.ui
 
-import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.util.drawMarquee
 import com.spadium.kassette.util.drawMarqueeFancy
@@ -13,14 +13,10 @@ import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.texture.NativeImageBackedTexture
-import net.minecraft.client.texture.SpriteAtlasHolder
-import net.minecraft.resource.ResourceReloader
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import net.minecraft.util.math.ColorHelper
-import java.io.File
-import javax.imageio.ImageIO
 import kotlin.math.floor
 import kotlin.math.round
 
@@ -30,7 +26,7 @@ class MediaInfoHUD {
     private var positionIndicator: Double = 0.0
     private var previousTime: Long = 0
 
-    private var mediaInfo = MediaManager.provider.getMedia()
+    private var mediaInfo: MediaInfo = MediaManager.provider.getMedia()
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
     private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(

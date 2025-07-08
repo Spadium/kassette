@@ -12,7 +12,7 @@ import kotlin.math.floor
 
 class DebugProvider: AccountMediaProvider() {
     override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
-    private var info = MediaInfo(
+    override var info = MediaInfo(
         60L, 0L, "TITLE", "ALBUM",
         "ARTIST", MediaManager.getDefaultCoverArt(), getServiceName()
     )

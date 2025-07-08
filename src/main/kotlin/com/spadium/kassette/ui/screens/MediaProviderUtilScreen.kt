@@ -34,55 +34,11 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
         gridAdder.add(IconWidget.create(
             32, 32, Identifier.of("kassette", "coverart"), 32 , 32
         ))
-        gridAdder.add(
-            TextWidget(
-                Text.literal("${MediaManager.info.title} - ${MediaManager.info.artist}"),
-                textRenderer
-            ), 4
-        )
-        gridAdder.add(
-            TextWidget(
-                Text.literal(MediaManager.info.album),
-                textRenderer
-            ), 4
-        )
-        gridAdder.add(EmptyWidget(1, 2), 4)
-        AvailableButtons.entries.forEach {
-            gridAdder.add(
-                TextIconButtonWidget.builder(
-                    Text.empty(),
-                    it.onPress,
-                    true
-                ).texture(it.sprite, 16, 16).width(20).build()
-            )
-        }
-        gridAdder.add(
-            TextIconButtonWidget.builder(
-                Text.empty(),
-                { println("testing i hope this works") },
-                true
-            ).texture(MediaManager.info.state.texture, 16, 16).width(20).build()
-        )
+
         gridWidget.forEachChild { widget ->
             addDrawableChild(widget)
         }
         gridWidget.refreshPositions()
-    }
-
-    private enum class AvailableButtons(val sprite: Identifier, val onPress: ButtonWidget.PressAction) {
-        PREVIOUS(Identifier.of("kassette", "test"), { button -> println("previous")}),
-        PLAY_PAUSE(
-//            MediaManager.provider.state.texture,
-            when (MediaManager.info.state) {
-                MediaManager.MediaState.PLAYING -> Identifier.of("kassette", "play")
-                MediaManager.MediaState.PAUSED -> Identifier.of("kassette", "pause")
-                MediaManager.MediaState.LOADING -> Identifier.of("kassette", "loading")
-                else -> Identifier.of("kassette", "other")
-            },
-            { button -> println("play_pause")}
-        ),
-        NEXT(Identifier.of("kassette", "other"), { button -> println("next")}),
-        CLOSE(Identifier.of("kassette", "other"), { button -> MinecraftClient.getInstance().setScreen(null) })
     }
 
     override fun renderBackground(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
@@ -97,11 +53,6 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
-        context?.drawTexture(
-            RenderPipelines.GUI_TEXTURED,
-            Identifier.of("kassette", "coverart"),
-            centeredX + 16, centeredY + 32, 0f, 0f, 64, 64, 64, 64
-        )
         context?.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED, MediaManager.provider.state.texture,
             centeredX + textRenderer.getWidth(title) + 8, centeredY + 6,

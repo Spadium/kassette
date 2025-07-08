@@ -7,6 +7,9 @@ abstract class MediaProvider {
 
     open var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
 
+    abstract val info: MediaInfo
+        private set
+
     abstract fun getServiceName(): String
     @Deprecated(
         "Constructors will initialize providers since git commit 964028d3! This will be removed by release!",
@@ -16,7 +19,7 @@ abstract class MediaProvider {
 
     abstract fun destroy()
 
-    abstract fun getMedia(): MediaInfo
+    open fun getMedia(): MediaInfo { return info }
 
     open fun sendCommand(cmd: String, payload: Any): Int { return 0 }
 
