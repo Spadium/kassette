@@ -1,16 +1,13 @@
 package com.spadium.kassette
 
-import com.mojang.blaze3d.opengl.GlConst
-import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
-import com.spadium.kassette.media.DebugProvider
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.PlaceholderProvider
 import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.ui.MediaInfoHUD
-import com.spadium.kassette.ui.MediaInfoScreen
+import com.spadium.kassette.ui.screens.MediaInfoScreen
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
@@ -19,15 +16,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.imageio.ImageIO
 import kotlin.concurrent.thread
 
 

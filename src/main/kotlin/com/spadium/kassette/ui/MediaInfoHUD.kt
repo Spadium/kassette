@@ -60,8 +60,6 @@ class MediaInfoHUD {
         )
     }
 
-    var shouldTextureHaveReloaded = true
-
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
         if (MediaManager.provider.getMedia().coverArt != coverArt.image) {
@@ -77,9 +75,6 @@ class MediaInfoHUD {
                 coverArt
             )
             println("Reloading texture")
-            shouldTextureHaveReloaded = true
-        } else {
-            shouldTextureHaveReloaded = false
         }
     }
 
@@ -96,25 +91,10 @@ class MediaInfoHUD {
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
         val artSize: Int = round(hudConfig.height.toFloat() * (3/4)).toInt()
-        var testing123 = 0.0
 
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
         positionIndicator += timeDelta / (1 / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble())
-        if (!shouldTextureHaveReloaded) {
-            testing123 += timeDelta
-        } else {
-            testing123 = 0.0
-        }
-
-        if (testing123 > 1.0) {
-            println("cover art should've changed but didn't")
-            throw Exception("cover art should've reloaded but didn't")
-        }
-
-        val maxWidth = MinecraftClient.getInstance().window.scaledWidth
-        val maxHeight = MinecraftClient.getInstance().window.scaledHeight
-
 
         context.fill(
             0, 0, hudConfig.width, hudConfig.height, backgroundColor
@@ -125,8 +105,8 @@ class MediaInfoHUD {
             2,
             ((hudConfig.height / 2) - (16)),
             0f, 0f,
-            32, 32,
-            32, 32
+            artSize, artSize,
+            artSize, artSize
         )
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,

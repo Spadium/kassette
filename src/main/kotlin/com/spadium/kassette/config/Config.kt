@@ -31,7 +31,7 @@ private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.
 @Serializable
 data class Config(
     var providers: ProvidersConfig = ProvidersConfig(
-        spotify = SpotifyConfig("", "", "", ""),
+        spotify = SpotifyConfig("", "", "", "", 0L, 0L),
     ),
     var hud: HUDConfig = HUDConfig(
         width = 128,

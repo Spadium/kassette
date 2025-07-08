@@ -1,17 +1,21 @@
-package com.spadium.kassette.ui
+package com.spadium.kassette.ui.screens
 
 import com.spadium.kassette.media.MediaManager
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.hud.PlayerListHud
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.*
+import net.minecraft.client.gui.widget.ButtonWidget
+import net.minecraft.client.gui.widget.EmptyWidget
+import net.minecraft.client.gui.widget.GridWidget
+import net.minecraft.client.gui.widget.IconWidget
+import net.minecraft.client.gui.widget.TextIconButtonWidget
+import net.minecraft.client.gui.widget.TextWidget
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 
-class MediaInfoScreen(title: Text) : Screen(title) {
+class MediaProviderUtilScreen(title: Text): Screen(title) {
     private val screenWidth = 256
     private val screenHeight = 128
     private var centeredX = 0
@@ -49,9 +53,16 @@ class MediaInfoScreen(title: Text) : Screen(title) {
                     Text.empty(),
                     it.onPress,
                     true
-                ).texture(MediaManager.provider.state.texture, 16, 16).width(20).build()
+                ).texture(it.sprite, 16, 16).width(20).build()
             )
         }
+        gridAdder.add(
+            TextIconButtonWidget.builder(
+                Text.empty(),
+                { println("testing i hope this works") },
+                true
+            ).texture(MediaManager.info.state.texture, 16, 16).width(20).build()
+        )
         gridWidget.forEachChild { widget ->
             addDrawableChild(widget)
         }
@@ -68,7 +79,7 @@ class MediaInfoScreen(title: Text) : Screen(title) {
                 MediaManager.MediaState.LOADING -> Identifier.of("kassette", "loading")
                 else -> Identifier.of("kassette", "other")
             },
-            { button -> MediaManager.provider.state = MediaManager.MediaState.PAUSED}
+            { button -> println("play_pause")}
         ),
         NEXT(Identifier.of("kassette", "other"), { button -> println("next")}),
         CLOSE(Identifier.of("kassette", "other"), { button -> MinecraftClient.getInstance().setScreen(null) })

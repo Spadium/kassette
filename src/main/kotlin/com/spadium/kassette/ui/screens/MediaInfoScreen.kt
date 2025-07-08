@@ -1,21 +1,16 @@
-package com.spadium.kassette.ui
+package com.spadium.kassette.ui.screens
 
 import com.spadium.kassette.media.MediaManager
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.EmptyWidget
-import net.minecraft.client.gui.widget.GridWidget
-import net.minecraft.client.gui.widget.IconWidget
-import net.minecraft.client.gui.widget.TextIconButtonWidget
-import net.minecraft.client.gui.widget.TextWidget
+import net.minecraft.client.gui.widget.*
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 
-class MediaProviderUtilScreen(title: Text): Screen(title) {
+class MediaInfoScreen(title: Text) : Screen(title) {
     private val screenWidth = 256
     private val screenHeight = 128
     private var centeredX = 0
@@ -31,18 +26,15 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
         )
         val gridAdder: GridWidget.Adder = gridWidget.createAdder(4)
         gridWidget.setSpacing(8)
-        gridAdder.add(IconWidget.create(
-            32, 32, Identifier.of("kassette", "coverart"), 32 , 32
-        ))
         gridAdder.add(
             TextWidget(
-                Text.literal("${MediaManager.info.title} - ${MediaManager.info.artist}"),
+                Text.literal("${MediaManager.provider.getMedia().title} - ${MediaManager.provider.getMedia().artist}"),
                 textRenderer
             ), 4
         )
         gridAdder.add(
             TextWidget(
-                Text.literal(MediaManager.info.album),
+                Text.literal(MediaManager.provider.getMedia().album),
                 textRenderer
             ), 4
         )
@@ -53,16 +45,9 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
                     Text.empty(),
                     it.onPress,
                     true
-                ).texture(it.sprite, 16, 16).width(20).build()
+                ).texture(MediaManager.provider.state.texture, 16, 16).width(20).build()
             )
         }
-        gridAdder.add(
-            TextIconButtonWidget.builder(
-                Text.empty(),
-                { println("testing i hope this works") },
-                true
-            ).texture(MediaManager.info.state.texture, 16, 16).width(20).build()
-        )
         gridWidget.forEachChild { widget ->
             addDrawableChild(widget)
         }
@@ -72,14 +57,13 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
     private enum class AvailableButtons(val sprite: Identifier, val onPress: ButtonWidget.PressAction) {
         PREVIOUS(Identifier.of("kassette", "test"), { button -> println("previous")}),
         PLAY_PAUSE(
-//            MediaManager.provider.state.texture,
-            when (MediaManager.info.state) {
+            when (MediaManager.provider.state) {
                 MediaManager.MediaState.PLAYING -> Identifier.of("kassette", "play")
                 MediaManager.MediaState.PAUSED -> Identifier.of("kassette", "pause")
                 MediaManager.MediaState.LOADING -> Identifier.of("kassette", "loading")
                 else -> Identifier.of("kassette", "other")
             },
-            { button -> println("play_pause")}
+            { button -> MediaManager.provider.state = MediaManager.MediaState.PAUSED}
         ),
         NEXT(Identifier.of("kassette", "other"), { button -> println("next")}),
         CLOSE(Identifier.of("kassette", "other"), { button -> MinecraftClient.getInstance().setScreen(null) })
@@ -107,6 +91,7 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
             centeredX + textRenderer.getWidth(title) + 8, centeredY + 6,
             8,8, Colors.BLACK
         )
+        init()
         super.render(context, mouseX, mouseY, deltaTicks)
     }
 

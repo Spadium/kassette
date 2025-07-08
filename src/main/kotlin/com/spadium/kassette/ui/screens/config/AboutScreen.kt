@@ -1,4 +1,4 @@
-package com.spadium.kassette.ui.config
+package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.ModInfo
 import com.spadium.kassette.util.KassetteUtils
