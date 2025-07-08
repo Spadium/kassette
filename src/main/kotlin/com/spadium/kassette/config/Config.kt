@@ -18,17 +18,20 @@ import kotlin.system.exitProcess
  */
 
 private val configVersion = 0u
+@OptIn(ExperimentalSerializationApi::class)
 private val json: Json = Json {
     prettyPrint = true
     ignoreUnknownKeys = true
     encodeDefaults = true
+    allowComments = true
+
 }
 private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.json")
 
 @Serializable
 data class Config(
     var providers: ProvidersConfig = ProvidersConfig(
-        spotify = SpotifyConfig("", ""),
+        spotify = SpotifyConfig("", "", "", ""),
     ),
     var hud: HUDConfig = HUDConfig(
         width = 128,

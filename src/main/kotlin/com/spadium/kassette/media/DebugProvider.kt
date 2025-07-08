@@ -17,6 +17,7 @@ class DebugProvider: AccountMediaProvider() {
         "ARTIST", MediaManager.getDefaultCoverArt(), getServiceName()
     )
     private var f = 0f
+    private var accumulator: Int = 0
 
     override fun initiateLogin() {
         Kassette.logger.debug("MEDIA PROVIDER INITIATE LOGIN")
@@ -40,6 +41,7 @@ class DebugProvider: AccountMediaProvider() {
 
     override suspend fun update() {
         delay(1000)
+        accumulator++
         f += 0.25f
         if (f > 3) {
             f = 0f
@@ -83,6 +85,9 @@ class DebugProvider: AccountMediaProvider() {
             }
         }
 
+        if (accumulator > 75) {
+            throw NullPointerException("testing exception")
+        }
         println("DEBUG UPDATE ${info.currentPosition}")
     }
 }

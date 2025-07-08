@@ -1,6 +1,7 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.spotify.SpotifyAuthHandler
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
@@ -18,6 +19,7 @@ class AuthenticationCallbackServer {
         server = HttpServer.create(InetSocketAddress(config.callbackPort.toInt()), 0)
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
+        server.createContext("/sp_auth", SpotifyAuthHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))
         server.executor = null
     }
@@ -59,6 +61,9 @@ class AuthenticationCallbackServer {
             outStream.write(response.toByteArray())
             outStream.close()
             println(exchange.requestURI.toString())
+            if (MediaManager.provider is AccountMediaProvider) {
+                MediaManager.provider.sendCommand("authSendStr", exchange.requestURI.rawQuery)
+            }
         }
     }
 }

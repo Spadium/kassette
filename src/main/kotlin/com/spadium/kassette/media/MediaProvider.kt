@@ -18,5 +18,7 @@ abstract class MediaProvider {
 
     abstract fun getMedia(): MediaInfo
 
+    open fun sendCommand(cmd: String, payload: Any): Int { return 0 }
+
     abstract suspend fun update()
 }

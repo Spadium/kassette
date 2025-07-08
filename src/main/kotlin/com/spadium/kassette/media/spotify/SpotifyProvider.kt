@@ -1,40 +1,41 @@
 package com.spadium.kassette.media.spotify
 
-import com.adamratzman.spotify.SpotifyAppApi
-import com.adamratzman.spotify.SpotifyClientApi
-import com.adamratzman.spotify.models.CurrentlyPlayingObject
-import com.adamratzman.spotify.models.CurrentlyPlayingType
-import com.adamratzman.spotify.spotifyAppApi
-import com.adamratzman.spotify.spotifyClientApi
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.media.MediaProvider
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import net.minecraft.util.Util
+import se.michaelthelin.spotify.SpotifyApi
+import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials
+import java.net.URI
 
-class SpotifyProvider : AccountMediaProvider() {
-    private lateinit var clientApi: SpotifyClientApi
+class SpotifyProvider : AccountMediaProvider {
+    private var clientApi: SpotifyApi
     private var config = Config.Instance
     private var spotifySettings: SpotifyConfig = config.providers.spotify
     private var infoToReturn: MediaInfo = MediaInfo(
         0L, 0L, "", "", "",
         MediaManager.getDefaultCoverArt(), getServiceName()
     )
+    private var authCode = ""
+    private var providerState = ProviderState.NONE
+
+    enum class ProviderState {
+        NONE, AUTHENTICATION, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN
+    }
 
     override fun getServiceName(): String {
         return "Spotify"
     }
 
-    override fun init() {
+    constructor() {
         runBlocking {
-            clientApi = spotifyClientApi(
-                spotifySettings.clientId,
-                spotifySettings.clientId,
-                "127.0.0.1:${config.callbackPort}"
-            ).build()
+            clientApi = SpotifyApi.builder()
+                .setClientId(spotifySettings.clientId).setClientSecret(spotifySettings.clientSecret)
+                .setRedirectUri(URI("http://127.0.0.1:${config.callbackPort}/callback")).build()
+            println("${spotifySettings.clientId}, ${spotifySettings.clientSecret}")
         }
     }
 
@@ -47,36 +48,55 @@ class SpotifyProvider : AccountMediaProvider() {
     }
 
     override suspend fun update() {
-        runBlocking {
-            val currentlyPlaying: CurrentlyPlayingObject? = clientApi.player.getCurrentlyPlaying()
-            val info = infoToReturn
+        if (providerState == ProviderState.GOT_TOKEN) {
+            val authCodeCredentials: AuthorizationCodeCredentials = clientApi
+                .authorizationCode(authCode).build().execute()
+            clientApi.accessToken = authCodeCredentials.accessToken
+            clientApi.refreshToken = authCodeCredentials.refreshToken
+            config.providers.spotify.accessToken = clientApi.accessToken
+            config.providers.spotify.refreshToken = clientApi.refreshToken
+            println("Expires in ${authCodeCredentials.expiresIn}")
+            config.save()
+            providerState = ProviderState.POST_TOKEN_SETUP
+        } else if (providerState == ProviderState.POST_TOKEN_SETUP) {
 
-            if (currentlyPlaying != null) {
-                info.currentPosition = currentlyPlaying.progressMs!!.toLong()
-                if (currentlyPlaying.currentlyPlayingType == CurrentlyPlayingType.Track) {
-                    if (currentlyPlaying.item?.asLocalTrack != null) {
-                        val track = currentlyPlaying.item?.asLocalTrack
-                        info.title = track?.name!!
-                        info.maximumTime = track.durationMs!!.toLong()
-                    } else {
-                        val track = currentlyPlaying.item?.asTrack
-                        info.title = track?.name!!
-                        info.maximumTime = track.durationMs.toLong()
-                    }
+        } else if (providerState == ProviderState.SIGNED_IN) {
 
-                } else if (currentlyPlaying.currentlyPlayingType == CurrentlyPlayingType.Episode) {
-                    val episode = currentlyPlaying.item?.asPodcastEpisodeTrack
-                } else if (currentlyPlaying.currentlyPlayingType == CurrentlyPlayingType.Ad) {
-                    info.title = "Advert"
-                    info.album = "N/A"
-                    info.album = "N/A"
-                }
-            }
-            infoToReturn = info
         }
     }
 
     override fun initiateLogin() {
-        TODO("Not yet implemented")
+        if (config.providers.spotify.refreshToken.isEmpty() && config.providers.spotify.accessToken.isEmpty()) {
+            val authCodeUriReq = clientApi.authorizationCodeUri()
+                .show_dialog(true)
+                .scope(
+                    "streaming user-read-playback-position"
+                ).build()
+            val authReqUri = authCodeUriReq.execute()
+            Util.getOperatingSystem().open(authReqUri)
+        } else {
+            clientApi.refreshToken = config.providers.spotify.refreshToken
+            val refreshToken = clientApi.authorizationCodeRefresh().build().execute()
+            clientApi.accessToken = refreshToken.accessToken
+            clientApi.refreshToken = refreshToken.refreshToken
+            config.providers.spotify.refreshToken = clientApi.refreshToken
+            config.providers.spotify.accessToken = clientApi.accessToken
+            config.save()
+        }
+    }
+
+    override fun sendCommand(cmd: String, payload: Any): Int {
+        if (cmd == "authSendStr" && payload is String) {
+            val splitPayload = payload.split("=")
+            if (splitPayload[0] == "code") {
+                authCode = payload.split("=")[1]
+                providerState = ProviderState.GOT_TOKEN
+            } else {
+                return 1
+            }
+        } else {
+            return Int.MIN_VALUE
+        }
+        return 0
     }
 }

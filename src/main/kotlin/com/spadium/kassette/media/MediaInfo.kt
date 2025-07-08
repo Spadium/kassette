@@ -9,5 +9,6 @@ data class MediaInfo(
     var album: String,
     var artist: String,
     var coverArt: NativeImage,
-    var provider: String
+    var provider: String,
+    var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
 )

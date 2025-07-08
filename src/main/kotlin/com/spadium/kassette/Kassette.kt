@@ -3,10 +3,12 @@ package com.spadium.kassette
 import com.mojang.blaze3d.opengl.GlConst
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.media.DebugProvider
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.PlaceholderProvider
+import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.MediaInfoScreen
 import kotlinx.coroutines.runBlocking
@@ -68,7 +70,9 @@ open class Kassette : ClientModInitializer {
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             MediaInfoHUD().setup()
-            MediaManager.provider = DebugProvider()
+            MediaManager.provider = SpotifyProvider()
+            (MediaManager.provider as AccountMediaProvider).initiateLogin()
+//            MediaManager.provider.init()
             thread(name = "Kassette MediaManager Thread") {
                 while (client.isRunning) {
                     try {

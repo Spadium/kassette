@@ -6,4 +6,6 @@ import kotlinx.serialization.Serializable
 data class SpotifyConfig(
     var clientId: String,
     var clientSecret: String,
+    var accessToken: String,
+    var refreshToken: String
 )

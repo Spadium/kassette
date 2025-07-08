@@ -6,11 +6,7 @@ import net.minecraft.util.Identifier
 
 object MediaManager {
     var provider: MediaProvider = DebugProvider()
-        set(p) {
-            p.init()
-        }
     val info: MediaInfo = provider.getMedia()
-    val state: MediaState = provider.state
 
     fun getDefaultCoverArt(): NativeImage {
         return NativeImage.read(

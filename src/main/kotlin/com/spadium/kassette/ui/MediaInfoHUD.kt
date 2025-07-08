@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui
 
+import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.util.drawMarquee
@@ -12,18 +13,24 @@ import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.texture.NativeImageBackedTexture
+import net.minecraft.client.texture.SpriteAtlasHolder
+import net.minecraft.resource.ResourceReloader
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import net.minecraft.util.math.ColorHelper
+import java.io.File
+import javax.imageio.ImageIO
 import kotlin.math.floor
+import kotlin.math.round
 
-private var timeDelta: Double = 0.0
-private var positionIndicator: Double = 0.0
-private var previousTime: Long = 0
 
 class MediaInfoHUD {
-    private var mediaInfo = MediaManager.info
+    private var timeDelta: Double = 0.0
+    private var positionIndicator: Double = 0.0
+    private var previousTime: Long = 0
+
+    private var mediaInfo = MediaManager.provider.getMedia()
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
     private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(
@@ -53,10 +60,12 @@ class MediaInfoHUD {
         )
     }
 
+    var shouldTextureHaveReloaded = true
+
     fun setupCoverArt() {
         val textureManager = MinecraftClient.getInstance().textureManager
-        if (mediaInfo.coverArt != coverArt.image) {
-            val coverImage = mediaInfo.coverArt
+        if (MediaManager.provider.getMedia().coverArt != coverArt.image) {
+            val coverImage = MediaManager.provider.getMedia().coverArt
             coverArt.close()
             coverArt = NativeImageBackedTexture(
                 { "coverart" }, coverImage
@@ -67,27 +76,46 @@ class MediaInfoHUD {
                 coverArtIdentifier,
                 coverArt
             )
+            println("Reloading texture")
+            shouldTextureHaveReloaded = true
+        } else {
+            shouldTextureHaveReloaded = false
         }
     }
 
     private fun getFirstLine(): String {
-        return "${mediaInfo.title} - ${mediaInfo.artist}"
+        return "${MediaManager.provider.getMedia().title} - ${MediaManager.provider.getMedia().artist}"
     }
 
     private fun getSecondLine(): String {
-        return "${mediaInfo.album}"
+        return MediaManager.provider.getMedia().album
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
         setupCoverArt()
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
+        val artSize: Int = round(hudConfig.height.toFloat() * (3/4)).toInt()
+        var testing123 = 0.0
 
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
         positionIndicator += timeDelta / (1 / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble())
+        if (!shouldTextureHaveReloaded) {
+            testing123 += timeDelta
+        } else {
+            testing123 = 0.0
+        }
+
+        if (testing123 > 1.0) {
+            println("cover art should've changed but didn't")
+            throw Exception("cover art should've reloaded but didn't")
+        }
+
         val maxWidth = MinecraftClient.getInstance().window.scaledWidth
         val maxHeight = MinecraftClient.getInstance().window.scaledHeight
+
+
         context.fill(
             0, 0, hudConfig.width, hudConfig.height, backgroundColor
         )
@@ -115,7 +143,7 @@ class MediaInfoHUD {
             isFancy
         )
         textWrapper(
-            context, textRenderer, getSecondLine(),
+            context, textRenderer, mediaInfo.artist,
             50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
             true, 8, 3,
             (positionIndicator >= scrollThreshold), isFancy

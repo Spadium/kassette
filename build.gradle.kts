@@ -41,7 +41,7 @@ dependencies {
 	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 	// temporary until i get to writing my own implementation
-	implementation("com.adamratzman:spotify-api-kotlin-core:4.1.3")
+	implementation("se.michaelthelin.spotify:spotify-web-api-java:9.2.0")
 }
 
 tasks.processResources {

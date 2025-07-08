@@ -3,15 +3,15 @@ package com.spadium.kassette.media
 import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 
-class PlaceholderProvider: MediaProvider() {
+class PlaceholderProvider: MediaProvider {
     override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
 
     override fun getServiceName(): String {
         return "placeholder"
     }
 
-    override fun init() {
-
+    constructor() {
+        println("test")
     }
 
     override fun destroy() {
@@ -24,7 +24,8 @@ class PlaceholderProvider: MediaProvider() {
             128,
             "View Kassette settings for more information", "N/A", "Kassette",
             MediaManager.getDefaultCoverArt(),
-            "placeholder"
+            "placeholder",
+            state
         )
     }
 

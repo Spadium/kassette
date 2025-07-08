@@ -7,9 +7,12 @@ import net.minecraft.util.PngMetadata
 import org.intellij.lang.annotations.MagicConstant
 import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryUtil
+import java.awt.image.BufferedImage
 import java.io.IOException
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import javax.imageio.ImageIO
 
 class ImageUtils {
 
@@ -26,6 +29,21 @@ class ImageUtils {
                 buffer.order(originalOrder)
                 PngMetadata.validate(buffer)
             }
+        }
+
+        fun loadImageIOImage(input: InputStream): NativeImage {
+            val bufferedImage: BufferedImage = ImageIO.read(input)
+            val nativeImage: NativeImage = NativeImage(bufferedImage.width, bufferedImage.height, true)
+            for (x in 0..bufferedImage.width-1) {
+                for (y in 0..bufferedImage.height-1) {
+                    nativeImage.setColor(x, y, rgbToRgba(bufferedImage.getRGB(x, y)))
+                }
+            }
+            return nativeImage
+        }
+
+        fun rgbToRgba(rgb: Int): Int {
+            return (0xFF000000.or(rgb.toLong())).toInt()
         }
 
         fun loadGenericImage(bytes: ByteArray): NativeImage {
