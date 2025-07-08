@@ -21,6 +21,7 @@ class SpotifyProvider : AccountMediaProvider {
     )
     private var authCode = ""
     private var providerState = ProviderState.NONE
+    private var nextTokenRefresh: Long = 0
 
     enum class ProviderState {
         NONE, AUTHENTICATION, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN
@@ -36,6 +37,10 @@ class SpotifyProvider : AccountMediaProvider {
                 .setClientId(spotifySettings.clientId).setClientSecret(spotifySettings.clientSecret)
                 .setRedirectUri(URI("http://127.0.0.1:${config.callbackPort}/callback")).build()
             println("${spotifySettings.clientId}, ${spotifySettings.clientSecret}")
+            if (!config.providers.spotify.refreshToken.isBlank() && !config.providers.spotify.accessToken.isBlank()) {
+                clientApi.refreshToken = config.providers.spotify.refreshToken
+                clientApi.accessToken = config.providers.spotify.accessToken
+            }
         }
     }
 
@@ -61,7 +66,10 @@ class SpotifyProvider : AccountMediaProvider {
         } else if (providerState == ProviderState.POST_TOKEN_SETUP) {
 
         } else if (providerState == ProviderState.SIGNED_IN) {
-
+            // Two-seconds before the maximum age of the token in case the update thread is running slow
+            if (System.currentTimeMillis() >= nextTokenRefresh - 2000) {
+                refreshTokens()
+            }
         }
     }
 
@@ -75,14 +83,22 @@ class SpotifyProvider : AccountMediaProvider {
             val authReqUri = authCodeUriReq.execute()
             Util.getOperatingSystem().open(authReqUri)
         } else {
-            clientApi.refreshToken = config.providers.spotify.refreshToken
-            val refreshToken = clientApi.authorizationCodeRefresh().build().execute()
-            clientApi.accessToken = refreshToken.accessToken
+            refreshTokens()
+        }
+    }
+
+    private fun refreshTokens() {
+        val refreshToken = clientApi.authorizationCodeRefresh()
+            .refresh_token(config.providers.spotify.refreshToken).build().execute()
+        nextTokenRefresh = System.currentTimeMillis() + (refreshToken.expiresIn * 1000)
+        clientApi.accessToken = refreshToken.accessToken
+        config.providers.spotify.accessToken = clientApi.accessToken
+        if (!refreshToken.refreshToken.isNullOrBlank()) {
             clientApi.refreshToken = refreshToken.refreshToken
             config.providers.spotify.refreshToken = clientApi.refreshToken
-            config.providers.spotify.accessToken = clientApi.accessToken
-            config.save()
         }
+        println("${refreshToken.refreshToken}, ${refreshToken.accessToken}")
+        config.save()
     }
 
     override fun sendCommand(cmd: String, payload: Any): Int {
