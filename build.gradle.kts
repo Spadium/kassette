@@ -79,29 +79,15 @@ tasks.processResources {
 		)
 	} else {
 		inputs.property("version", project.version)
-		inputs.property(
-			"buildType",
-			"DEV"
-		)
-		inputs.property(
-			"gitCommitId",
-			"N/A"
-		)
-		inputs.property(
-			"gitBranchRef",
-			"N/A"
-		)
+		inputs.property("buildType", "DEV")
+		inputs.property("gitCommitId", "N/A")
+		inputs.property("gitBranchRef", "N/A")
 	}
 
 	filesMatching("fabric.mod.json") {
 		expand(
-			mapOf("version" to inputs.properties["version"])
-		)
-	}
-
-	filesMatching("kassetteinfo.json") {
-		expand(
 			mapOf(
+				"version" to inputs.properties["version"],
 				"buildType" to inputs.properties.getOrDefault("buildType", "DEV"),
 				"gitCommitId" to inputs.properties.getOrDefault("gitCommitId", "N/A"),
 				"gitBranchRef" to inputs.properties.getOrDefault("gitBranchRef", "N/A"),

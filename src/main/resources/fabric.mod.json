@@ -33,6 +33,12 @@
 				"modmenu.github_releases": "https://github.com/Spadium/kassette/releases"
 			},
 			"update_checker": true
+		},
+		"info": {
+			"buildType": "${buildType}",
+			"gitCommitId": "${gitCommitId}",
+			"gitBranchRef": "${gitBranchRef}",
+			"buildDate": "${buildDate}"
 		}
 	},
 	"mixins": [

@@ -1,8 +1,10 @@
 package com.spadium.kassette.ui.screens.config
 
+import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.screen.Overlay
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
@@ -12,7 +14,7 @@ import net.minecraft.text.Text
 
 class ConfigScreen : Screen {
     private val parent: Screen?
-    private val layout = ThreePartsLayoutWidget(this, 64, 32)
+    private val layout = ThreePartsLayoutWidget(this)
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.title")) {
         this.parent = parent
@@ -46,6 +48,15 @@ class ConfigScreen : Screen {
                 { button -> close() }
             ).width(200).build()
         )
+
+        if (!Kassette.errors.isEmpty()) {
+            sectionButtons.add(
+                KassetteUtils.createButtonToScreen(
+                    Text.translatable("kassette.config.button.errors"),
+                    ErrorScreen(this, Kassette.errors)
+                )
+            )
+        }
 
 
         layout.forEachChild { widget ->

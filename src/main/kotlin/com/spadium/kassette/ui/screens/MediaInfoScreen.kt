@@ -1,6 +1,7 @@
 package com.spadium.kassette.ui.screens
 
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.media.MediaProvider
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.widget.*
 import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
+import javax.print.attribute.standard.Media
 
 class MediaInfoScreen(title: Text) : Screen(title) {
     private val screenWidth = 256
@@ -16,57 +18,93 @@ class MediaInfoScreen(title: Text) : Screen(title) {
     private var centeredX = 0
     private var centeredY = 0
 
-
     override fun init() {
         centeredX = (this.width / 2) - (screenWidth / 2)
         centeredY = (this.height / 2) - (screenHeight / 2)
-        val gridWidget: GridWidget = GridWidget(
-            centeredX + 80 + 4,
-            centeredY + 32
+        val containerWidget = DirectionalLayoutWidget(
+            0, 0,
+            DirectionalLayoutWidget.DisplayAxis.HORIZONTAL
+        ).spacing(8)
+        val firstLine = TextWidget(
+            Text.literal(MediaManager.provider.info.title),
+            textRenderer
+        ).alignLeft()
+        val secondLine = TextWidget(
+            Text.literal(MediaManager.provider.info.artist),
+            textRenderer
+        ).alignLeft()
+        val thirdLine = TextWidget(
+            Text.literal(MediaManager.provider.info.album),
+            textRenderer
+        ).alignLeft()
+        firstLine.width = 150
+        secondLine.width = 150
+        thirdLine.width = 150
+
+        containerWidget.add(
+            IconWidget.create(
+                64, 64,
+                Identifier.of("kassette", "coverart"),
+                64, 64
+            )
         )
-        val gridAdder: GridWidget.Adder = gridWidget.createAdder(4)
-        gridWidget.setSpacing(8)
+        val gridWidget: GridWidget = containerWidget.add(GridWidget())
+        val gridAdder: GridWidget.Adder = gridWidget.createAdder(3)
+        gridWidget.setSpacing(4)
         gridAdder.add(
-            TextWidget(
-                Text.literal("${MediaManager.provider.getMedia().title} - ${MediaManager.provider.getMedia().artist}"),
-                textRenderer
-            ), 4
+            firstLine, 3
         )
         gridAdder.add(
-            TextWidget(
-                Text.literal(MediaManager.provider.getMedia().album),
-                textRenderer
-            ), 4
+            secondLine, 3
         )
-        gridAdder.add(EmptyWidget(1, 2), 4)
+        gridAdder.add(
+            thirdLine, 3
+        )
         AvailableButtons.entries.forEach {
             gridAdder.add(
                 TextIconButtonWidget.builder(
                     Text.empty(),
                     it.onPress,
                     true
-                ).texture(MediaManager.provider.info.state.texture, 16, 16).width(20).build()
+                ).texture(it.sprite, 16, 16).width(20).build()
             )
+        }
+        containerWidget.forEachChild { widget ->
+            addDrawableChild(widget)
         }
         gridWidget.forEachChild { widget ->
             addDrawableChild(widget)
         }
+        containerWidget.refreshPositions()
+        containerWidget.x = (width / 2) - (containerWidget.width / 2)
+        containerWidget.y = (height / 2) - (containerWidget.height / 2)
+        containerWidget.refreshPositions()
         gridWidget.refreshPositions()
     }
 
-    private enum class AvailableButtons(val sprite: Identifier, val onPress: ButtonWidget.PressAction) {
-        PREVIOUS(Identifier.of("kassette", "test"), { button -> println("previous")}),
+    private enum class AvailableButtons(
+        val sprite: Identifier, val onPress: ButtonWidget.PressAction,
+        val tooltip: Text, val isActive: Boolean
+    ) {
+        PREVIOUS(
+            Identifier.of("kassette", "test"),
+            { button -> MediaManager.provider.sendCommand("previousTrack", null) },
+            Text.literal("Previous Track"), MediaManager.provider.availableCommands.contains("previousTrack")
+        ),
         PLAY_PAUSE(
             MediaManager.provider.info.state.texture,
-            { button -> MediaManager.provider.info.state = MediaManager.MediaState.PAUSED}
+            { button -> MediaManager.provider.sendCommand("togglePlay", null) },
+            Text.literal("Play/Pause"), MediaManager.provider.availableCommands.contains("togglePlay")
         ),
-        NEXT(Identifier.of("kassette", "other"), { button -> println("next")}),
-        CLOSE(Identifier.of("kassette", "other"), { button -> MinecraftClient.getInstance().setScreen(null) })
+        NEXT(
+            Identifier.of("kassette", "other"),
+            { button -> MediaManager.provider.sendCommand("nextTrack", null) },
+            Text.literal("Next Track"), MediaManager.provider.availableCommands.contains("nextTrack")
+        )
     }
 
     override fun renderBackground(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.renderBackground(context, mouseX, mouseY, deltaTicks)
-
         context?.drawTexture(
             RenderPipelines.GUI_TEXTURED,
             Identifier.of("kassette", "textures/gui/info_background.png"),
@@ -75,18 +113,8 @@ class MediaInfoScreen(title: Text) : Screen(title) {
     }
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
-        context?.drawTexture(
-            RenderPipelines.GUI_TEXTURED,
-            Identifier.of("kassette", "coverart"),
-            centeredX + 16, centeredY + 32, 0f, 0f, 64, 64, 64, 64
-        )
-        context?.drawGuiTexture(
-            RenderPipelines.GUI_TEXTURED, MediaManager.provider.info.state.texture,
-            centeredX + textRenderer.getWidth(title) + 8, centeredY + 6,
-            8,8, Colors.BLACK
-        )
         clearAndInit()
+        context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         super.render(context, mouseX, mouseY, deltaTicks)
     }
 

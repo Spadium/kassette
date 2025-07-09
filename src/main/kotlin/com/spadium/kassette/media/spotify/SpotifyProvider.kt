@@ -6,6 +6,7 @@ import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Util
@@ -30,9 +31,14 @@ class SpotifyProvider : AccountMediaProvider {
     private var nextTokenRefresh: Long = 0
     private var lastImageUrl = ""
     override var info: MediaInfo = infoToReturn
+    override val availableCommands: List<String> = listOf(
+        "authSendStr", "togglePlay", "nextTrack", "previousTrack"
+    )
+    private var requestsMadeBeforeLimit = 0
+    private var cooldownTime = System.currentTimeMillis()
 
     enum class ProviderState {
-        NONE, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN
+        NONE, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN, COOLDOWN
     }
 
     override fun getServiceName(): String {
@@ -44,11 +50,11 @@ class SpotifyProvider : AccountMediaProvider {
             clientApi = SpotifyApi.builder()
                 .setClientId(spotifySettings.clientId).setClientSecret(spotifySettings.clientSecret)
                 .setRedirectUri(URI("http://127.0.0.1:${config.callbackPort}/callback")).build()
-            println("${spotifySettings.clientId}, ${spotifySettings.clientSecret}")
             if (!config.providers.spotify.refreshToken.isBlank() && !config.providers.spotify.accessToken.isBlank()) {
                 clientApi.refreshToken = config.providers.spotify.refreshToken
                 clientApi.accessToken = config.providers.spotify.accessToken
             }
+            requestsMadeBeforeLimit++
         }
     }
 
@@ -71,6 +77,7 @@ class SpotifyProvider : AccountMediaProvider {
             clientApi.refreshToken = authCodeCredentials.refreshToken
             config.providers.spotify.accessToken = clientApi.accessToken
             config.providers.spotify.refreshToken = clientApi.refreshToken
+            requestsMadeBeforeLimit++
             // actually save the config
             config.save()
             // move to the next step
@@ -78,51 +85,13 @@ class SpotifyProvider : AccountMediaProvider {
         } else if (providerState == ProviderState.POST_TOKEN_SETUP) {
             providerState = ProviderState.SIGNED_IN
         } else if (providerState == ProviderState.SIGNED_IN) {
-            // Two-seconds before the maximum age of the token in case the update thread is running slow
-            if (System.currentTimeMillis() >= nextTokenRefresh - 2000) {
-                refreshTokens()
-            }
-            val currentlyPlayingCtx = clientApi.informationAboutUsersCurrentPlayback.build().execute()
-            if (currentlyPlayingCtx != null) {
-                val item = currentlyPlayingCtx.item
-                infoToReturn.currentPosition = currentlyPlayingCtx.progress_ms.toLong()
-                infoToReturn.maximumTime = currentlyPlayingCtx.item.durationMs.toLong()
-
-                infoToReturn.state = if (currentlyPlayingCtx.is_playing) {
-                    MediaManager.MediaState.PLAYING
-                } else {
-                    MediaManager.MediaState.PAUSED
-                }
-                if (currentlyPlayingCtx.item.type == ModelObjectType.TRACK && item is Track) {
-                    infoToReturn.album = item.album.name
-                    infoToReturn.title = item.name
-                    val artistStr = buildString {
-                        if (item.artists.size == 1) {
-                            append(item.artists[0].name)
-                        } else {
-                            item.artists.forEachIndexed { i, artist ->
-                                if (i == item.artists.size - 1) {
-                                    append(artist.name)
-                                } else {
-                                    append("${artist.name}, ")
-                                }
-                            }
-                        }
-                    }
-                    infoToReturn.artist = artistStr
-                    if (item.album.images[0].url != lastImageUrl) {
-                        lastImageUrl = item.album.images[0].url
-                        val stream = URI(item.album.images[0].url).toURL().openStream()
-                        infoToReturn.coverArt = NativeImage.read(stream)
-                        stream.close()
-                    }
-                } else if (currentlyPlayingCtx.item.type == ModelObjectType.EPISODE && item is Episode) {
-
-                } else {
-
-                }
-            }
-
+            getCurrentPlayback()
+        } else if (providerState == ProviderState.COOLDOWN) {
+            delay(1000)
+            getCurrentPlayback()
+        }
+        if (requestsMadeBeforeLimit >= 20) {
+            providerState = ProviderState.COOLDOWN
         }
     }
 
@@ -131,9 +100,10 @@ class SpotifyProvider : AccountMediaProvider {
             val authCodeUriReq = clientApi.authorizationCodeUri()
                 .show_dialog(true)
                 .scope(
-                    "streaming user-read-playback-position"
+                    "streaming user-read-playback-position user-modify-playback-state"
                 ).build()
             val authReqUri = authCodeUriReq.execute()
+            requestsMadeBeforeLimit++
             Util.getOperatingSystem().open(authReqUri)
         } else if ((config.providers.spotify.nextRefresh - 2000) >= System.currentTimeMillis()) {
             Kassette.logger.info("Spotify tokens need a refresh!")
@@ -156,11 +126,56 @@ class SpotifyProvider : AccountMediaProvider {
             clientApi.refreshToken = refreshToken.refreshToken
             config.providers.spotify.refreshToken = clientApi.refreshToken
         }
+        requestsMadeBeforeLimit++
         config.save()
         providerState = ProviderState.POST_TOKEN_SETUP
     }
 
-    override fun sendCommand(cmd: String, payload: Any): Int {
+    private suspend fun getCurrentPlayback() {
+        // Two-seconds before the maximum age of the token in case the update thread is running slow
+        if (System.currentTimeMillis() >= nextTokenRefresh - 2000) {
+            refreshTokens()
+        }
+        val currentlyPlayingCtx = clientApi.informationAboutUsersCurrentPlayback.build().execute()
+        requestsMadeBeforeLimit++
+        if (currentlyPlayingCtx != null) {
+            val item = currentlyPlayingCtx.item
+            infoToReturn.currentPosition = currentlyPlayingCtx.progress_ms.toLong()
+            infoToReturn.maximumTime = currentlyPlayingCtx.item.durationMs.toLong()
+
+            infoToReturn.state = if (currentlyPlayingCtx.is_playing) {
+                MediaManager.MediaState.PLAYING
+            } else {
+                MediaManager.MediaState.PAUSED
+            }
+            if (currentlyPlayingCtx.item.type == ModelObjectType.TRACK && item is Track) {
+                infoToReturn.album = item.album.name
+                infoToReturn.title = item.name
+                val artistStr = buildString {
+                    if (item.artists.size == 1) {
+                        append(item.artists[0].name)
+                    } else {
+                        item.artists.forEachIndexed { i, artist ->
+                            if (i == item.artists.size - 1) {
+                                append(artist.name)
+                            } else {
+                                append("${artist.name}, ")
+                            }
+                        }
+                    }
+                }
+                infoToReturn.artist = artistStr
+                if (item.album.images[0].url != lastImageUrl) {
+                    lastImageUrl = item.album.images[0].url
+                    val stream = URI(item.album.images[0].url).toURL().openStream()
+                    infoToReturn.coverArt = NativeImage.read(stream)
+                    stream.close()
+                }
+            }
+        }
+    }
+
+    override fun sendCommand(cmd: String, payload: Any?): Int {
         if (cmd == "authSendStr" && payload is String) {
             val splitPayload = payload.split("=")
             if (splitPayload[0] == "code") {
@@ -168,6 +183,31 @@ class SpotifyProvider : AccountMediaProvider {
                 providerState = ProviderState.GOT_TOKEN
             } else {
                 return 1
+            }
+        } else if (cmd == "togglePlay") {
+            try {
+                if (info.state == MediaManager.MediaState.PLAYING) {
+                    clientApi.pauseUsersPlayback().build().execute()
+                } else {
+                    clientApi.startResumeUsersPlayback().build().execute()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return 2
+            }
+        } else if (cmd == "nextTrack") {
+            try {
+                clientApi.skipUsersPlaybackToNextTrack().build().execute()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return 2
+            }
+        } else if (cmd == "previousTrack") {
+            try {
+                clientApi.skipUsersPlaybackToPreviousTrack().build().execute()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return 2
             }
         } else {
             return Int.MIN_VALUE

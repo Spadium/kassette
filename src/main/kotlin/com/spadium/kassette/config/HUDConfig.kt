@@ -9,13 +9,15 @@ data class HUDConfig(
     val imageSize: Int,
     var backgroundColor: IntArray,
     var borderColor: IntArray,
+    val progressBackgroundColor: IntArray,
+    val progressForegroundColor: IntArray,
     var textSpeed: Int,
     var fancyTextSpeed: Int,
     var lineSpacing: Int,
     var progressBarThickness: Int,
     var showCover: Boolean,
     var fancyText: Boolean,
-    var progressType: ProgressType,
+    var progressType: ProgressType
 ) {
     @Serializable
     enum class ProgressType {

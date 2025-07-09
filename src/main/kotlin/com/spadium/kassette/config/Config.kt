@@ -1,16 +1,14 @@
 package com.spadium.kassette.config
 
+import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonPrimitive
 import net.fabricmc.loader.api.FabricLoader
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
-import kotlin.system.exitProcess
 
 /*
     Config class
@@ -37,10 +35,12 @@ data class Config(
         width = 128,
         height = 48,
         imageSize = 32,
-        backgroundColor = intArrayOf(0,0,0, 255),
-        borderColor = intArrayOf(0,255,0, 255),
-        textSpeed = 1,
-        fancyTextSpeed = 2,
+        backgroundColor = intArrayOf(0, 0, 0, 128),
+        borderColor = intArrayOf(0, 128, 0, 255),
+        progressBackgroundColor = intArrayOf(32, 32, 32, 255),
+        progressForegroundColor = intArrayOf(16, 32, 128, 255),
+        textSpeed = 1, // Characters per second
+        fancyTextSpeed = 5, // Pixels per second
         showCover = true,
         fancyText = true,
         progressType = HUDConfig.ProgressType.BAR,
@@ -75,6 +75,7 @@ data class Config(
                     config.validate()
                 } catch (e: Exception) {
                     logger.error("Error loading config! ${e.toString()}")
+                    Kassette.errors.put("Kassette Configuration", e)
                     config = Config()
                 }
             } else {

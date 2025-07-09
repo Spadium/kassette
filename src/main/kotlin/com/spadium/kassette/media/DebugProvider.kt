@@ -16,6 +16,7 @@ class DebugProvider: AccountMediaProvider {
         "ARTIST", MediaManager.getDefaultCoverArt(), getServiceName(),
         MediaManager.MediaState.OTHER
     )
+    override val availableCommands: List<String> = listOf()
     private var f = 0f
     private var accumulator: Int = 0
 

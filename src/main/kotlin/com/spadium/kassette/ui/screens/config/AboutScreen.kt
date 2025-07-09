@@ -38,7 +38,7 @@ import java.util.Calendar
 class AboutScreen: Screen {
     private val parent: Screen?
     @OptIn(ExperimentalSerializationApi::class)
-    private val aboutInfo: ModInfo = Json.decodeFromStream(javaClass.getResourceAsStream("/kassetteinfo.json")!!)
+    private val aboutInfo: ModInfo = getInfo()
     private val dateFormat = LocalDateTime.Format {
         date(LocalDate.Formats.ISO); chars("  ")
         amPmHour(); chars(":"); minute(); chars(":"); second(); amPmMarker("AM", "PM")
@@ -47,6 +47,17 @@ class AboutScreen: Screen {
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.about.title")) {
         this.parent = parent
+    }
+
+    private fun getInfo(): ModInfo {
+        val metadata = FabricLoader.getInstance().getModContainer("kassette")!!.get().metadata
+        val infoMetadata = metadata.getCustomValue("info").asObject
+        return ModInfo(
+            ModInfo.BuildTypes.valueOf(infoMetadata.get("buildType").asString),
+            infoMetadata.get("gitCommitId").asString,
+            infoMetadata.get("gitBranchRef").asString,
+            infoMetadata.get("buildDate").asString.toLong()
+        )
     }
 
     override fun init() {

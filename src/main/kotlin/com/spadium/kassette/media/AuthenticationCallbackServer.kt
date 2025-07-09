@@ -60,7 +60,6 @@ class AuthenticationCallbackServer {
             val outStream: OutputStream = exchange.responseBody
             outStream.write(response.toByteArray())
             outStream.close()
-            println(exchange.requestURI.toString())
             if (MediaManager.provider is AccountMediaProvider) {
                 MediaManager.provider.sendCommand("authSendStr", exchange.requestURI.rawQuery)
             }

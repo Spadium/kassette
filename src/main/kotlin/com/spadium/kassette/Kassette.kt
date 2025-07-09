@@ -8,6 +8,7 @@ import com.spadium.kassette.media.PlaceholderProvider
 import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.screens.MediaInfoScreen
+import com.spadium.kassette.ui.toasts.ErrorToast
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
@@ -28,6 +29,7 @@ import kotlin.concurrent.thread
 open class Kassette : ClientModInitializer {
     companion object {
         val logger: Logger = LoggerFactory.getLogger("Kassette")
+        val errors: MutableMap<String, Exception> = mutableMapOf()
     }
 
     override fun onInitializeClient() {
@@ -35,6 +37,7 @@ open class Kassette : ClientModInitializer {
             AuthenticationCallbackServer().start()
         } catch (e: Exception) {
             logger.error("Error initializing Kassette's authentication callback!", e)
+            errors.put("Authentication Callback Server", e)
         }
 
         Config.Instance = Config.reload()
@@ -75,6 +78,11 @@ open class Kassette : ClientModInitializer {
                     } catch (e: Exception) {
                         e.printStackTrace()
                         logger.warn("Exception thrown by provider for \"${MediaManager.provider.getServiceName()}\"! Using PlaceholderProvider as fallback!")
+                        errors.put(
+                            "${MediaManager.provider.getServiceName()} MediaProvider",
+                            e
+                        )
+                        client.toastManager.add(ErrorToast("Error from ${MediaManager.provider.getServiceName()}!"))
                         MediaManager.provider = PlaceholderProvider()
                     }
                 }

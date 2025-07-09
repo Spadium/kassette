@@ -2,18 +2,15 @@ package com.spadium.kassette.media
 
 abstract class MediaProvider {
     abstract val info: MediaInfo
+    abstract val availableCommands: List<String>
 
-    abstract fun getServiceName(): String
-    @Deprecated(
-        "Constructors will initialize providers since git commit 964028d3! This will be removed by release!",
-        ReplaceWith("constructor()")
-    )
+    open fun getServiceName(): String { return info.provider }
 
     abstract fun destroy()
 
     open fun getMedia(): MediaInfo { return info }
 
-    open fun sendCommand(cmd: String, payload: Any): Int { return 0 }
+    open fun sendCommand(cmd: String, payload: Any?): Int { return 0 }
 
     abstract suspend fun update()
 }

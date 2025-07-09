@@ -5,7 +5,7 @@ import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
 
 object MediaManager {
-    var provider: MediaProvider = DebugProvider()
+    var provider: MediaProvider = PlaceholderProvider()
 
     fun getDefaultCoverArt(): NativeImage {
         return NativeImage.read(

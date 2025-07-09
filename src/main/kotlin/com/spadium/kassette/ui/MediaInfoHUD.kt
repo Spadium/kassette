@@ -47,6 +47,18 @@ class MediaInfoHUD {
         hudConfig.backgroundColor[1],
         hudConfig.backgroundColor[2]
     )
+    private val progressBarBg = ColorHelper.getArgb(
+        hudConfig.progressBackgroundColor[3],
+        hudConfig.progressBackgroundColor[0],
+        hudConfig.progressBackgroundColor[1],
+        hudConfig.progressBackgroundColor[2]
+    )
+    private val progressBarFg = ColorHelper.getArgb(
+        hudConfig.progressForegroundColor[3],
+        hudConfig.progressForegroundColor[0],
+        hudConfig.progressForegroundColor[1],
+        hudConfig.progressForegroundColor[2]
+    )
     private lateinit var firstLineManager: MarqueeTextManager
     private lateinit var secondLineManager: MarqueeTextManager
     private lateinit var thirdLineManager: MarqueeTextManager
@@ -129,10 +141,10 @@ class MediaInfoHUD {
             50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
-        thirdLineManager.text = MediaManager.provider.getServiceName()
+        thirdLineManager.text = MediaManager.provider.info.provider
         thirdLineManager.renderText(
             50, 2 + (textRenderer.fontHeight * 3) + (hudConfig.lineSpacing * 2),
-            0xFF555555.toInt(),
+            0xFFAAAAAA.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
 
@@ -158,12 +170,12 @@ class MediaInfoHUD {
         val progressBarWidth = floor((hudConfig.width - 1) * progress).toInt()
         // Progressbar background
         context.fill(
-            1, 1, hudConfig.width - 1, hudConfig.progressBarThickness, Colors.WHITE
+            1, 1, hudConfig.width - 1, hudConfig.progressBarThickness, progressBarBg
         )
         // Progressbar
         if (progressBarWidth > 0) {
             context.fill(
-                1, 1, floor((hudConfig.width - 1) * progress).toInt(), hudConfig.progressBarThickness, Colors.RED
+                1, 1, floor((hudConfig.width - 1) * progress).toInt(), hudConfig.progressBarThickness, progressBarFg
             )
         }
     }
