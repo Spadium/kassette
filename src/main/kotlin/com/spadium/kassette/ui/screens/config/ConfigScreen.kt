@@ -1,5 +1,7 @@
 package com.spadium.kassette.ui.screens.config
 
+import com.spadium.kassette.config.Config
+import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
@@ -20,13 +22,19 @@ class ConfigScreen : Screen {
         layout.addHeader(title, textRenderer)
         val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
         sectionButtons.add(
-            createButtonToScreen(
+            KassetteUtils.createButtonToScreen(
                 Text.translatable("kassette.config.button.providers"),
                 ProvidersScreen(this)
             )
         )
         sectionButtons.add(
-            createButtonToScreen(
+            KassetteUtils.createButtonToScreen(
+                Text.translatable("kassette.config.button.hud"),
+                null
+            )
+        )
+        sectionButtons.add(
+            KassetteUtils.createButtonToScreen(
                 Text.translatable("kassette.config.button.about"),
                 AboutScreen(this)
             )
@@ -52,13 +60,7 @@ class ConfigScreen : Screen {
     }
 
     override fun close() {
-        this.client!!.setScreen(this.parent)
-    }
-
-    private fun createButtonToScreen(message: Text, screen: Screen): ButtonWidget {
-        return ButtonWidget.builder(
-            message,
-            { button -> client!!.setScreen(screen) }
-        ).width(200).build()
+        Config.Instance.save()
+        this.client!!.setScreen(parent)
     }
 }

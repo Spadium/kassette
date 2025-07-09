@@ -10,11 +10,11 @@ import java.net.URI
 import javax.net.ssl.HttpsURLConnection
 import kotlin.math.floor
 
-class DebugProvider: AccountMediaProvider() {
-    override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
+class DebugProvider: AccountMediaProvider {
     override var info = MediaInfo(
         60L, 0L, "TITLE", "ALBUM",
-        "ARTIST", MediaManager.getDefaultCoverArt(), getServiceName()
+        "ARTIST", MediaManager.getDefaultCoverArt(), getServiceName(),
+        MediaManager.MediaState.OTHER
     )
     private var f = 0f
     private var accumulator: Int = 0
@@ -27,16 +27,12 @@ class DebugProvider: AccountMediaProvider() {
         return "Debug"
     }
 
-    override fun init() {
+    constructor() {
         Kassette.logger.debug("MEDIA PROVIDER INIT")
     }
 
     override fun destroy() {
         Kassette.logger.debug("MEDIA PROVIDER DESTROYED")
-    }
-
-    override fun getMedia(): MediaInfo {
-        return info
     }
 
     override suspend fun update() {
@@ -52,15 +48,15 @@ class DebugProvider: AccountMediaProvider() {
             info.currentPosition = 0
         }
 
-        state = when (floor(f)) {
+        info.state = when (floor(f)) {
             0f -> MediaManager.MediaState.PLAYING
             1f -> MediaManager.MediaState.PAUSED
             2f -> MediaManager.MediaState.LOADING
             3f -> MediaManager.MediaState.OTHER
-            else -> state
+            else -> info.state
         }
 
-        when (state) {
+        when (info.state) {
             MediaManager.MediaState.OTHER -> {
                 info.coverArt = NativeImage.read(
                     MinecraftClient.getInstance().resourceManager

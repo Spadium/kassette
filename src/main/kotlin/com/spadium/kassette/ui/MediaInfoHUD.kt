@@ -49,6 +49,7 @@ class MediaInfoHUD {
     )
     private lateinit var firstLineManager: MarqueeTextManager
     private lateinit var secondLineManager: MarqueeTextManager
+    private lateinit var thirdLineManager: MarqueeTextManager
 
     constructor() {
         HudElementRegistry.attachElementBefore(
@@ -71,7 +72,6 @@ class MediaInfoHUD {
                 coverArtIdentifier,
                 coverArt
             )
-            println("Reloading texture")
         }
     }
 
@@ -87,12 +87,13 @@ class MediaInfoHUD {
         if (!::firstLineManager.isInitialized) {
             firstLineManager = MarqueeTextManager(context)
             secondLineManager = MarqueeTextManager(context)
+            thirdLineManager = MarqueeTextManager(context)
         }
         mediaInfo = MediaManager.provider.info
         setupCoverArt()
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
-        val artSize: Int = (hudConfig.height.toFloat() * (3f/4f)).toInt()
+        val artSize: Int = ((hudConfig.height.toFloat() - hudConfig.progressBarThickness) * (3f/4f)).toInt()
 
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
@@ -104,15 +105,15 @@ class MediaInfoHUD {
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
             Identifier.of("kassette:coverart"),
-            2,
-            ((hudConfig.height / 2) - (16)),
+            8,
+            (((hudConfig.height + hudConfig.progressBarThickness) / 2) - (artSize / 2)),
             0f, 0f,
             artSize, artSize,
             artSize, artSize
         )
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
-            MediaManager.provider.state.texture,
+            MediaManager.provider.info.state.texture,
             2, ((hudConfig.height / 2) + 8),
             8, 8
         )
@@ -120,13 +121,19 @@ class MediaInfoHUD {
         firstLineManager.text = getFirstLine()
         firstLineManager.renderText(
             50, 2 + textRenderer.fontHeight, 0xFFFFFFFF.toInt(),
-            true, 8, 3, (positionIndicator >= scrollThreshold)
+            true, 14, 3, (positionIndicator >= scrollThreshold)
         )
 
         secondLineManager.text = getSecondLine()
         secondLineManager.renderText(
             50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
-            true, 8, 3, (positionIndicator >= scrollThreshold)
+            true, 14, 3, (positionIndicator >= scrollThreshold)
+        )
+        thirdLineManager.text = MediaManager.provider.getServiceName()
+        thirdLineManager.renderText(
+            50, 2 + (textRenderer.fontHeight * 3) + (hudConfig.lineSpacing * 2),
+            0xFF555555.toInt(),
+            true, 14, 3, (positionIndicator >= scrollThreshold)
         )
 
         drawProgressBar(context)

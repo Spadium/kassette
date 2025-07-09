@@ -1,6 +1,9 @@
 package com.spadium.kassette.ui.screens.config
 
+import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.util.KassetteUtils
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
@@ -22,6 +25,12 @@ class ProvidersScreen: Screen {
         val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
         sectionButtons.add(
             KassetteUtils.createButtonToScreen(
+                Text.translatable("kassette.config.button.currentprovider"),
+                getScreenForProvider()
+            )
+        )
+        sectionButtons.add(
+            KassetteUtils.createButtonToScreen(
                 Text.translatable("kassette.config.button.spotify"),
                 SpotifyScreen(this)
             )
@@ -41,7 +50,21 @@ class ProvidersScreen: Screen {
         layout.refreshPositions()
     }
 
+    private fun getScreenForProvider(): Screen? {
+        val provider = MediaManager.provider
+        return when (provider::class.simpleName) {
+            "SpotifyProvider" -> SpotifyScreen(this)
+            else -> null
+        }
+    }
+
+    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        clearAndInit()
+        super.render(context, mouseX, mouseY, deltaTicks)
+    }
+
     override fun close() {
-        this.client!!.setScreen(this.parent)
+        Config.Instance.save()
+        this.client!!.setScreen(parent)
     }
 }

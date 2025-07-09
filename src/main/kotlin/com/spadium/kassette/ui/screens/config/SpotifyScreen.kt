@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui.screens.config
 
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
@@ -28,7 +29,7 @@ class SpotifyScreen: Screen {
         gridLayout.mainPositioner.margin(4, 4, 4, 0)
         gridAdder.add(
             ButtonWidget.builder(
-                Text.translatable("kassette.config.login"),
+                Text.translatable("kassette.config.button.login"),
                 { button -> Util.getOperatingSystem().open("https://www.google.com") }
             ).width(50 ).build(),
             1
@@ -53,6 +54,7 @@ class SpotifyScreen: Screen {
     }
 
     override fun close() {
-        this.client!!.setScreen(this.parent)
+        Config.Instance.save()
+        this.client!!.setScreen(parent)
     }
 }

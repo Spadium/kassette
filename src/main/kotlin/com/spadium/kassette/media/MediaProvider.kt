@@ -1,12 +1,6 @@
 package com.spadium.kassette.media
 
 abstract class MediaProvider {
-    constructor() {
-        this.init()
-    }
-
-    open var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
-
     abstract val info: MediaInfo
 
     abstract fun getServiceName(): String
@@ -14,7 +8,6 @@ abstract class MediaProvider {
         "Constructors will initialize providers since git commit 964028d3! This will be removed by release!",
         ReplaceWith("constructor()")
     )
-    open fun init() {}
 
     abstract fun destroy()
 

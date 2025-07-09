@@ -4,7 +4,7 @@ import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 
 class PlaceholderProvider: MediaProvider {
-    override var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
+    private var state: MediaManager.MediaState = MediaManager.MediaState.OTHER
     override val info: MediaInfo = getMedia()
 
     override fun getServiceName(): String {

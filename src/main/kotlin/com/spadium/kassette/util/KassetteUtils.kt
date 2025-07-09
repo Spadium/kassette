@@ -7,11 +7,14 @@ import net.minecraft.text.Text
 
 class KassetteUtils {
     companion object {
-        fun createButtonToScreen(message: Text, screen: Screen): ButtonWidget {
-            return ButtonWidget.builder(
+        fun createButtonToScreen(message: Text, screen: Screen?): ButtonWidget {
+            val button = ButtonWidget.builder(
                 message,
-                { button -> MinecraftClient.getInstance().setScreen(screen) }
+                { button -> if (screen != null) MinecraftClient.getInstance().setScreen(screen) }
             ).width(200).build()
+            button.active = (screen != null)
+
+            return button
         }
     }
 }

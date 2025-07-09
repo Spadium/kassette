@@ -66,7 +66,6 @@ open class Kassette : ClientModInitializer {
             MediaInfoHUD()
             MediaManager.provider = SpotifyProvider()
             (MediaManager.provider as AccountMediaProvider).initiateLogin()
-//            MediaManager.provider.init()
             thread(name = "Kassette MediaManager Thread") {
                 while (client.isRunning) {
                     try {
@@ -79,6 +78,7 @@ open class Kassette : ClientModInitializer {
                         MediaManager.provider = PlaceholderProvider()
                     }
                 }
+                MediaManager.provider.destroy()
             }
         }
         logger.info("Locked and loaded")

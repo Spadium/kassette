@@ -45,7 +45,7 @@ class MediaInfoScreen(title: Text) : Screen(title) {
                     Text.empty(),
                     it.onPress,
                     true
-                ).texture(MediaManager.provider.state.texture, 16, 16).width(20).build()
+                ).texture(MediaManager.provider.info.state.texture, 16, 16).width(20).build()
             )
         }
         gridWidget.forEachChild { widget ->
@@ -57,8 +57,8 @@ class MediaInfoScreen(title: Text) : Screen(title) {
     private enum class AvailableButtons(val sprite: Identifier, val onPress: ButtonWidget.PressAction) {
         PREVIOUS(Identifier.of("kassette", "test"), { button -> println("previous")}),
         PLAY_PAUSE(
-            MediaManager.provider.state.texture,
-            { button -> MediaManager.provider.state = MediaManager.MediaState.PAUSED}
+            MediaManager.provider.info.state.texture,
+            { button -> MediaManager.provider.info.state = MediaManager.MediaState.PAUSED}
         ),
         NEXT(Identifier.of("kassette", "other"), { button -> println("next")}),
         CLOSE(Identifier.of("kassette", "other"), { button -> MinecraftClient.getInstance().setScreen(null) })
@@ -82,7 +82,7 @@ class MediaInfoScreen(title: Text) : Screen(title) {
             centeredX + 16, centeredY + 32, 0f, 0f, 64, 64, 64, 64
         )
         context?.drawGuiTexture(
-            RenderPipelines.GUI_TEXTURED, MediaManager.provider.state.texture,
+            RenderPipelines.GUI_TEXTURED, MediaManager.provider.info.state.texture,
             centeredX + textRenderer.getWidth(title) + 8, centeredY + 6,
             8,8, Colors.BLACK
         )

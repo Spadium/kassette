@@ -54,7 +54,7 @@ class MediaProviderUtilScreen(title: Text): Screen(title) {
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         context?.drawGuiTexture(
-            RenderPipelines.GUI_TEXTURED, MediaManager.provider.state.texture,
+            RenderPipelines.GUI_TEXTURED, MediaManager.provider.info.state.texture,
             centeredX + textRenderer.getWidth(title) + 8, centeredY + 6,
             8,8, Colors.BLACK
         )

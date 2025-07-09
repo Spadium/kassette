@@ -1,6 +1,7 @@
 package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.ModInfo
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.util.KassetteUtils
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -42,7 +43,7 @@ class AboutScreen: Screen {
         date(LocalDate.Formats.ISO); chars("  ")
         amPmHour(); chars(":"); minute(); chars(":"); second(); amPmMarker("AM", "PM")
     }
-    private val layout = ThreePartsLayoutWidget(this, 32, 32)
+    private val layout = ThreePartsLayoutWidget(this, 32)
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.about.title")) {
         this.parent = parent
@@ -51,10 +52,15 @@ class AboutScreen: Screen {
     override fun init() {
         val headerLayout = layout.addHeader(DirectionalLayoutWidget.vertical().spacing(4))
         headerLayout.add(TextWidget(title, textRenderer), Positioner::alignHorizontalCenter)
+        headerLayout.mainPositioner.alignVerticalCenter()
 
         val gridLayout = GridWidget()
         gridLayout.setSpacing(8)
-        gridLayout.mainPositioner.marginX(0).marginBottom(0).alignHorizontalCenter()
+        gridLayout.mainPositioner
+            .marginX(4)
+            .marginBottom(4)
+            .alignHorizontalCenter()
+
         val gridAdder = gridLayout.createAdder(2)
         gridAdder.add(IconWidget.create(
             256, 64,
@@ -64,6 +70,18 @@ class AboutScreen: Screen {
             ),
             256, 64
         ), 2)
+        gridAdder.add(
+            TextWidget(
+                Text.translatable("kassette.config.about.version"),
+                textRenderer
+            )
+        )
+        gridAdder.add(
+            TextWidget(
+                Text.literal(FabricLoader.getInstance().getModContainer("kassette").get().metadata.version.friendlyString),
+                textRenderer
+            )
+        )
         gridAdder.add(
             TextWidget(
                 Text.translatable("kassette.config.about.type"),

@@ -12,6 +12,7 @@ import net.minecraft.util.Util
 import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials
+import se.michaelthelin.spotify.model_objects.specification.Episode
 import se.michaelthelin.spotify.model_objects.specification.Track
 import java.net.URI
 import kotlin.math.PI
@@ -84,11 +85,14 @@ class SpotifyProvider : AccountMediaProvider {
             val currentlyPlayingCtx = clientApi.informationAboutUsersCurrentPlayback.build().execute()
             if (currentlyPlayingCtx != null) {
                 val item = currentlyPlayingCtx.item
-                if (infoToReturn.currentPosition != currentlyPlayingCtx.progress_ms.toLong()) {
-                    println("(${infoToReturn.maximumTime} / ${infoToReturn.currentPosition})")
-                }
                 infoToReturn.currentPosition = currentlyPlayingCtx.progress_ms.toLong()
                 infoToReturn.maximumTime = currentlyPlayingCtx.item.durationMs.toLong()
+
+                infoToReturn.state = if (currentlyPlayingCtx.is_playing) {
+                    MediaManager.MediaState.PLAYING
+                } else {
+                    MediaManager.MediaState.PAUSED
+                }
                 if (currentlyPlayingCtx.item.type == ModelObjectType.TRACK && item is Track) {
                     infoToReturn.album = item.album.name
                     infoToReturn.title = item.name
@@ -108,8 +112,14 @@ class SpotifyProvider : AccountMediaProvider {
                     infoToReturn.artist = artistStr
                     if (item.album.images[0].url != lastImageUrl) {
                         lastImageUrl = item.album.images[0].url
-                        infoToReturn.coverArt = NativeImage.read(URI(item.album.images[0].url).toURL().openStream())
+                        val stream = URI(item.album.images[0].url).toURL().openStream()
+                        infoToReturn.coverArt = NativeImage.read(stream)
+                        stream.close()
                     }
+                } else if (currentlyPlayingCtx.item.type == ModelObjectType.EPISODE && item is Episode) {
+
+                } else {
+
                 }
             }
 
