@@ -63,7 +63,7 @@ open class Kassette : ClientModInitializer {
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
-            MediaInfoHUD().setup()
+            MediaInfoHUD()
             MediaManager.provider = SpotifyProvider()
             (MediaManager.provider as AccountMediaProvider).initiateLogin()
 //            MediaManager.provider.init()

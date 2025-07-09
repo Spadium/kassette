@@ -57,12 +57,7 @@ class MediaInfoScreen(title: Text) : Screen(title) {
     private enum class AvailableButtons(val sprite: Identifier, val onPress: ButtonWidget.PressAction) {
         PREVIOUS(Identifier.of("kassette", "test"), { button -> println("previous")}),
         PLAY_PAUSE(
-            when (MediaManager.provider.state) {
-                MediaManager.MediaState.PLAYING -> Identifier.of("kassette", "play")
-                MediaManager.MediaState.PAUSED -> Identifier.of("kassette", "pause")
-                MediaManager.MediaState.LOADING -> Identifier.of("kassette", "loading")
-                else -> Identifier.of("kassette", "other")
-            },
+            MediaManager.provider.state.texture,
             { button -> MediaManager.provider.state = MediaManager.MediaState.PAUSED}
         ),
         NEXT(Identifier.of("kassette", "other"), { button -> println("next")}),
@@ -91,7 +86,7 @@ class MediaInfoScreen(title: Text) : Screen(title) {
             centeredX + textRenderer.getWidth(title) + 8, centeredY + 6,
             8,8, Colors.BLACK
         )
-        init()
+        clearAndInit()
         super.render(context, mouseX, mouseY, deltaTicks)
     }
 

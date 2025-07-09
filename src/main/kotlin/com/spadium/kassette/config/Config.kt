@@ -40,7 +40,7 @@ data class Config(
         backgroundColor = intArrayOf(0,0,0, 255),
         borderColor = intArrayOf(0,255,0, 255),
         textSpeed = 1,
-        fancyTextSpeed = 5,
+        fancyTextSpeed = 2,
         showCover = true,
         fancyText = true,
         progressType = HUDConfig.ProgressType.BAR,
@@ -48,8 +48,12 @@ data class Config(
         progressBarThickness = 4
     ),
     var callbackPort: UInt = 61008u,
+    var infoMode: InfoMode = InfoMode.HUD,
     val version: UInt = configVersion
 ) {
+    enum class InfoMode {
+        HIDDEN, HUD, TOAST
+    }
 
     companion object {
         @OptIn(ExperimentalUnsignedTypes::class)

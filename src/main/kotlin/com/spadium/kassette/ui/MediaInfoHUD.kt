@@ -25,8 +25,7 @@ class MediaInfoHUD {
     private var timeDelta: Double = 0.0
     private var positionIndicator: Double = 0.0
     private var previousTime: Long = 0
-
-    private var mediaInfo: MediaInfo = MediaManager.provider.getMedia()
+    private var mediaInfo: MediaInfo = MediaManager.provider.info
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
     private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(
@@ -48,8 +47,10 @@ class MediaInfoHUD {
         hudConfig.backgroundColor[1],
         hudConfig.backgroundColor[2]
     )
+    private lateinit var firstLineManager: MarqueeTextManager
+    private lateinit var secondLineManager: MarqueeTextManager
 
-    fun setup() {
+    constructor() {
         HudElementRegistry.attachElementBefore(
             VanillaHudElements.HOTBAR, MEDIA_LAYER,
             this::render
@@ -57,8 +58,8 @@ class MediaInfoHUD {
     }
 
     fun setupCoverArt() {
-        val textureManager = MinecraftClient.getInstance().textureManager
         if (MediaManager.provider.getMedia().coverArt != coverArt.image) {
+            val textureManager = MinecraftClient.getInstance().textureManager
             val coverImage = MediaManager.provider.getMedia().coverArt
             coverArt.close()
             coverArt = NativeImageBackedTexture(
@@ -75,18 +76,23 @@ class MediaInfoHUD {
     }
 
     private fun getFirstLine(): String {
-        return "${MediaManager.provider.getMedia().title} - ${MediaManager.provider.getMedia().artist}"
+        return "${mediaInfo.title} - ${mediaInfo.artist}"
     }
 
     private fun getSecondLine(): String {
-        return MediaManager.provider.getMedia().album
+        return mediaInfo.album
     }
 
     private fun render(context: DrawContext, tickCounter: RenderTickCounter) {
+        if (!::firstLineManager.isInitialized) {
+            firstLineManager = MarqueeTextManager(context)
+            secondLineManager = MarqueeTextManager(context)
+        }
+        mediaInfo = MediaManager.provider.info
         setupCoverArt()
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
-        val artSize: Int = round(hudConfig.height.toFloat() * (3/4)).toInt()
+        val artSize: Int = (hudConfig.height.toFloat() * (3f/4f)).toInt()
 
         // Delta-Time in seconds
         timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
@@ -111,19 +117,18 @@ class MediaInfoHUD {
             8, 8
         )
 
-        textWrapper(
-            context, textRenderer, getFirstLine(),
+        firstLineManager.text = getFirstLine()
+        firstLineManager.renderText(
             50, 2 + textRenderer.fontHeight, 0xFFFFFFFF.toInt(),
-            true, 8, 3,
-            (positionIndicator >= scrollThreshold),
-            isFancy
+            true, 8, 3, (positionIndicator >= scrollThreshold)
         )
-        textWrapper(
-            context, textRenderer, mediaInfo.artist,
+
+        secondLineManager.text = getSecondLine()
+        secondLineManager.renderText(
             50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
-            true, 8, 3,
-            (positionIndicator >= scrollThreshold), isFancy
+            true, 8, 3, (positionIndicator >= scrollThreshold)
         )
+
         drawProgressBar(context)
         context.drawBorder(
             0, 0,
@@ -152,40 +157,6 @@ class MediaInfoHUD {
         if (progressBarWidth > 0) {
             context.fill(
                 1, 1, floor((hudConfig.width - 1) * progress).toInt(), hudConfig.progressBarThickness, Colors.RED
-            )
-        }
-    }
-
-    private fun textWrapper(
-        context: DrawContext,
-        textRenderer: TextRenderer,
-        text: String,
-        x: Int,
-        y: Int,
-        color: Int,
-        shadow: Boolean,
-        maxLength: Int,
-        spacingBetween: Int,
-        shouldScroll: Boolean,
-        isFancy: Boolean
-    ) {
-        if (isFancy) {
-            context.drawMarqueeFancy(
-                textRenderer,
-                text,
-                x, y,
-                color,
-                shadow,
-                maxLength, spacingBetween, shouldScroll
-            )
-        } else {
-            context.drawMarquee(
-                textRenderer,
-                text,
-                x, y,
-                color,
-                shadow,
-                maxLength, spacingBetween, shouldScroll
             )
         }
     }
