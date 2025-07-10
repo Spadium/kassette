@@ -4,12 +4,14 @@ import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.Identifier
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
+import kotlin.properties.Delegates
 
 /*
     Config class
@@ -23,7 +25,6 @@ private val json: Json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     allowComments = true
-
 }
 private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.json")
 
@@ -59,8 +60,22 @@ data class Config(
 
     companion object {
         @OptIn(ExperimentalUnsignedTypes::class)
-        var Instance: Config = Config()
+//        var Instance: Config = Config()
+        var Instance: Config by Delegates.observable(Config()) {
+            property, oldValue, newValue ->
+            yellAtListeners()
+        }
+        val configUpdateListeners: MutableList<() -> Unit> = mutableListOf()
 
+        fun addListener(listener: () -> Unit) {
+            configUpdateListeners.add(listener)
+        }
+
+        private fun yellAtListeners() {
+            configUpdateListeners.forEach {
+                it()
+            }
+        }
         @OptIn(ExperimentalSerializationApi::class)
         fun load(): Config {
             val jsonIn: Config = json.decodeFromStream(configFile.toFile().inputStream())

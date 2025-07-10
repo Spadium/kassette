@@ -18,7 +18,7 @@ class MediaInfoScreen : Screen {
     private val screenHeight = 128
     private var centeredX = 0
     private var centeredY = 0
-
+    private var savedInfo = MediaManager.provider.info
     constructor() : super(Text.translatable("kassette.popup.title", MediaManager.provider.info.provider))
 
     override fun init() {
@@ -63,18 +63,48 @@ class MediaInfoScreen : Screen {
         gridAdder.add(
             thirdLine, 3
         )
-        AvailableButtons.entries.forEach {
-            val button = TextIconButtonWidget.builder(
+        val previousTrackButton = gridAdder.add(
+            TextIconButtonWidget.builder(
                 Text.empty(),
-                it.onPress,
+                { button -> MediaManager.provider.sendCommand("previousTrack", null) },
                 true
-            ).texture(it.sprite, 16, 16).width(20).build()
-            button.active = it.isActive
-            button.setTooltip(Tooltip.of(it.tooltip))
-            gridAdder.add(
-                button
-            )
-        }
+            ).texture(
+                Identifier.of("kassette", "previous"),
+                16, 16
+            ).width(20).build()
+        )
+        previousTrackButton.active = MediaManager.provider.availableCommands.contains("previousTrack")
+        previousTrackButton.setTooltip(Tooltip.of(Text.literal("Previous Track")))
+
+        val playPauseButton = gridAdder.add(
+            TextIconButtonWidget.builder(
+                Text.empty(),
+                { button -> MediaManager.provider.sendCommand("togglePlay", null) },
+                true
+            ).texture(
+                when (MediaManager.provider.info.state) {
+                    MediaManager.MediaState.PLAYING -> Identifier.of("kassette", "pause")
+                    MediaManager.MediaState.PAUSED -> Identifier.of("kassette", "play")
+                    else -> Identifier.of("kassette", "loading")
+                }, 16, 16
+            ).width(20).build()
+        )
+        playPauseButton.active = MediaManager.provider.availableCommands.contains("togglePlay")
+        playPauseButton.setTooltip(Tooltip.of(Text.literal("Play/Pause")))
+
+        val nextTrackButton = gridAdder.add(
+            TextIconButtonWidget.builder(
+                Text.empty(),
+                { button -> MediaManager.provider.sendCommand("nextTrack", null) },
+                true
+            ).texture(
+                Identifier.of("kassette", "next"),
+                16, 16
+            ).width(20).build()
+        )
+        nextTrackButton.active = MediaManager.provider.availableCommands.contains("nextTrack")
+        nextTrackButton.setTooltip(Tooltip.of(Text.literal("Next Track")))
+
         containerWidget.forEachChild { widget ->
             addDrawableChild(widget)
         }
@@ -88,31 +118,6 @@ class MediaInfoScreen : Screen {
         gridWidget.refreshPositions()
     }
 
-    private enum class AvailableButtons(
-        val sprite: Identifier, val onPress: ButtonWidget.PressAction,
-        val tooltip: Text, val isActive: Boolean
-    ) {
-        PREVIOUS(
-            Identifier.of("kassette", "previous"),
-            { button -> MediaManager.provider.sendCommand("previousTrack", null) },
-            Text.literal("Previous Track"), MediaManager.provider.availableCommands.contains("previousTrack")
-        ),
-        PLAY_PAUSE(
-            when (MediaManager.provider.info.state) {
-                MediaManager.MediaState.PLAYING -> Identifier.of("kassette", "pause")
-                MediaManager.MediaState.PAUSED -> Identifier.of("kassette", "play")
-                else -> Identifier.of("kassette", "loading")
-            },
-            { button -> MediaManager.provider.sendCommand("togglePlay", null) },
-            Text.literal("Play/Pause"), MediaManager.provider.availableCommands.contains("togglePlay")
-        ),
-        NEXT(
-            Identifier.of("kassette", "next"),
-            { button -> MediaManager.provider.sendCommand("nextTrack", null) },
-            Text.literal("Next Track"), MediaManager.provider.availableCommands.contains("nextTrack")
-        )
-    }
-
     override fun renderBackground(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.renderBackground(context, mouseX, mouseY, deltaTicks)
         context?.drawTexture(
@@ -123,7 +128,10 @@ class MediaInfoScreen : Screen {
     }
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        clearAndInit()
+        if (savedInfo != MediaManager.provider.info) {
+            clearAndInit()
+            println("different infos!")
+        }
         context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         super.render(context, mouseX, mouseY, deltaTicks)
     }

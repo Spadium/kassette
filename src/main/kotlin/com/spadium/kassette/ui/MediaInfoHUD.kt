@@ -36,28 +36,28 @@ class MediaInfoHUD {
     )
     private val coverArtIdentifier = Identifier.of("kassette:coverart")
     private val largeCoverArtIdentifier = Identifier.of("kassette:coverart_large")
-    private val config = Config.Instance
-    private val hudConfig = config.hud
-    private val isFancy = hudConfig.fancyText
-    private val borderColor = ColorHelper.getArgb(
+    private var config = Config.Instance
+    private var hudConfig = config.hud
+    private var isFancy = hudConfig.fancyText
+    private var borderColor = ColorHelper.getArgb(
         hudConfig.backgroundColor[3],
         hudConfig.borderColor[0],
         hudConfig.borderColor[1],
         hudConfig.borderColor[2]
     )
-    private val backgroundColor = ColorHelper.getArgb(
+    private var backgroundColor = ColorHelper.getArgb(
         hudConfig.backgroundColor[3],
         hudConfig.backgroundColor[0],
         hudConfig.backgroundColor[1],
         hudConfig.backgroundColor[2]
     )
-    private val progressBarBg = ColorHelper.getArgb(
+    private var progressBarBg = ColorHelper.getArgb(
         hudConfig.progressBackgroundColor[3],
         hudConfig.progressBackgroundColor[0],
         hudConfig.progressBackgroundColor[1],
         hudConfig.progressBackgroundColor[2]
     )
-    private val progressBarFg = ColorHelper.getArgb(
+    private var progressBarFg = ColorHelper.getArgb(
         hudConfig.progressForegroundColor[3],
         hudConfig.progressForegroundColor[0],
         hudConfig.progressForegroundColor[1],
@@ -72,9 +72,39 @@ class MediaInfoHUD {
             VanillaHudElements.HOTBAR, MEDIA_LAYER,
             this::render
         )
+        Config.addListener { this.updateVariables() }
     }
 
-    fun setupCoverArt() {
+    private fun updateVariables() {
+        config = Config.Instance
+        hudConfig = config.hud
+        borderColor = ColorHelper.getArgb(
+            hudConfig.backgroundColor[3],
+            hudConfig.borderColor[0],
+            hudConfig.borderColor[1],
+            hudConfig.borderColor[2]
+        )
+        backgroundColor = ColorHelper.getArgb(
+            hudConfig.backgroundColor[3],
+            hudConfig.backgroundColor[0],
+            hudConfig.backgroundColor[1],
+            hudConfig.backgroundColor[2]
+        )
+        progressBarBg = ColorHelper.getArgb(
+            hudConfig.progressBackgroundColor[3],
+            hudConfig.progressBackgroundColor[0],
+            hudConfig.progressBackgroundColor[1],
+            hudConfig.progressBackgroundColor[2]
+        )
+        progressBarFg = ColorHelper.getArgb(
+            hudConfig.progressForegroundColor[3],
+            hudConfig.progressForegroundColor[0],
+            hudConfig.progressForegroundColor[1],
+            hudConfig.progressForegroundColor[2]
+        )
+    }
+
+    private fun setupCoverArt() {
         if (MediaManager.provider.getMedia().coverArt != coverArt.image) {
             val textureManager = MinecraftClient.getInstance().textureManager
             val coverImage = MediaManager.provider.getMedia().coverArt
@@ -136,8 +166,8 @@ class MediaInfoHUD {
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
             MediaManager.provider.info.state.texture,
-            2, ((hudConfig.height / 2) + 8),
-            8, 8
+            hudConfig.width - 17, 2 + (textRenderer.fontHeight * 3) + (hudConfig.lineSpacing * 2),
+            textRenderer.fontHeight, textRenderer.fontHeight
         )
 
         firstLineManager.text = getFirstLine()

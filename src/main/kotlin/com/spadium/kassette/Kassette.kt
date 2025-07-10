@@ -41,6 +41,10 @@ open class Kassette : ClientModInitializer {
             errors.put("Authentication Callback Server", e)
         }
 
+        Config.addListener {
+            println("test")
+        }
+
         Config.Instance = Config.reload()
 
         val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(
@@ -84,7 +88,7 @@ open class Kassette : ClientModInitializer {
                             e
                         )
                         client.toastManager.add(ErrorToast("Error from ${MediaManager.provider.getServiceName()}!"))
-                        MediaManager.setProvider(Identifier.of("kassette::placeholder"))
+                        MediaManager.setProvider(Identifier.of("kassette:placeholder"))
                     }
                 }
                 MediaManager.provider.destroy()
