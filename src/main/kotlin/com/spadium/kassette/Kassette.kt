@@ -30,7 +30,7 @@ import kotlin.concurrent.thread
 open class Kassette : ClientModInitializer {
     companion object {
         val logger: Logger = LoggerFactory.getLogger("Kassette")
-        val errors: MutableMap<String, Exception> = mutableMapOf()
+        val errors: MutableMap<String, Throwable> = mutableMapOf()
     }
 
     override fun onInitializeClient() {
@@ -80,7 +80,7 @@ open class Kassette : ClientModInitializer {
                         runBlocking {
                             MediaManager.provider.update()
                         }
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         e.printStackTrace()
                         logger.warn("Exception thrown by provider for \"${MediaManager.provider.getServiceName()}\"! Using PlaceholderProvider as fallback!")
                         errors.put(

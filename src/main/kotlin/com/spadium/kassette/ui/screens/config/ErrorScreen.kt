@@ -11,9 +11,9 @@ import net.minecraft.text.Text
 class ErrorScreen: Screen {
     val layout = ThreePartsLayoutWidget(this)
     val parent: Screen?
-    var errors: MutableMap<String, Exception>
+    var errors: MutableMap<String, Throwable>
 
-    constructor(parent: Screen?, errors: MutableMap<String, Exception>) : super(Text.translatable("kassette.error.title")) {
+    constructor(parent: Screen?, errors: MutableMap<String, Throwable>) : super(Text.translatable("kassette.error.title")) {
         this.parent = parent
         this.errors = errors
     }
