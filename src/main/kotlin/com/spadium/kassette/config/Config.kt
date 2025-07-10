@@ -32,7 +32,7 @@ private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.
 data class Config(
     var providers: ProvidersConfig = ProvidersConfig(
         defaultProvider = Identifier.of("kassette:placeholder"),
-        spotify = SpotifyConfig("", "", "", "", 0L, 0L),
+        spotify = SpotifyConfig("", "", "", "", 0L, 0L, false),
     ),
     var hud: HUDConfig = HUDConfig(
         width = 128,

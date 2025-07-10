@@ -34,7 +34,7 @@ class SpotifyProvider : AccountMediaProvider {
         "authSendStr", "togglePlay", "nextTrack", "previousTrack"
     )
     private var requestsMadeBeforeLimit = 0
-    private var cooldownTime = System.currentTimeMillis()
+    private var cooldownStartTime = 0L
 
     enum class ProviderState {
         NONE, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN, COOLDOWN
@@ -55,6 +55,12 @@ class SpotifyProvider : AccountMediaProvider {
             }
             requestsMadeBeforeLimit++
         }
+
+        Config.addListener { this.onConfigUpdate() }
+    }
+
+    private fun onConfigUpdate() {
+        config = Config.Instance
     }
 
     override fun destroy() {
@@ -84,17 +90,24 @@ class SpotifyProvider : AccountMediaProvider {
         } else if (providerState == ProviderState.POST_TOKEN_SETUP) {
             providerState = ProviderState.SIGNED_IN
         } else if (providerState == ProviderState.SIGNED_IN) {
-            getCurrentPlayback()
+            try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
         } else if (providerState == ProviderState.COOLDOWN) {
             delay(1000)
             try {
                 getCurrentPlayback()
             } catch (jsonException: JsonParseException) {
                 // Fail silently on JsonParseExceptions to avoid switching to the placeholder provider
-                // when we woudln't need to! For some reason spotify randomly gives us malformed json.
+                // when we wouldn't need to! For some reason spotify randomly gives us malformed json.
             }
         }
-        if (requestsMadeBeforeLimit >= 20) {
+        if (requestsMadeBeforeLimit >= 100 && config.providers.spotify.ignoreRateLimits) {
+            if (cooldownStartTime == 0L) {
+                cooldownStartTime = System.currentTimeMillis()
+            } else if (cooldownStartTime + 30000 >= System.currentTimeMillis()) {
+                cooldownStartTime = 0L
+                requestsMadeBeforeLimit = 0
+                providerState = ProviderState.SIGNED_IN
+            }
             providerState = ProviderState.COOLDOWN
         }
     }

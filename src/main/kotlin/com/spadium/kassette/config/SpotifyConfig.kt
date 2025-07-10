@@ -9,5 +9,6 @@ data class SpotifyConfig(
     var accessToken: String,
     var refreshToken: String,
     var createdAt: Long,
-    var nextRefresh: Long
+    var nextRefresh: Long,
+    var ignoreRateLimits: Boolean
 )

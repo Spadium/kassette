@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui.screens
 
+import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.MediaProvider
 import net.minecraft.client.MinecraftClient
@@ -12,13 +13,17 @@ import net.minecraft.text.Text
 import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 import javax.print.attribute.standard.Media
+import kotlin.properties.Delegates
 
 class MediaInfoScreen : Screen {
     private val screenWidth = 256
     private val screenHeight = 128
     private var centeredX = 0
     private var centeredY = 0
-    private var savedInfo = MediaManager.provider.info
+    private var savedInfo: MediaInfo by Delegates.observable(MediaManager.provider.info) {
+        property, oldValue, newValue ->
+        println("test")
+    }
     constructor() : super(Text.translatable("kassette.popup.title", MediaManager.provider.info.provider))
 
     override fun init() {
