@@ -20,6 +20,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -52,9 +53,7 @@ open class Kassette : ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { client: MinecraftClient? ->
             while (openMediaInfoKeybind.wasPressed()) {
-                client!!.setScreen(
-                    MediaInfoScreen(Text.translatable("kassette.popup.title"))
-                )
+                client!!.setScreen(MediaInfoScreen())
             }
         })
 
@@ -67,8 +66,10 @@ open class Kassette : ClientModInitializer {
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             MediaInfoHUD()
-            MediaManager.provider = SpotifyProvider()
-            (MediaManager.provider as AccountMediaProvider).initiateLogin()
+            MediaManager.setProvider(Config.Instance.providers.defaultProvider)
+            if (MediaManager.provider is AccountMediaProvider) {
+                (MediaManager.provider as AccountMediaProvider).initiateLogin()
+            }
             thread(name = "Kassette MediaManager Thread") {
                 while (client.isRunning) {
                     try {
@@ -83,7 +84,7 @@ open class Kassette : ClientModInitializer {
                             e
                         )
                         client.toastManager.add(ErrorToast("Error from ${MediaManager.provider.getServiceName()}!"))
-                        MediaManager.provider = PlaceholderProvider()
+                        MediaManager.setProvider(Identifier.of("kassette::placeholder"))
                     }
                 }
                 MediaManager.provider.destroy()

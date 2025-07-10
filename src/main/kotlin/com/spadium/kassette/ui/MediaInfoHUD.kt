@@ -31,7 +31,11 @@ class MediaInfoHUD {
     private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(
         { "coverart" }, MediaManager.getDefaultCoverArt()
     )
+    private var largeCoverArt: NativeImageBackedTexture = NativeImageBackedTexture(
+        { "coverart_large" }, MediaManager.getDefaultCoverArt()
+    )
     private val coverArtIdentifier = Identifier.of("kassette:coverart")
+    private val largeCoverArtIdentifier = Identifier.of("kassette:coverart_large")
     private val config = Config.Instance
     private val hudConfig = config.hud
     private val isFancy = hudConfig.fancyText
@@ -80,10 +84,16 @@ class MediaInfoHUD {
             )
             coverArt.setFilter(true, true)
             coverArt.upload()
-            textureManager.registerTexture(
-                coverArtIdentifier,
-                coverArt
+
+            largeCoverArt.close()
+            largeCoverArt = NativeImageBackedTexture(
+                { "coverart_large" }, coverImage
             )
+            largeCoverArt.setFilter(false, false)
+            largeCoverArt.upload()
+
+            textureManager.registerTexture(coverArtIdentifier, coverArt)
+            textureManager.registerTexture(largeCoverArtIdentifier, largeCoverArt)
         }
     }
 

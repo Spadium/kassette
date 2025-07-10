@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.util.Identifier
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
 
@@ -29,6 +30,7 @@ private val configFile = FabricLoader.getInstance().configDir.resolve("kassette.
 @Serializable
 data class Config(
     var providers: ProvidersConfig = ProvidersConfig(
+        defaultProvider = Identifier.of("kassette:placeholder"),
         spotify = SpotifyConfig("", "", "", "", 0L, 0L),
     ),
     var hud: HUDConfig = HUDConfig(
