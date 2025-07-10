@@ -1,5 +1,6 @@
 package com.spadium.kassette.media.spotify
 
+import com.google.gson.JsonParseException
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.SpotifyConfig
@@ -13,10 +14,8 @@ import net.minecraft.util.Util
 import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials
-import se.michaelthelin.spotify.model_objects.specification.Episode
 import se.michaelthelin.spotify.model_objects.specification.Track
 import java.net.URI
-import kotlin.math.PI
 
 class SpotifyProvider : AccountMediaProvider {
     private var clientApi: SpotifyApi
@@ -88,7 +87,12 @@ class SpotifyProvider : AccountMediaProvider {
             getCurrentPlayback()
         } else if (providerState == ProviderState.COOLDOWN) {
             delay(1000)
-            getCurrentPlayback()
+            try {
+                getCurrentPlayback()
+            } catch (jsonException: JsonParseException) {
+                // Fail silently on JsonParseExceptions to avoid switching to the placeholder provider
+                // when we woudln't need to! For some reason spotify randomly gives us malformed json.
+            }
         }
         if (requestsMadeBeforeLimit >= 20) {
             providerState = ProviderState.COOLDOWN
