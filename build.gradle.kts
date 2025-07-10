@@ -42,6 +42,12 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 	// temporary until i get to writing my own implementation
 	include(implementation("se.michaelthelin.spotify:spotify-web-api-java:9.2.0")!!)
+	// required to not crash outside the dev environment
+	include(implementation("org.apache.httpcomponents.client5:httpclient5:5.5")!!)
+	include(implementation("org.apache.httpcomponents.client5:httpclient5-cache:5.4.3")!!)
+	include(implementation("org.apache.httpcomponents.core5:httpcore5:5.3.4")!!)
+	include(implementation("org.apache.httpcomponents.core5:httpcore5-h2:5.3.4")!!)
+	include(implementation("com.neovisionaries:nv-i18n:1.29")!!)
 }
 
 tasks.processResources {
