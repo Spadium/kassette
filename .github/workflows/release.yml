@@ -17,14 +17,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'microsoft'
+          distribution: 'temurin'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
         run: ./gradlew build
-      - name: capture build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Kassette-Release
-          path: build/libs/
-          compression-level: 9
+      - name: add artifacts to release
+        run: gh release upload ${{github.event.release.tag_name}} build/libs/kassette-*.jar
+        env:
+          GITHUB_TOKEN: ${{ github.TOKEN }}
+        shell: bash
