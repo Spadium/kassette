@@ -12,11 +12,6 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.createInstance
 
 object MediaManager {
-    val defaultImage = ImageUtils.loadImageIOImage(
-        MinecraftClient.getInstance().resourceManager
-            .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!,
-        true
-    )
     var provider: MediaProvider = PlaceholderProvider()
         private set
     val providers: MutableMap<Identifier, KClass<out MediaProvider>> = mutableMapOf(
@@ -28,7 +23,11 @@ object MediaManager {
     }
 
     fun getDefaultCoverArt(): NativeImage {
-        return defaultImage
+        return ImageUtils.loadImageIOImage(
+            MinecraftClient.getInstance().resourceManager
+                .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!,
+            true
+        )
     }
 
     fun setProvider(identifier: Identifier) {
