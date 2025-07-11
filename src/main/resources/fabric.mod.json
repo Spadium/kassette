@@ -30,7 +30,9 @@
 	"custom": {
 		"modmenu": {
 			"links": {
-				"modmenu.github_releases": "https://github.com/Spadium/kassette/releases"
+				"modmenu.github_releases": "https://github.com/Spadium/kassette/releases",
+				"modmenu.modrinth": "https://modrinth.com/project/PRKaZJML",
+				"modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/kassette"
 			},
 			"update_checker": true
 		},
@@ -46,7 +48,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.6",
+		"minecraft": "~1.21.7",
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
