@@ -1,6 +1,7 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
+import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
@@ -18,7 +19,6 @@ class DebugProvider: AccountMediaProvider {
     )
     override val availableCommands: List<String> = listOf()
     private var f = 0f
-    private var accumulator: Int = 0
     override var isAuthenticated: Boolean = true
 
     override fun initiateLogin(titleScreen: Boolean) {
@@ -39,7 +39,6 @@ class DebugProvider: AccountMediaProvider {
 
     override suspend fun update() {
         delay(1000)
-        accumulator++
         f += 0.25f
         if (f > 3) {
             f = 0f
@@ -60,7 +59,7 @@ class DebugProvider: AccountMediaProvider {
 
         when (info.state) {
             MediaManager.MediaState.OTHER -> {
-                info.coverArt = NativeImage.read(
+                info.coverArt = ImageUtils.loadImageIOImage(
                     MinecraftClient.getInstance().resourceManager
                         .open(Identifier.of("kassette", "textures/other_placeholder.png"))
                 )
@@ -81,10 +80,6 @@ class DebugProvider: AccountMediaProvider {
             else -> {
                 info.coverArt = MediaManager.getDefaultCoverArt()
             }
-        }
-
-        if (accumulator > 75) {
-            throw NullPointerException("testing exception")
         }
         println("DEBUG UPDATE ${info.currentPosition}")
     }
