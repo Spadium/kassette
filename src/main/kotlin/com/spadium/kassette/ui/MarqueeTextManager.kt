@@ -115,4 +115,25 @@ class MarqueeTextManager {
             context.disableScissor()
         }
     }
+
+    private fun drawShortened(
+        textRenderer: TextRenderer,
+        text: String,
+        x: Int,
+        y: Int,
+        color: Int,
+        shadow: Boolean,
+        maxLength: Int,
+    ) {
+        if (text.length <= maxLength) {
+            // Don't bother scrolling when the text can fit within the maximum length before scrolling
+            context.drawText(
+                textRenderer, text,
+                x, y, color, shadow
+            )
+        } else {
+            val textAfterShortening = "${text.substring(maxLength - 3)}..."
+            context.drawText(textRenderer, textAfterShortening, x, y, color, shadow)
+        }
+    }
 }

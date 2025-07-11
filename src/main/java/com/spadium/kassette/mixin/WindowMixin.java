@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// for debugging purposes, was required once upon a time, but not anymore
+// for debugging purposes, was required once upon a time, but not anymore (very early in development)
 @Mixin(value = Window.class, remap = false)
 public class WindowMixin {
     @Inject(

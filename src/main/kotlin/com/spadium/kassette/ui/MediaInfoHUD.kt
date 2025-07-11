@@ -3,8 +3,6 @@ package com.spadium.kassette.ui
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.util.drawMarquee
-import com.spadium.kassette.util.drawMarqueeFancy
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
@@ -13,12 +11,11 @@ import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.texture.NativeImageBackedTexture
-import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import net.minecraft.util.math.ColorHelper
 import kotlin.math.floor
-import kotlin.math.round
+import kotlin.reflect.KProperty
 
 
 class MediaInfoHUD {
@@ -72,10 +69,10 @@ class MediaInfoHUD {
             VanillaHudElements.HOTBAR, MEDIA_LAYER,
             this::render
         )
-        Config.addListener { this.updateVariables() }
+        Config.addListener(this::updateVariables)
     }
 
-    private fun updateVariables() {
+    private fun updateVariables(property: KProperty<*>, oldValue: Config, newValue: Config) {
         config = Config.Instance
         hudConfig = config.hud
         borderColor = ColorHelper.getArgb(

@@ -1,8 +1,11 @@
 package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.tooltip.Tooltip
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
 import net.minecraft.client.gui.widget.GridWidget
@@ -30,8 +33,15 @@ class SpotifyScreen: Screen {
         gridAdder.add(
             ButtonWidget.builder(
                 Text.translatable("kassette.config.button.login"),
-                { button -> Util.getOperatingSystem().open("https://www.google.com") }
-            ).width(50 ).build(),
+                { button ->
+                    if (MediaManager.provider is SpotifyProvider) {
+                        (MediaManager.provider as SpotifyProvider).initiateLogin(false)
+                    } else {
+                        button.active = false
+                        button.setTooltip(Tooltip.of(Text.translatable("kassette.config.provider.error.inactive", "Spotify")))
+                    }
+                }
+            ).width(50).build(),
             1
         )
         layout.addBody(gridLayout)

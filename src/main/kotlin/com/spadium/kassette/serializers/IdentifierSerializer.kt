@@ -8,6 +8,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.minecraft.util.Identifier
 
+// simple serializer for identifiers
 object IdentifierSerializer : KSerializer<Identifier> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
         "net.minecraft.util.Identifier",

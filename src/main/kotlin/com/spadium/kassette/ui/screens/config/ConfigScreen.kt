@@ -6,11 +6,14 @@ import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Overlay
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.tooltip.Tooltip
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
+import net.minecraft.client.gui.widget.IconWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 
 class ConfigScreen : Screen {
     private val parent: Screen?
@@ -23,6 +26,13 @@ class ConfigScreen : Screen {
     override fun init() {
         layout.addHeader(title, textRenderer)
         val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
+        sectionButtons.mainPositioner.alignHorizontalCenter()
+        sectionButtons.add(
+            IconWidget.create(
+                200, 50, Identifier.of("kassette", "textures/gui/under_construction_banner.png"),
+                200, 50
+            )
+        ).setTooltip(Tooltip.of(Text.translatable("kassette.config.tooltip.disclaimer")))
         sectionButtons.add(
             KassetteUtils.createButtonToScreen(
                 Text.translatable("kassette.config.button.providers"),

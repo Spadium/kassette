@@ -1,7 +1,7 @@
 package com.spadium.kassette.media
 
 abstract class AccountMediaProvider: MediaProvider() {
-    open var isAuthenticated: Boolean = true
+    abstract var isAuthenticated: Boolean
 
-    abstract fun initiateLogin()
+    abstract fun initiateLogin(titleScreen: Boolean)
 }

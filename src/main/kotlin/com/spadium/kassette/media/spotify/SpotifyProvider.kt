@@ -7,6 +7,7 @@ import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.texture.NativeImage
@@ -16,6 +17,7 @@ import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials
 import se.michaelthelin.spotify.model_objects.specification.Track
 import java.net.URI
+import kotlin.reflect.KProperty
 
 class SpotifyProvider : AccountMediaProvider {
     private var clientApi: SpotifyApi
@@ -35,6 +37,7 @@ class SpotifyProvider : AccountMediaProvider {
     )
     private var requestsMadeBeforeLimit = 0
     private var cooldownStartTime = 0L
+    override var isAuthenticated: Boolean = false
 
     enum class ProviderState {
         NONE, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN, COOLDOWN
@@ -55,12 +58,10 @@ class SpotifyProvider : AccountMediaProvider {
             }
             requestsMadeBeforeLimit++
         }
-
-        Config.addListener { this.onConfigUpdate() }
     }
 
-    private fun onConfigUpdate() {
-        config = Config.Instance
+    private fun onConfigUpdate(property: KProperty<*>, oldValue: Config, newValue: Config) {
+        config = newValue
     }
 
     override fun destroy() {
@@ -88,6 +89,7 @@ class SpotifyProvider : AccountMediaProvider {
             // move to the next step
             providerState = ProviderState.POST_TOKEN_SETUP
         } else if (providerState == ProviderState.POST_TOKEN_SETUP) {
+            isAuthenticated = true
             providerState = ProviderState.SIGNED_IN
         } else if (providerState == ProviderState.SIGNED_IN) {
             try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
@@ -112,8 +114,9 @@ class SpotifyProvider : AccountMediaProvider {
         }
     }
 
-    override fun initiateLogin() {
-        if (config.providers.spotify.refreshToken.isEmpty() && config.providers.spotify.accessToken.isEmpty()) {
+    override fun initiateLogin(titleScreen: Boolean) {
+        Config.addListener(this::onConfigUpdate)
+        if (config.providers.spotify.refreshToken.isEmpty() && config.providers.spotify.accessToken.isEmpty() && !titleScreen) {
             val authCodeUriReq = clientApi.authorizationCodeUri()
                 .show_dialog(true)
                 .scope(
@@ -125,9 +128,11 @@ class SpotifyProvider : AccountMediaProvider {
         } else if ((config.providers.spotify.nextRefresh - 2000) >= System.currentTimeMillis()) {
             Kassette.logger.info("Spotify tokens need a refresh!")
             refreshTokens()
-        } else {
+        } else if (config.providers.spotify.accessToken.isNotBlank() && config.providers.spotify.refreshToken.isNotBlank()) {
             Kassette.logger.info("Valid spotify tokens already in config!")
             providerState = ProviderState.POST_TOKEN_SETUP
+        } else {
+            Kassette.logger.info("No Spotify login info exists! Not logging in.")
         }
     }
 
@@ -185,7 +190,7 @@ class SpotifyProvider : AccountMediaProvider {
                 if (item.album.images[0].url != lastImageUrl) {
                     lastImageUrl = item.album.images[0].url
                     val stream = URI(item.album.images[0].url).toURL().openStream()
-                    infoToReturn.coverArt = NativeImage.read(stream)
+                    infoToReturn.coverArt = ImageUtils.loadImageIOImage(stream)
                     stream.close()
                 }
             }

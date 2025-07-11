@@ -19,8 +19,9 @@ class DebugProvider: AccountMediaProvider {
     override val availableCommands: List<String> = listOf()
     private var f = 0f
     private var accumulator: Int = 0
+    override var isAuthenticated: Boolean = true
 
-    override fun initiateLogin() {
+    override fun initiateLogin(titleScreen: Boolean) {
         Kassette.logger.debug("MEDIA PROVIDER INITIATE LOGIN")
     }
 

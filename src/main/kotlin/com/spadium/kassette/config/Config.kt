@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 /*
     Config class
@@ -52,6 +53,7 @@ data class Config(
     ),
     var callbackPort: UInt = 61008u,
     var infoMode: InfoMode = InfoMode.HUD,
+    var firstRun: Boolean = true,
     val version: UInt = configVersion
 ) {
     enum class InfoMode {
@@ -59,21 +61,29 @@ data class Config(
     }
 
     companion object {
-        @OptIn(ExperimentalUnsignedTypes::class)
-//        var Instance: Config = Config()
         var Instance: Config by Delegates.observable(Config()) {
             property, oldValue, newValue ->
-            yellAtListeners()
+            yellAtListeners(property, oldValue, newValue)
         }
-        val configUpdateListeners: MutableList<() -> Unit> = mutableListOf()
+        val configUpdateListeners: MutableList<(KProperty<*>, Config, Config) -> Unit> = mutableListOf()
 
-        fun addListener(listener: () -> Unit) {
+        fun addListener(listener: (KProperty<*>, Config, Config) -> Unit) {
             configUpdateListeners.add(listener)
         }
 
-        private fun yellAtListeners() {
+        private fun yellAtListeners(property: KProperty<*>, oldValue: Config, newValue: Config) {
+            val invalidListeners: MutableList<(KProperty<*>, Config, Config) -> Unit> = mutableListOf()
             configUpdateListeners.forEach {
-                it()
+                try {
+                    it.invoke(property, oldValue, newValue)
+                } catch (t: Throwable) {
+                    invalidListeners.add(it)
+                }
+            }
+            if (invalidListeners.isNotEmpty()) {
+                invalidListeners.forEach {
+                    configUpdateListeners.remove(it)
+                }
             }
         }
         @OptIn(ExperimentalSerializationApi::class)

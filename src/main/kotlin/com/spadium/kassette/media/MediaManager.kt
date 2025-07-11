@@ -1,10 +1,13 @@
 package com.spadium.kassette.media
 
+import com.spadium.kassette.Kassette
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.spotify.SpotifyProvider
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.createInstance
 
 object MediaManager {
@@ -26,8 +29,12 @@ object MediaManager {
     }
 
     fun setProvider(identifier: Identifier) {
-        provider.destroy()
         this.provider = providers.getValue(identifier).createInstance()
+    }
+
+    fun onConfigChange(property: KProperty<*>, oldValue: Config, newValue: Config) {
+        setProvider(newValue.providers.defaultProvider)
+        Kassette.logger.info("Changing provider to ${newValue.providers.defaultProvider}")
     }
 
     fun addProvider(identifier: Identifier, klazz: KClass<out MediaProvider>) {
