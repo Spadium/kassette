@@ -23,7 +23,7 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: add artifacts to release
-        run: gh release upload ${{github.event.release.tag_name}} build/libs/kassette-*.jar
+        run: gh release upload ${GITHUB_REF#refs/*/} build/libs/kassette-*.jar
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
         shell: bash
