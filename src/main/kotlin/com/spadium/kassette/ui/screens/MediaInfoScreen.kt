@@ -2,28 +2,20 @@ package com.spadium.kassette.ui.screens
 
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.media.MediaProvider
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.tooltip.Tooltip
 import net.minecraft.client.gui.widget.*
 import net.minecraft.text.Text
-import net.minecraft.util.Colors
 import net.minecraft.util.Identifier
-import javax.print.attribute.standard.Media
-import kotlin.properties.Delegates
 
 class MediaInfoScreen : Screen {
     private val screenWidth = 256
     private val screenHeight = 128
     private var centeredX = 0
     private var centeredY = 0
-    private var savedInfo: MediaInfo by Delegates.observable(MediaManager.provider.info) {
-        property, oldValue, newValue ->
-        println("test")
-    }
+    private var savedInfo: MediaInfo = MediaInfo(1L, 0L, "", "", "", MediaManager.getDefaultCoverArt(), "")
     constructor() : super(Text.translatable("kassette.popup.title", MediaManager.provider.info.provider))
 
     override fun init() {
@@ -71,7 +63,10 @@ class MediaInfoScreen : Screen {
         val previousTrackButton = gridAdder.add(
             TextIconButtonWidget.builder(
                 Text.empty(),
-                { button -> MediaManager.provider.sendCommand("previousTrack", null) },
+                { button ->
+                    MediaManager.provider.sendCommand("previousTrack", null)
+                    button.isFocused = false
+                },
                 true
             ).texture(
                 Identifier.of("kassette", "previous"),
@@ -84,7 +79,9 @@ class MediaInfoScreen : Screen {
         val playPauseButton = gridAdder.add(
             TextIconButtonWidget.builder(
                 Text.empty(),
-                { button -> MediaManager.provider.sendCommand("togglePlay", null) },
+                { button ->
+                    MediaManager.provider.sendCommand("togglePlay", null)
+                },
                 true
             ).texture(
                 when (MediaManager.provider.info.state) {
@@ -134,8 +131,8 @@ class MediaInfoScreen : Screen {
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
+            savedInfo = MediaManager.provider.info.copy()
             clearAndInit()
-            println("different infos!")
         }
         context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         super.render(context, mouseX, mouseY, deltaTicks)
