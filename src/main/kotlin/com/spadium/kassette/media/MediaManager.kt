@@ -3,6 +3,7 @@ package com.spadium.kassette.media
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.spotify.SpotifyProvider
+import com.spadium.kassette.util.ImageUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
@@ -11,6 +12,11 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.createInstance
 
 object MediaManager {
+    val defaultImage = ImageUtils.loadImageIOImage(
+        MinecraftClient.getInstance().resourceManager
+            .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!,
+        true
+    )
     var provider: MediaProvider = PlaceholderProvider()
         private set
     val providers: MutableMap<Identifier, KClass<out MediaProvider>> = mutableMapOf(
@@ -22,10 +28,7 @@ object MediaManager {
     }
 
     fun getDefaultCoverArt(): NativeImage {
-        return NativeImage.read(
-            MinecraftClient.getInstance().resourceManager
-                .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!.readAllBytes()
-        )
+        return defaultImage
     }
 
     fun setProvider(identifier: Identifier) {
