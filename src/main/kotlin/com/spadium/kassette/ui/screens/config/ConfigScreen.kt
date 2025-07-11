@@ -3,6 +3,7 @@ package com.spadium.kassette.ui.screens.config
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.util.KassetteUtils
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Overlay
 import net.minecraft.client.gui.screen.Screen
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.minecraft.util.Util
 
 class ConfigScreen : Screen {
     private val parent: Screen?
@@ -27,12 +29,20 @@ class ConfigScreen : Screen {
         layout.addHeader(title, textRenderer)
         val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
         sectionButtons.mainPositioner.alignHorizontalCenter()
-        sectionButtons.add(
+        val banner = sectionButtons.add(
             IconWidget.create(
                 200, 50, Identifier.of("kassette", "textures/gui/under_construction_banner.png"),
                 200, 50
             )
-        ).setTooltip(Tooltip.of(Text.translatable("kassette.config.tooltip.disclaimer")))
+        )
+        banner.setTooltip(Tooltip.of(Text.translatable("kassette.config.tooltip.disclaimer")))
+
+        sectionButtons.add(
+            ButtonWidget.builder(
+                Text.translatable("kassette.config.button.openfile"),
+                { button -> Util.getOperatingSystem().open(FabricLoader.getInstance().configDir.resolve("kassette.json")) }
+            ).width(200).build()
+        )
         sectionButtons.add(
             KassetteUtils.createButtonToScreen(
                 Text.translatable("kassette.config.button.providers"),

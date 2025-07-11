@@ -16,5 +16,19 @@ class KassetteUtils {
 
             return button
         }
+
+        inline fun createBooleanOptionButton(crossinline setter: (Boolean) -> Unit, value: Boolean): ButtonWidget {
+            var valueToReturn = value
+
+            val button = ButtonWidget.builder(
+                Text.translatable("kassette.config.button.generic.boolean.$value"),
+                { button ->
+                    valueToReturn = !valueToReturn
+                    setter(valueToReturn)
+                    button.message = Text.translatable("kassette.config.button.generic.boolean.$valueToReturn")
+                }
+            ).width(100).build()
+            return button
+        }
     }
 }

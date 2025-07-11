@@ -30,7 +30,8 @@ class SpotifyScreen: Screen {
         val gridLayout = GridWidget()
         val gridAdder = gridLayout.createAdder(2)
         gridLayout.mainPositioner.margin(4, 4, 4, 0)
-        gridAdder.add(
+            .alignHorizontalCenter().alignVerticalCenter()
+        val loginButton = gridAdder.add(
             ButtonWidget.builder(
                 Text.translatable("kassette.config.button.login"),
                 { button ->
@@ -41,9 +42,24 @@ class SpotifyScreen: Screen {
                         button.setTooltip(Tooltip.of(Text.translatable("kassette.config.provider.error.inactive", "Spotify")))
                     }
                 }
-            ).width(50).build(),
-            1
+            ).width(200).build(), 2
         )
+        if (MediaManager.provider is SpotifyProvider && (MediaManager.provider as SpotifyProvider).isAuthenticated) {
+            loginButton.active = false
+            loginButton.message = Text.translatable("kassette.config.button.login.loggedin")
+        }
+        val bypassRateLimitText = gridAdder.add(TextWidget(Text.translatable("kassette.config.option.spotify.ratelimit"), textRenderer))
+        bypassRateLimitText.width = 100
+        val bypassRateLimitButton = gridAdder.add(
+            ButtonWidget.builder(
+                Text.translatable("kassette.config.button.generic.boolean.${Config.Instance.providers.spotify.ignoreRateLimits}"),
+                { button ->
+                    Config.Instance.providers.spotify.ignoreRateLimits = !Config.Instance.providers.spotify.ignoreRateLimits
+                    button.message = Text.translatable("kassette.config.button.generic.boolean.${Config.Instance.providers.spotify.ignoreRateLimits}")
+                }
+            ).width(100).build()
+        )
+
         layout.addBody(gridLayout)
 
         layout.addFooter(
@@ -66,5 +82,6 @@ class SpotifyScreen: Screen {
     override fun close() {
         Config.Instance.save()
         this.client!!.setScreen(parent)
+
     }
 }
