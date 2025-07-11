@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.text.Text
+import kotlin.properties.Delegates
 
 /**
     This class contains logic related to marquee text rendering, we use this to fix a bug
@@ -17,11 +18,21 @@ class MarqueeTextManager {
     private var spacingBetween: Int = 3
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
 
-    var text: String = ""
+    var text: String by Delegates.observable("") {
+        property, oldValue, newValue ->
+        if (oldValue != newValue) {
+            resetPosition()
+        }
+    }
     var context: DrawContext
 
     constructor(context: DrawContext) {
         this.context = context
+    }
+
+    fun resetPosition() {
+        this.fancyOffset = 0
+        this.marqueeCounter = 0
     }
 
     fun renderText(
