@@ -7,10 +7,12 @@ import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import net.minecraft.client.texture.NativeImage
+import net.minecraft.client.MinecraftClient
+import net.minecraft.text.Text
 import net.minecraft.util.Util
 import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
@@ -73,34 +75,40 @@ class SpotifyProvider : AccountMediaProvider {
     }
 
     override suspend fun update() {
-        if (providerState == ProviderState.GOT_TOKEN) {
-            config.providers.spotify.createdAt = System.currentTimeMillis()
-            val authCodeCredentials: AuthorizationCodeCredentials = clientApi
-                .authorizationCode(authCode).build().execute()
-            // config stuff
-            config.providers.spotify.nextRefresh = nextTokenRefresh - 1000
-            clientApi.accessToken = authCodeCredentials.accessToken
-            clientApi.refreshToken = authCodeCredentials.refreshToken
-            config.providers.spotify.accessToken = clientApi.accessToken
-            config.providers.spotify.refreshToken = clientApi.refreshToken
-            requestsMadeBeforeLimit++
-            // actually save the config
-            config.save()
-            // move to the next step
-            providerState = ProviderState.POST_TOKEN_SETUP
-        } else if (providerState == ProviderState.POST_TOKEN_SETUP) {
-            isAuthenticated = true
-            providerState = ProviderState.SIGNED_IN
-        } else if (providerState == ProviderState.SIGNED_IN) {
-            try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
-        } else if (providerState == ProviderState.COOLDOWN) {
-            delay(1000)
-            try {
-                getCurrentPlayback()
-            } catch (jsonException: JsonParseException) {
-                // Fail silently on JsonParseExceptions to avoid switching to the placeholder provider
-                // when we wouldn't need to! For some reason spotify randomly gives us malformed json.
+        when (providerState) {
+            ProviderState.GOT_TOKEN -> {
+                config.providers.spotify.createdAt = System.currentTimeMillis()
+                val authCodeCredentials: AuthorizationCodeCredentials = clientApi
+                    .authorizationCode(authCode).build().execute()
+                // config stuff
+                config.providers.spotify.nextRefresh = nextTokenRefresh - 1000
+                clientApi.accessToken = authCodeCredentials.accessToken
+                clientApi.refreshToken = authCodeCredentials.refreshToken
+                config.providers.spotify.accessToken = clientApi.accessToken
+                config.providers.spotify.refreshToken = clientApi.refreshToken
+                requestsMadeBeforeLimit++
+                // actually save the config
+                config.save()
+                // move to the next step
+                providerState = ProviderState.POST_TOKEN_SETUP
             }
+            ProviderState.POST_TOKEN_SETUP -> {
+                isAuthenticated = true
+                providerState = ProviderState.SIGNED_IN
+            }
+            ProviderState.SIGNED_IN -> {
+                try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
+            }
+            ProviderState.COOLDOWN -> {
+                delay(1000)
+                try {
+                    getCurrentPlayback()
+                } catch (jsonException: JsonParseException) {
+                    // Fail silently on JsonParseExceptions to avoid switching to the placeholder provider
+                    // when we wouldn't need to! For some reason spotify randomly gives us malformed json.
+                }
+            }
+            ProviderState.NONE -> {}
         }
         if (requestsMadeBeforeLimit >= 100 && config.providers.spotify.ignoreRateLimits) {
             if (cooldownStartTime == 0L) {
@@ -210,11 +218,18 @@ class SpotifyProvider : AccountMediaProvider {
             try {
                 if (info.state == MediaManager.MediaState.PLAYING) {
                     clientApi.pauseUsersPlayback().build().execute()
+                    infoToReturn.state = MediaManager.MediaState.PAUSED
                 } else {
                     clientApi.startResumeUsersPlayback().build().execute()
+                    infoToReturn.state = MediaManager.MediaState.PLAYING
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                if (e.message == "Player command failed: No active device found") {
+                    MinecraftClient.getInstance().toastManager.add(WarningToast(Text.translatable("kassette.warning.spotify.device")))
+
+                } else {
+                    e.printStackTrace()
+                }
                 return 2
             }
         } else if (cmd == "nextTrack") {
