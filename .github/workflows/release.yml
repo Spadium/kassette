@@ -25,5 +25,5 @@ jobs:
       - name: add artifacts to release
         run: gh release upload ${GITHUB_REF#refs/*/} build/libs/kassette-*.jar
         env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
