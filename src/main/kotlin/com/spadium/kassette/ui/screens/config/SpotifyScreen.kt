@@ -37,9 +37,6 @@ class SpotifyScreen: Screen {
                 { button ->
                     if (MediaManager.provider is SpotifyProvider) {
                         (MediaManager.provider as SpotifyProvider).initiateLogin(false)
-                    } else {
-                        button.active = false
-                        button.setTooltip(Tooltip.of(Text.translatable("kassette.config.provider.error.inactive", "Spotify")))
                     }
                 }
             ).width(200).build(), 2
@@ -47,6 +44,9 @@ class SpotifyScreen: Screen {
         if (MediaManager.provider is SpotifyProvider && (MediaManager.provider as SpotifyProvider).isAuthenticated) {
             loginButton.active = false
             loginButton.message = Text.translatable("kassette.config.button.login.loggedin")
+        } else if (MediaManager.provider !is SpotifyProvider) {
+            loginButton.active = false
+            loginButton.setTooltip(Tooltip.of(Text.translatable("kassette.config.provider.error.inactive", "Spotify")))
         }
         val bypassRateLimitText = gridAdder.add(TextWidget(Text.translatable("kassette.config.option.spotify.ratelimit"), textRenderer))
         bypassRateLimitText.width = 100
