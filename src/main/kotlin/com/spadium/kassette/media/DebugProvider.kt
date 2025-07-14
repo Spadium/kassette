@@ -69,9 +69,7 @@ class DebugProvider: AccountMediaProvider {
                     val url = URI("https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png").toURL()
                     val uc: HttpsURLConnection = url.openConnection() as HttpsURLConnection
                     val inputStream = uc.inputStream
-                    info.coverArt = NativeImage.read(
-                        inputStream
-                    )
+                    info.coverArt = ImageUtils.loadImageIOImage(inputStream, true)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
