@@ -46,7 +46,7 @@ class ImageUtils {
             val r = (rgb shr 16) and 0xFF
             val g = (rgb shr 8) and 0xFF
             val b = rgb and 0xFF
-            val a = 0xFF
+            val a = (rgb shr 24) and 0xFF
 
             return (a shl 24) or (b shl 16) or (g shl 8) or r
         }
