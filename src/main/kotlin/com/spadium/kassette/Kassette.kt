@@ -6,7 +6,6 @@ import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.MediaInfoHUD
 import com.spadium.kassette.ui.screens.MediaInfoScreen
-import com.spadium.kassette.ui.screens.onboarding.DisclaimerPage
 import com.spadium.kassette.ui.toasts.ErrorToast
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
@@ -65,9 +64,6 @@ open class Kassette : ClientModInitializer {
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             MediaInfoHUD()
             Config.addListener(MediaManager::onConfigChange)
-            if (Config.Instance.firstRun) {
-                client.setScreen(DisclaimerPage())
-            }
             MediaManager.setProvider(Config.Instance.providers.defaultProvider)
             if (MediaManager.provider is AccountMediaProvider) {
                 (MediaManager.provider as AccountMediaProvider).initiateLogin(true)
