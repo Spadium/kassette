@@ -73,32 +73,35 @@ class MediaInfoHUD {
     }
 
     private fun updateVariables(property: KProperty<*>, oldValue: Config, newValue: Config) {
-        config = Config.Instance
-        hudConfig = config.hud
-        borderColor = ColorHelper.getArgb(
-            hudConfig.backgroundColor[3],
-            hudConfig.borderColor[0],
-            hudConfig.borderColor[1],
-            hudConfig.borderColor[2]
-        )
-        backgroundColor = ColorHelper.getArgb(
-            hudConfig.backgroundColor[3],
-            hudConfig.backgroundColor[0],
-            hudConfig.backgroundColor[1],
-            hudConfig.backgroundColor[2]
-        )
-        progressBarBg = ColorHelper.getArgb(
-            hudConfig.progressBackgroundColor[3],
-            hudConfig.progressBackgroundColor[0],
-            hudConfig.progressBackgroundColor[1],
-            hudConfig.progressBackgroundColor[2]
-        )
-        progressBarFg = ColorHelper.getArgb(
-            hudConfig.progressForegroundColor[3],
-            hudConfig.progressForegroundColor[0],
-            hudConfig.progressForegroundColor[1],
-            hudConfig.progressForegroundColor[2]
-        )
+        // avoid stuttering when we don't need to reload variables
+        if (oldValue != newValue) {
+            config = newValue
+            hudConfig = config.hud
+            borderColor = ColorHelper.getArgb(
+                hudConfig.backgroundColor[3],
+                hudConfig.borderColor[0],
+                hudConfig.borderColor[1],
+                hudConfig.borderColor[2]
+            )
+            backgroundColor = ColorHelper.getArgb(
+                hudConfig.backgroundColor[3],
+                hudConfig.backgroundColor[0],
+                hudConfig.backgroundColor[1],
+                hudConfig.backgroundColor[2]
+            )
+            progressBarBg = ColorHelper.getArgb(
+                hudConfig.progressBackgroundColor[3],
+                hudConfig.progressBackgroundColor[0],
+                hudConfig.progressBackgroundColor[1],
+                hudConfig.progressBackgroundColor[2]
+            )
+            progressBarFg = ColorHelper.getArgb(
+                hudConfig.progressForegroundColor[3],
+                hudConfig.progressForegroundColor[0],
+                hudConfig.progressForegroundColor[1],
+                hudConfig.progressForegroundColor[2]
+            )
+        }
     }
 
     private fun setupCoverArt() {
