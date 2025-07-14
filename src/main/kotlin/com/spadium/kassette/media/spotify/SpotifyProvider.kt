@@ -113,7 +113,7 @@ class SpotifyProvider : AccountMediaProvider {
         if (requestsMadeBeforeLimit >= 100 && config.providers.spotify.ignoreRateLimits) {
             if (cooldownStartTime == 0L) {
                 cooldownStartTime = System.currentTimeMillis()
-            } else if (cooldownStartTime + 30000 >= System.currentTimeMillis()) {
+            } else if (cooldownStartTime + 30000 <= System.currentTimeMillis()) {
                 cooldownStartTime = 0L
                 requestsMadeBeforeLimit = 0
                 providerState = ProviderState.SIGNED_IN
