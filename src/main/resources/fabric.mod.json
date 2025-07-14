@@ -3,7 +3,7 @@
 	"id": "kassette",
 	"version": "${version}",
 	"name": "Kassette",
-	"description": "Fabric mod to show media player information",
+	"description": "Fabric mod that shows media player information",
 	"authors": [
 		"Spadium"
 	],
