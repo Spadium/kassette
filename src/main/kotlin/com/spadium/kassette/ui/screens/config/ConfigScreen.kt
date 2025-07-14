@@ -25,9 +25,8 @@ import net.minecraft.util.Util
 class ConfigScreen : Screen {
     private val parent: Screen?
     private val layout = ThreePartsLayoutWidget(this)
-    private val categories: Map<Text, Screen?> = mapOf(
-        Text.translatable("kassette.config.button.providers") to ProvidersScreen(this)
-    )
+
+    private lateinit var sections: ConfigCategoryListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.title")) {
         this.parent = parent
@@ -35,49 +34,8 @@ class ConfigScreen : Screen {
 
     override fun init() {
         layout.addHeader(title, textRenderer)
-        val sections = layout.addBody(ConfigCategoryListWidget(categories))
-        val sectionButtons = DirectionalLayoutWidget.vertical().spacing(8)
-        sectionButtons.mainPositioner.alignHorizontalCenter()
-        val banner = sectionButtons.add(
-            IconWidget.create(
-                200, 50, Identifier.of("kassette", "textures/gui/under_construction_banner.png"),
-                200, 50
-            )
-        )
-        banner.setTooltip(Tooltip.of(Text.translatable("kassette.config.tooltip.disclaimer")))
-
-        sectionButtons.add(
-            ButtonWidget.builder(
-                Text.translatable("kassette.config.button.openfile"),
-                { button -> Util.getOperatingSystem().open(FabricLoader.getInstance().configDir.resolve("kassette.json")) }
-            ).width(200).build()
-        )
-        sectionButtons.add(
-            KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.providers"),
-                ProvidersScreen(this)
-            )
-        )
-        sectionButtons.add(
-            KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.hud"),
-                null
-            )
-        )
-        sectionButtons.add(
-            KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.about"),
-                AboutScreen(this)
-            )
-        )
-        sectionButtons.add(
-            KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.help"),
-                HelpScreen(this)
-            )
-        )
-
-        sectionButtons.refreshPositions()
+        sections = ConfigCategoryListWidget()
+        layout.addBody(sections)
 
         layout.addFooter(
             ButtonWidget.builder(
@@ -86,24 +44,15 @@ class ConfigScreen : Screen {
             ).width(200).build()
         )
 
-        if (!Kassette.errors.isEmpty()) {
-            sectionButtons.add(
-                KassetteUtils.createButtonToScreen(
-                    Text.translatable("kassette.config.button.errors"),
-                    ErrorScreen(this, Kassette.errors)
-                )
-            )
-        }
-
         layout.forEachChild { widget ->
             addDrawableChild(widget)
         }
         layout.refreshPositions()
     }
 
-    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        super.render(context, mouseX, mouseY, deltaTicks)
-
+    override fun refreshWidgetPositions() {
+        layout.refreshPositions()
+        sections.position(width, layout)
     }
 
     override fun close() {
@@ -112,62 +61,86 @@ class ConfigScreen : Screen {
     }
 
     inner class ConfigCategoryListWidget: ElementListWidget<ConfigScreenListEntry> {
-        constructor(categories: Map<Text, Screen?>) : super(
-            this@ConfigScreen.client, this@ConfigScreen.width,
-            this@ConfigScreen.layout.contentHeight, this@ConfigScreen.layout.headerHeight, 20
-        ) {
-            addEntry(BannerImage())
-            addEntry(
-                ConfigCategory(
-                    ButtonWidget.builder(
-                        Text.translatable("kassette.config.button.openfile"),
-                        { button -> Util.getOperatingSystem().open(FabricLoader.getInstance().configDir.resolve("kassette.json")) }
-                    ).width(200).build()
-                )
+        private val entries: List<ConfigScreenListEntry> = listOf(
+            BannerImage(),
+            ConfigCategory(
+                ButtonWidget.builder(
+                    Text.translatable("kassette.config.button.openfile"),
+                    { button -> Util.getOperatingSystem().open(FabricLoader.getInstance().configDir.resolve("kassette.json")) }
+                ).width(200).build()
+            ),
+            ConfigCategory(
+                Text.translatable("kassette.config.button.providers"),
+                ProvidersScreen(this@ConfigScreen)
+            ),
+            ConfigCategory(
+                Text.translatable("kassette.config.button.hud"),
+                null
+            ),
+            ConfigCategory(
+                Text.translatable("kassette.config.button.about"),
+                AboutScreen(this@ConfigScreen)
+            ),
+            ConfigCategory(
+                Text.translatable("kassette.config.button.help"),
+                HelpScreen(this@ConfigScreen)
             )
-            categories.forEach { msg, dest ->
-                addEntry(ConfigCategory(msg, dest))
+        )
+
+        constructor() : super(
+            this@ConfigScreen.client, this@ConfigScreen.width,
+            this@ConfigScreen.layout.contentHeight, this@ConfigScreen.layout.headerHeight, 25
+        ) {
+            entries.forEach { entry ->
+                addEntry(entry)
+            }
+
+            if (!Kassette.errors.isEmpty()) {
+                addEntry(
+                    ConfigCategory(
+                        Text.translatable("kassette.config.button.errors"),
+                        ErrorScreen(this@ConfigScreen, Kassette.errors)
+                    )
+                )
             }
         }
 
+        inner class BannerImage : ConfigScreenListEntry() {
+            val bannerLocation: Identifier = Identifier.of("kassette", "textures/gui/under_construction_banner.png")
+            val banner: IconWidget = IconWidget.create(
+                200, 50, bannerLocation,
+                200, 50
+            )
 
-    }
+            override fun render(
+                context: DrawContext?,
+                index: Int,
+                y: Int,
+                x: Int,
+                entryWidth: Int,
+                entryHeight: Int,
+                mouseX: Int,
+                mouseY: Int,
+                hovered: Boolean,
+                tickProgress: Float
+            ) {
+//            val bannerX = (this@ConfigCategoryListWidget.width / 2) - (banner.width / 2)
+                val bannerX = this@ConfigCategoryListWidget.scrollbarX - banner.width - 10
+                banner.setPosition(bannerX, y)
+                banner.render(context, mouseX, mouseY, tickProgress)
+            }
 
-    inner class BannerImage: ConfigScreenListEntry {
-        val bannerLocation: Identifier = Identifier.of("kassette", "textures/gui/under_construction_banner.png")
-        val banner: IconWidget = IconWidget.create(
-            200, 50, bannerLocation,
-            200, 50
-        )
+            override fun selectableChildren(): List<Selectable?>? {
+                return listOf(banner)
+            }
 
-        constructor()
+            override fun children(): List<Element?>? {
+                return listOf(banner)
+            }
 
-        override fun render(
-            context: DrawContext?,
-            index: Int,
-            y: Int,
-            x: Int,
-            entryWidth: Int,
-            entryHeight: Int,
-            mouseX: Int,
-            mouseY: Int,
-            hovered: Boolean,
-            tickProgress: Float
-        ) {
-            banner.render(context, mouseX, mouseY, tickProgress)
         }
 
-        override fun selectableChildren(): List<Selectable?>? {
-            return listOf(banner)
-        }
-
-        override fun children(): List<Element?>? {
-            return listOf(banner)
-        }
-
-    }
-
-    inner class ConfigCategory: ConfigScreenListEntry {
+        inner class ConfigCategory: ConfigScreenListEntry {
         val button: ButtonWidget
 
         constructor(text: Text, destination: Screen?) {
@@ -190,7 +163,8 @@ class ConfigScreen : Screen {
             hovered: Boolean,
             tickProgress: Float
         ) {
-            button.setPosition(20, 20)
+            val buttonX = this@ConfigCategoryListWidget.scrollbarX - button.width - 10
+            button.setPosition(buttonX, y + entryHeight + 15)
             button.render(context, mouseX, mouseY, tickProgress)
         }
 
@@ -201,6 +175,7 @@ class ConfigScreen : Screen {
         override fun children(): List<Element?>? {
             return listOf(button)
         }
+    }
     }
 
     abstract inner class ConfigScreenListEntry: ElementListWidget.Entry<ConfigScreenListEntry>() {
