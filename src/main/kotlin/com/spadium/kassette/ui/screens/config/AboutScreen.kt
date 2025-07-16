@@ -44,6 +44,7 @@ class AboutScreen: Screen {
         amPmHour(); chars(":"); minute(); chars(":"); second(); amPmMarker("AM", "PM")
     }
     private val layout = ThreePartsLayoutWidget(this, 32)
+    private lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.about.title")) {
         this.parent = parent
@@ -147,8 +148,11 @@ class AboutScreen: Screen {
                 textRenderer
             )
         )
-        layout.addBody(gridLayout)
-
+        gridLayout.refreshPositions()
+        sections = LayoutListWidget(
+            client, gridLayout, this, layout
+        )
+        layout.addBody(sections)
 
         layout.addFooter(
             ButtonWidget.builder(
@@ -163,16 +167,12 @@ class AboutScreen: Screen {
         layout.forEachChild { widget ->
             addDrawableChild(widget)
         }
-        gridLayout.forEachChild { widget ->
-            addDrawableChild(widget)
-        }
-        headerLayout.refreshPositions()
-        gridLayout.refreshPositions()
-        layout.refreshPositions()
+        refreshWidgetPositions()
     }
 
     override fun refreshWidgetPositions() {
-        super.refreshWidgetPositions()
+        layout.refreshPositions()
+        sections.position(width, layout)
     }
 
     override fun close() {

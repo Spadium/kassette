@@ -2,27 +2,13 @@ package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
-import com.spadium.kassette.ui.screens.config.ConfigCategoryListWidget
 import com.spadium.kassette.util.KassetteUtils
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.Element
-import net.minecraft.client.gui.Selectable
-import net.minecraft.client.gui.screen.Overlay
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.tooltip.Tooltip
 import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.ClickableWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.gui.widget.ElementListWidget
-import net.minecraft.client.gui.widget.EntryListWidget
 import net.minecraft.client.gui.widget.IconWidget
-import net.minecraft.client.gui.widget.LayoutWidget
-import net.minecraft.client.gui.widget.ScrollableLayoutWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
-import net.minecraft.client.gui.widget.Widget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
@@ -31,12 +17,7 @@ import net.minecraft.util.Util
 class ConfigScreen : Screen {
     val parent: Screen?
     val layout = ThreePartsLayoutWidget(this)
-    internal val _client: MinecraftClient?
-        get() {
-            return this.client
-        }
-
-    private lateinit var sections: ConfigCategoryListWidget
+    lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.title")) {
         this.parent = parent
@@ -44,7 +25,57 @@ class ConfigScreen : Screen {
 
     override fun init() {
         layout.addHeader(title, textRenderer)
-        sections = ConfigCategoryListWidget(this)
+        val buttonList: DirectionalLayoutWidget = DirectionalLayoutWidget.vertical().spacing(2)
+        buttonList.add(
+            IconWidget.create(
+                200, 50, Identifier.of("kassette", "textures/gui/under_construction_banner.png"),
+                200, 50
+            )
+        )
+        buttonList.add(
+            ButtonWidget.builder(
+                Text.translatable("kassette.config.button.openfile"),
+                { button ->
+                    Util.getOperatingSystem().open(FabricLoader.getInstance().configDir.resolve("kassette.json"))
+                }
+            ).width(200).build()
+        )
+        buttonList.add(
+            KassetteUtils.createButtonToScreen(
+                Text.translatable("kassette.config.button.providers"),
+                ProvidersScreen(this)
+            )
+        )
+        buttonList.add(
+            KassetteUtils.createButtonToScreen(
+                Text.translatable("kassette.config.button.hud"),
+                null
+            )
+        )
+        buttonList.add(
+            KassetteUtils.createButtonToScreen(
+                Text.translatable("kassette.config.button.help"),
+                HelpScreen(this)
+            )
+        )
+        buttonList.add(
+            KassetteUtils.createButtonToScreen(
+                Text.translatable("kassette.config.button.about"),
+                AboutScreen(this)
+            )
+        )
+        if (!Kassette.errors.isEmpty()) {
+            buttonList.add(
+                KassetteUtils.createButtonToScreen(
+                    Text.translatable("kassette.config.button.errors"),
+                    ErrorScreen(this, Kassette.errors)
+                )
+            )
+        }
+        buttonList.refreshPositions()
+        sections = LayoutListWidget(
+            client, buttonList, this, layout
+        )
         layout.addBody(sections)
 
         layout.addFooter(
@@ -57,7 +88,7 @@ class ConfigScreen : Screen {
         layout.forEachChild { widget ->
             addDrawableChild(widget)
         }
-        layout.refreshPositions()
+        refreshWidgetPositions()
     }
 
     override fun refreshWidgetPositions() {

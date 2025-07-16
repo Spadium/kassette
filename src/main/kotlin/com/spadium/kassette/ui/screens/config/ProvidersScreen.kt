@@ -14,6 +14,7 @@ import net.minecraft.text.Text
 class ProvidersScreen: Screen {
     private val parent: Screen?
     private val layout = ThreePartsLayoutWidget(this, 64, 32)
+    private lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.providers.title")) {
         this.parent = parent
@@ -22,7 +23,7 @@ class ProvidersScreen: Screen {
     override fun init() {
         layout.addHeader(title, textRenderer)
 
-        val sectionButtons = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
+        val sectionButtons = DirectionalLayoutWidget.vertical().spacing(8)
         sectionButtons.add(
             KassetteUtils.createButtonToScreen(
                 Text.translatable("kassette.config.button.currentprovider"),
@@ -35,6 +36,9 @@ class ProvidersScreen: Screen {
                 SpotifyScreen(this)
             )
         )
+        sectionButtons.refreshPositions()
+        sections = LayoutListWidget(client, sectionButtons, this, layout)
+        layout.addBody(sections)
 
         layout.addFooter(
             ButtonWidget.builder(
@@ -42,7 +46,6 @@ class ProvidersScreen: Screen {
                 { button -> close() }
             ).width(200).build()
         )
-
 
         layout.forEachChild { widget ->
             addDrawableChild(widget)
@@ -59,8 +62,8 @@ class ProvidersScreen: Screen {
     }
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        clearAndInit()
         super.render(context, mouseX, mouseY, deltaTicks)
+//        clearAndInit()
     }
 
     override fun close() {

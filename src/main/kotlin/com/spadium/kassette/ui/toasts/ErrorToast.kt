@@ -27,13 +27,18 @@ class ErrorToast: Toast {
         }
     }
 
+    override fun getHeight(): Int {
+
+        return 96
+    }
+
     override fun draw(
         context: DrawContext?,
         textRenderer: TextRenderer?,
         startTime: Long
     ) {
         context?.fill(
-            0, 0, width, 64, 0xFF882222.toInt()
+            0, 0, width, height, 0xFF882222.toInt()
         )
 
         context?.drawText(
@@ -48,11 +53,11 @@ class ErrorToast: Toast {
 
         context?.drawText(
             textRenderer!!, Text.literal("Check settings for more info"),
-            8, (64 - textRenderer.fontHeight) - 8, 0xFFFFFFFF.toInt(), false
+            8, (height - textRenderer.fontHeight) - 8, 0xFFFFFFFF.toInt(), false
         )
 
         context?.drawBorder(
-            0, 0, width, 64, 0xFFBBBBBB.toInt()
+            0, 0, width, height, 0xFFBBBBBB.toInt()
         )
     }
 }
