@@ -9,7 +9,7 @@ import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 
 class ErrorScreen: Screen {
-    val layout = ThreePartsLayoutWidget(this)
+    val layout = ThreePartsLayoutWidget(this, 32)
     val parent: Screen?
     var errors: MutableMap<String, Throwable>
 

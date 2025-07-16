@@ -13,7 +13,7 @@ import net.minecraft.text.Text
 
 class ProvidersScreen: Screen {
     private val parent: Screen?
-    private val layout = ThreePartsLayoutWidget(this, 64, 32)
+    private val layout = ThreePartsLayoutWidget(this, 32)
     private lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.providers.title")) {
@@ -37,7 +37,9 @@ class ProvidersScreen: Screen {
             )
         )
         sectionButtons.refreshPositions()
-        sections = LayoutListWidget(client, sectionButtons, this, layout)
+        sections = LayoutListWidget(
+            client, sectionButtons, this, layout
+        )
         layout.addBody(sections)
 
         layout.addFooter(
@@ -50,7 +52,7 @@ class ProvidersScreen: Screen {
         layout.forEachChild { widget ->
             addDrawableChild(widget)
         }
-        layout.refreshPositions()
+        refreshWidgetPositions()
     }
 
     private fun getScreenForProvider(): Screen? {
@@ -59,6 +61,11 @@ class ProvidersScreen: Screen {
             "SpotifyProvider" -> SpotifyScreen(this)
             else -> null
         }
+    }
+
+    override fun refreshWidgetPositions() {
+        sections.position(width, layout)
+        layout.refreshPositions()
     }
 
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {

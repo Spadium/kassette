@@ -18,7 +18,7 @@ import net.minecraft.util.Util
 
 class SpotifyScreen: Screen {
     private val parent: Screen?
-    private val layout = ThreePartsLayoutWidget(this, 64, 32)
+    private val layout = ThreePartsLayoutWidget(this, 32)
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.providers.title")) {
         this.parent = parent

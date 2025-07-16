@@ -16,7 +16,7 @@ import net.minecraft.util.Util
 
 class ConfigScreen : Screen {
     val parent: Screen?
-    val layout = ThreePartsLayoutWidget(this)
+    val layout = ThreePartsLayoutWidget(this, 32)
     lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.title")) {

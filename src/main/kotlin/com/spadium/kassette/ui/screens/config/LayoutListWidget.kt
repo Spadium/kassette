@@ -9,9 +9,16 @@ import net.minecraft.client.gui.widget.DirectionalLayoutWidget
 import net.minecraft.client.gui.widget.ElementListWidget
 import net.minecraft.client.gui.widget.LayoutWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
+import kotlin.properties.Delegates
 
 class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
     val layout: LayoutWidget
+    val center: Boolean by Delegates.observable(false) {
+        property, oldValue, newValue ->
+        if (oldValue != newValue) {
+            this.centerListVertically = newValue
+        }
+    }
 
     constructor(client: MinecraftClient?, layout: LayoutWidget, parent: Screen, parentLayout: ThreePartsLayoutWidget) :
             super(client, parent.width, parentLayout.contentHeight, parentLayout.headerHeight, layout.height) {
@@ -49,7 +56,12 @@ class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
             hovered: Boolean,
             tickProgress: Float
         ) {
-            layout.setPosition(x, y)
+            val layoutY = if (centerListVertically && layout.height < itemHeight) {
+                height / 2 - layout.height / 2
+            } else {
+                y
+            }
+            layout.setPosition(x, layoutY)
             layout.forEachChild {
                 it.render(context, mouseX, mouseY, tickProgress)
             }

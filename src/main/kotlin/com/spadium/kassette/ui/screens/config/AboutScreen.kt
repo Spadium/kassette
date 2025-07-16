@@ -43,7 +43,7 @@ class AboutScreen: Screen {
         date(LocalDate.Formats.ISO); chars("  ")
         amPmHour(); chars(":"); minute(); chars(":"); second(); amPmMarker("AM", "PM")
     }
-    private val layout = ThreePartsLayoutWidget(this, 32)
+    private val layout = ThreePartsLayoutWidget(this, 128, 32)
     private lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Text.translatable("kassette.config.about.title")) {
@@ -62,8 +62,16 @@ class AboutScreen: Screen {
     }
 
     override fun init() {
-        val headerLayout = layout.addHeader(DirectionalLayoutWidget.vertical().spacing(4))
+        val headerLayout = layout.addHeader(DirectionalLayoutWidget.vertical().spacing(8))
         headerLayout.add(TextWidget(title, textRenderer), Positioner::alignHorizontalCenter)
+        headerLayout.add(IconWidget.create(
+            256, 64,
+            Identifier.of(
+                "kassette",
+                "textures/gui/about_banner.png"
+            ),
+            256, 64
+        ))
         headerLayout.mainPositioner.alignVerticalCenter()
 
         val gridLayout = GridWidget()
@@ -74,14 +82,6 @@ class AboutScreen: Screen {
             .alignHorizontalCenter()
 
         val gridAdder = gridLayout.createAdder(2)
-        gridAdder.add(IconWidget.create(
-            256, 64,
-            Identifier.of(
-                "kassette",
-                "textures/gui/about_banner.png"
-            ),
-            256, 64
-        ), 2)
         gridAdder.add(
             TextWidget(
                 Text.translatable("kassette.config.about.version"),
