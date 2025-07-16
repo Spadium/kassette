@@ -1,19 +1,13 @@
 package com.spadium.kassette.util
 
 import net.minecraft.client.texture.NativeImage
-import net.minecraft.util.PngMetadata
-import org.lwjgl.stb.STBImage
-import org.lwjgl.system.MemoryUtil
 import java.awt.image.BufferedImage
-import java.io.IOException
 import java.io.InputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import javax.imageio.ImageIO
 
 class ImageUtils {
     companion object {
-        fun loadImageIOImage(input: InputStream, close: Boolean = false): NativeImage {
+        fun loadStream(input: InputStream, close: Boolean = false): NativeImage {
             val bufferedImage: BufferedImage = ImageIO.read(input)
             val nativeImage: NativeImage = NativeImage(bufferedImage.width, bufferedImage.height, true)
             nativeImage.format

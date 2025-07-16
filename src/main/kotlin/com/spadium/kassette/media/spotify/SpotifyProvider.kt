@@ -198,7 +198,7 @@ class SpotifyProvider : AccountMediaProvider {
                 if (item.album.images[0].url != lastImageUrl) {
                     lastImageUrl = item.album.images[0].url
                     val stream = URI(item.album.images[0].url).toURL().openStream()
-                    infoToReturn.coverArt = ImageUtils.loadImageIOImage(stream)
+                    infoToReturn.coverArt = ImageUtils.loadStream(stream)
                     stream.close()
                 }
             }

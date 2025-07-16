@@ -23,7 +23,7 @@ object MediaManager {
     }
 
     fun getDefaultCoverArt(): NativeImage {
-        return ImageUtils.loadImageIOImage(
+        return ImageUtils.loadStream(
             MinecraftClient.getInstance().resourceManager
                 .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!,
             true

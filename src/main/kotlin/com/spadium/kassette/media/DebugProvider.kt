@@ -3,9 +3,7 @@ package com.spadium.kassette.media
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.util.ImageUtils
 import kotlinx.coroutines.delay
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.texture.NativeImage
 import net.minecraft.util.Identifier
 import java.net.URI
 import javax.net.ssl.HttpsURLConnection
@@ -59,7 +57,7 @@ class DebugProvider: AccountMediaProvider {
 
         when (info.state) {
             MediaManager.MediaState.OTHER -> {
-                info.coverArt = ImageUtils.loadImageIOImage(
+                info.coverArt = ImageUtils.loadStream(
                     MinecraftClient.getInstance().resourceManager
                         .open(Identifier.of("kassette", "textures/other_placeholder.png"))
                 )
@@ -69,7 +67,7 @@ class DebugProvider: AccountMediaProvider {
                     val url = URI("https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png").toURL()
                     val uc: HttpsURLConnection = url.openConnection() as HttpsURLConnection
                     val inputStream = uc.inputStream
-                    info.coverArt = ImageUtils.loadImageIOImage(inputStream, true)
+                    info.coverArt = ImageUtils.loadStream(inputStream, true)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
