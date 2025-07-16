@@ -196,7 +196,7 @@ class MediaInfoHUD {
         )
 
         if (positionIndicator >= scrollThreshold) {
-            positionIndicator = 0.0
+            positionIndicator -= scrollThreshold
         }
         previousTime = currentTime
     }
