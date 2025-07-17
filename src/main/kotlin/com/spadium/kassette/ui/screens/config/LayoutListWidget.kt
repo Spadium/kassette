@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 
 class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
     val layout: LayoutWidget
-    val center: Boolean by Delegates.observable(false) {
+    var center: Boolean by Delegates.observable(false) {
         property, oldValue, newValue ->
         if (oldValue != newValue) {
             this.centerListVertically = newValue
@@ -24,6 +24,11 @@ class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
             super(client, parent.width, parentLayout.contentHeight, parentLayout.headerHeight, layout.height) {
         addEntry(LayoutElement(layout))
         this.layout = layout
+    }
+
+    constructor(client: MinecraftClient?, layout: LayoutWidget, parent: Screen, parentLayout: ThreePartsLayoutWidget, center: Boolean) :
+            this(client, layout, parent, parentLayout) {
+        this.centerListVertically = center
     }
 
     companion object {
@@ -57,7 +62,7 @@ class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
             tickProgress: Float
         ) {
             val layoutY = if (centerListVertically && layout.height < itemHeight) {
-                height / 2 - layout.height / 2
+                (height / 2) - (layout.height / 2)
             } else {
                 y
             }

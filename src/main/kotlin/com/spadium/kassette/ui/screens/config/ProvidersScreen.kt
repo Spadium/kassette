@@ -38,7 +38,8 @@ class ProvidersScreen: Screen {
         )
         sectionButtons.refreshPositions()
         sections = LayoutListWidget(
-            client, sectionButtons, this, layout
+            client, sectionButtons, this, layout,
+            true
         )
         layout.addBody(sections)
 
