@@ -2,6 +2,7 @@ package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.ModInfo
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate

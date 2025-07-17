@@ -2,6 +2,7 @@ package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
@@ -38,8 +39,8 @@ class ProvidersScreen: Screen {
         )
         sectionButtons.refreshPositions()
         sections = LayoutListWidget(
-            client, sectionButtons, this, layout,
-            true
+            client, sectionButtons,
+            this, layout,
         )
         layout.addBody(sections)
 

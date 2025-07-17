@@ -56,6 +56,7 @@ class SpotifyScreen: Screen {
                 { button ->
                     Config.Instance.providers.spotify.ignoreRateLimits = !Config.Instance.providers.spotify.ignoreRateLimits
                     button.message = Text.translatable("kassette.config.button.generic.boolean.${Config.Instance.providers.spotify.ignoreRateLimits}")
+                    clearAndInit()
                 }
             ).width(100).build()
         )
@@ -77,6 +78,10 @@ class SpotifyScreen: Screen {
         }
         gridLayout.refreshPositions()
         layout.refreshPositions()
+    }
+
+    private fun onLogin() {
+        clearAndInit()
     }
 
     override fun close() {

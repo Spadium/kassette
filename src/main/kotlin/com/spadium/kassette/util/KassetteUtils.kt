@@ -10,7 +10,11 @@ class KassetteUtils {
         fun createButtonToScreen(message: Text, screen: Screen?): ButtonWidget {
             val button = ButtonWidget.builder(
                 message,
-                { button -> if (screen != null) MinecraftClient.getInstance().setScreen(screen) }
+                { button ->
+                    if (screen != null) {
+                        MinecraftClient.getInstance().setScreen(screen)
+                    }
+                }
             ).width(200).build()
             button.active = (screen != null)
 

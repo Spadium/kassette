@@ -29,4 +29,15 @@ data class MediaInfo(
         return true
     }
 
+    override fun hashCode(): Int {
+        var result = maximumTime.hashCode()
+        result = 31 * result + title.hashCode()
+        result = 31 * result + album.hashCode()
+        result = 31 * result + artist.hashCode()
+        result = 31 * result + coverArt.hashCode()
+        result = 31 * result + provider.hashCode()
+        result = 31 * result + state.hashCode()
+        return result
+    }
+
 }
