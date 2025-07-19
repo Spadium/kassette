@@ -10,7 +10,7 @@ class HCTSolver {
         doubleArrayOf(0.00010146692491640572, 0.0005364214359186694, 0.0032979401770712076)
     )
 
-    val LRGB_FROM_SCALED_DISCOUNT: Array<DoubleArray> = arrayOf(
+    val LINRGB_FROM_SCALED_DISCOUNT: Array<DoubleArray> = arrayOf(
             doubleArrayOf(1373.2198709594231, -1100.4251190754821, -7.278681089101213),
             doubleArrayOf(-271.815969077903, 559.6580465940733, -32.46047482791194),
             doubleArrayOf(1.9622899599665666, -57.173814538844006, 308.7233197812385)
@@ -479,7 +479,36 @@ class HCTSolver {
 
     fun findResultByJ(hueRadians: Double, chroma: Double, y: Double): Int {
         var j: Double = sqrt(y) * 11.0
-        TODO("implement")
+        val viewingConditions: ViewingConditions = ViewingConditions.DEFAULT
+        val tInnerCoefficient = 1/ 1.64.pow(0.29.pow(viewingConditions.n)).pow(0.73)
+        val eHue = 0.25 * (cos(hueRadians + 2.0) + 3.8)
+        val p1 = eHue * (50000.0 / 13.0) * viewingConditions.nc * viewingConditions.ncb
+        val hSin = sin(hueRadians)
+        val hCos = cos(hueRadians)
+        for (iteration in 0..5) {
+            val jNormalized = j / 100.0
+            val alpha = if (chroma == 0.0 || j == 0.0) 0.0 else chroma / sqrt(jNormalized)
+            val t = (alpha * tInnerCoefficient).pow(1.0 / 0.9)
+            val ac = viewingConditions.aw * jNormalized.pow(
+                1.0 / viewingConditions.c / viewingConditions.z
+            )
+            val p2 = ac / viewingConditions.nbb
+            val gamma = 23.0 * (p2 + 0.305) * t / (23.0 * p1 + 100 * t * hCos + 108.0 * t * hSin)
+            val a = gamma * hCos
+            val b = gamma * hSin
+            val rA = (460.0 * p2 + 451.0 * a + 288.0 * b) / 1403.0
+            val gA = (460.0 * p2 - 891.0 * a - 261.0 * b) / 1403.0
+            val bA = (460.0 * p2 - 220.0 * a - 6300.0 * b) / 1403.0
+            val rCScaled = inverseChromaticAdaptation(rA)
+            val gCScaled = inverseChromaticAdaptation(gA)
+            val bCScaled = inverseChromaticAdaptation(bA)
+            val linRgb = MathUtil.matrixMultiply(
+                doubleArrayOf(rCScaled, gCScaled, bCScaled),
+                LINRGB_FROM_SCALED_DISCOUNT
+            )
+
+        }
+
         return 0
     }
 }

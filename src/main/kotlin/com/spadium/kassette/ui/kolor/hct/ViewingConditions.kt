@@ -3,19 +3,25 @@ package com.spadium.kassette.ui.kolor.hct
 import com.spadium.kassette.ui.kolor.util.MathUtil
 import kotlin.math.*
 
-class ViewingConditions {
+data class ViewingConditions(
+    val n: Double,  val aw: Double, val nbb: Double,
+    val ncb: Double, val c: Double, val nc: Double,
+    val rgbD: DoubleArray, val fl: Double, val flRoot: Double,
+    val z: Double
+) {
     companion object {
+        @JvmStatic
         val DEFAULT: ViewingConditions = ViewingConditions(
-            n = TODO(),
-            aw = TODO(),
-            nbb = TODO(),
-            ncb = TODO(),
-            c = TODO(),
-            nc = TODO(),
-            rgbD = TODO(),
-            fl = TODO(),
-            flRoot = TODO(),
-            z = TODO()
+            n = 0.0,
+            aw = 0.0,
+            nbb = 0.0,
+            ncb = 0.0,
+            c = 0.0,
+            nc = 0.0,
+            rgbD = doubleArrayOf(),
+            fl = 0.0,
+            flRoot = 0.0,
+            z = 0.0
         )
 
         fun make(
@@ -101,34 +107,5 @@ class ViewingConditions {
 //                z
 //            )
 //        }
-    }
-
-    private var aw = 0.0
-    private var nbb = 0.0
-    private var ncb = 0.0
-    private var c = 0.0
-    private var nc = 0.0
-    private var n = 0.0
-    private var rgbD: DoubleArray? = null
-    private var fl = 0.0
-    private var flRoot = 0.0
-    private var z = 0.0
-
-    private constructor(
-        n: Double,  aw: Double, nbb: Double,
-        ncb: Double, c: Double, nc: Double,
-        rgbD: DoubleArray, fl: Double, flRoot: Double,
-        z: Double
-    ) {
-        this.n = n
-        this.aw = aw
-        this.nbb = nbb
-        this.ncb = ncb
-        this.c = c
-        this.nc = nc
-        this.rgbD = rgbD
-        this.fl = fl
-        this.flRoot = flRoot
-        this.z = z
     }
 }
