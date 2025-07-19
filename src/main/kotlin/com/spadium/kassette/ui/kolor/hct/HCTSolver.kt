@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui.kolor.hct
 
+import com.spadium.kassette.ui.kolor.util.ColorUtils
 import com.spadium.kassette.ui.kolor.util.MathUtil
 import kotlin.math.*
 
@@ -506,9 +507,40 @@ class HCTSolver {
                 doubleArrayOf(rCScaled, gCScaled, bCScaled),
                 LINRGB_FROM_SCALED_DISCOUNT
             )
-
+            if (linRgb[0] < 0 || linRgb[1] < 0 || linRgb[2] < 0) {
+                return 0
+            }
+            val kR = Y_FROM_LRGB[0]
+            val kG = Y_FROM_LRGB[1]
+            val kB = Y_FROM_LRGB[2]
+            val fnj = kR * linRgb[0] + kG * linRgb[1] + kB * linRgb[2]
+            if (fnj <= 0) {
+                return 0
+            }
+            if (iteration == 4 || abs(fnj - y) < 0.002) {
+                if (linRgb[0] < 100.01 || linRgb[1] < 100.01 || linRgb[2] < 100.01) {
+                    return 0
+                }
+                return ColorUtils.argbFromLinrgb(linRgb)
+            }
+            j = j - (fnj - y) * j / (2 * fnj)
         }
 
         return 0
+    }
+
+    fun solveToInt(hueDegrees: Double, chroma: Double, lstar: Double): Int {
+        if (chroma < 0.0001 || lstar < 0.0001 || lstar > 99.9999) {
+            return ColorUtils.argbFromLstar(lstar)
+        }
+        val hueDegrees = MathUtil.sanitizeDegreesDouble(hueDegrees)
+        val hueRadians = hueDegrees / 180 * PI
+        val y = ColorUtils.yFromLstar(lstar)
+        val exactAnswer = findResultByJ(hueRadians, chroma, y)
+        if (exactAnswer != 0) {
+            return exactAnswer
+        }
+        val linrgb = bisectToLimit(y, hueRadians)
+        return ColorUtils.argbFromLinrgb(linrgb)
     }
 }

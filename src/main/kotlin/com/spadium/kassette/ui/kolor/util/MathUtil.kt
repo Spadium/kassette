@@ -12,5 +12,21 @@ class MathUtil {
             val c: Double = row[0] * matrix[2][0] + row[1] * matrix[2][1] + row[2] * matrix[2][2]
             return doubleArrayOf(a, b, c)
         }
+
+        fun sanitizeDegreesDouble(degrees: Double): Double {
+            var deg = degrees % 360.0
+            if (deg < 0) {
+                deg = deg + 360.0
+            }
+            return deg
+        }
+
+        fun sanitizeDegreesInt(degrees: Int): Int {
+            var deg = degrees % 360
+            if (deg < 0) {
+                deg = deg + 360
+            }
+            return deg
+        }
     }
 }
