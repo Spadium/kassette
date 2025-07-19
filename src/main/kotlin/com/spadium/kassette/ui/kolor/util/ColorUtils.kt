@@ -43,6 +43,13 @@ class ColorUtils {
             95.047, 100.0, 108.883
         )
 
+        fun hexString(argb: Int): String {
+            val red = redFromArgb(argb)
+            val blue = blueFromArgb(argb)
+            val green = greenFromArgb(argb)
+            return "#%02x%02x%02x".format(red, green, blue)
+        }
+
         fun delinearized(component: Double): Int {
             val normalized = component / 100.0
             val delinearized = 0.0
@@ -165,12 +172,8 @@ class ColorUtils {
             return labF(y / 100.0) * 116.0 - 16.0
         }
 
-        fun whitePointD65(): DoubleArray {
-            return WHITE_POINT_D65
-        }
-
-        val e = 216.0 / 24389.0
-        val kappa = 24389.0 / 27.0
+        const val e = 216.0 / 24389.0
+        const val kappa = 24389.0 / 27.0
 
         fun labF(t: Double): Double {
             return if (t > e) {

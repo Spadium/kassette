@@ -543,4 +543,8 @@ class HCTSolver {
         val linrgb = bisectToLimit(y, hueRadians)
         return ColorUtils.argbFromLinrgb(linrgb)
     }
+
+    fun solveToCam(hueDegrees: Double, chroma: Double, lstar: Double): Cam16 {
+        return Cam16.fromInt(solveToInt(hueDegrees, chroma, lstar))
+    }
 }

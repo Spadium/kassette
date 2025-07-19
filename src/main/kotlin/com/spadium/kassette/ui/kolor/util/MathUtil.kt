@@ -1,5 +1,7 @@
 package com.spadium.kassette.ui.kolor.util
 
+import kotlin.math.abs
+
 class MathUtil {
     companion object {
         fun lerp(start: Double, stop: Double, amount: Double): Double {
@@ -27,6 +29,15 @@ class MathUtil {
                 deg = deg + 360
             }
             return deg
+        }
+
+        fun rotationDirection(from: Double, to: Double): Double {
+            val increasingDifference = sanitizeDegreesDouble(to - from)
+            return if (increasingDifference <= 180.0) 1.0 else -1.0
+        }
+
+        fun differenceDegrees(a: Double, b: Double): Double {
+            return 180.0 - abs(abs(a - b) - 180.0)
         }
     }
 }
