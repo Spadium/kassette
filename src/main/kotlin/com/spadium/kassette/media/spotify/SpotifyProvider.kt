@@ -16,6 +16,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Util
 import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
+import se.michaelthelin.spotify.enums.ProductType
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials
 import se.michaelthelin.spotify.model_objects.specification.Track
 import java.net.URI
@@ -34,7 +35,7 @@ class SpotifyProvider : AccountMediaProvider {
     private var nextTokenRefresh: Long = 0
     private var lastImageUrl = ""
     override var info: MediaInfo = infoToReturn
-    override val availableCommands: List<String> = listOf(
+    override val availableCommands: MutableList<String> = mutableListOf(
         "authSendStr", "togglePlay", "nextTrack", "previousTrack"
     )
     private var requestsMadeBeforeLimit = 0
@@ -96,11 +97,14 @@ class SpotifyProvider : AccountMediaProvider {
             }
             ProviderState.POST_TOKEN_SETUP -> {
                 isAuthenticated = true
-
-                usingPremiumAccount = true
+                val profile = clientApi.currentUsersProfile.build().execute()
+                usingPremiumAccount = (profile.product == ProductType.PREMIUM)
                 providerState = ProviderState.SIGNED_IN
             }
             ProviderState.SIGNED_IN -> {
+                if (!usingPremiumAccount) {
+                    availableCommands.removeAll(arrayOf("togglePlay", "nextTrack", "previousTrack"))
+                }
                 try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
             }
             ProviderState.COOLDOWN -> {
@@ -124,10 +128,6 @@ class SpotifyProvider : AccountMediaProvider {
             }
             providerState = ProviderState.COOLDOWN
         }
-    }
-
-    private fun checkPremiumStatus() {
-
     }
 
     override fun initiateLogin(titleScreen: Boolean) {
