@@ -46,6 +46,18 @@ class Cam16 {
     }
 
     companion object {
+        val XYZ_TO_CAM16RGB: Array<DoubleArray> = arrayOf(
+            doubleArrayOf(0.401288, 0.650173, -0.051461),
+            doubleArrayOf(-0.250268, 1.204414, 0.045854),
+            doubleArrayOf(-0.002079, 0.048952, 0.953127)
+        )
+
+        val CAM16RGB_TO_XYZ: Array<DoubleArray> = arrayOf(
+            doubleArrayOf(1.8620678, -1.0112547, 0.14918678),
+            doubleArrayOf(0.38752654, 0.62144744, -0.00897398),
+            doubleArrayOf(-0.01584150, -0.03412294, 1.0499644)
+        )
+
         fun fromInt(argb: Int): Cam16 {
             return fromIntIntViewingConditions(argb, ViewingConditions.DEFAULT)
         }
@@ -70,6 +82,16 @@ class Cam16 {
             z: Double,
             conditions: ViewingConditions
         ): Cam16 {
+            val matrix = XYZ_TO_CAM16RGB
+            val rT = (x * matrix[0][0]) + (y * matrix[0][1]) + (z * matrix[0][2])
+            val gT = (x * matrix[1][0]) + (y * matrix[1][1]) + (z * matrix[1][2])
+            val bT = (x * matrix[2][0]) + (y * matrix[2][1]) + (z * matrix[2][2])
+
+            val rD = conditions.rgbD[0] * rT
+            val gD = conditions.rgbD[1] * gT
+            val bD = conditions.rgbD[2] * bT
+
+
             TODO()
         }
 

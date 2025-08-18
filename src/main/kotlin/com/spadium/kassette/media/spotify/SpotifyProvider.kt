@@ -41,6 +41,8 @@ class SpotifyProvider : AccountMediaProvider {
     private var cooldownStartTime = 0L
     override var isAuthenticated: Boolean = false
 
+    var usingPremiumAccount = false
+
     enum class ProviderState {
         NONE, GOT_TOKEN, POST_TOKEN_SETUP, SIGNED_IN, COOLDOWN
     }
@@ -94,6 +96,8 @@ class SpotifyProvider : AccountMediaProvider {
             }
             ProviderState.POST_TOKEN_SETUP -> {
                 isAuthenticated = true
+
+                usingPremiumAccount = true
                 providerState = ProviderState.SIGNED_IN
             }
             ProviderState.SIGNED_IN -> {
@@ -120,6 +124,10 @@ class SpotifyProvider : AccountMediaProvider {
             }
             providerState = ProviderState.COOLDOWN
         }
+    }
+
+    private fun checkPremiumStatus() {
+
     }
 
     override fun initiateLogin(titleScreen: Boolean) {

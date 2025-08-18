@@ -1,6 +1,6 @@
 package com.spadium.kassette.config
 
-import com.spadium.kassette.serializers.IdentifierSerializer
+import com.spadium.kassette.config.serializers.IdentifierSerializer
 import kotlinx.serialization.Serializable
 import net.minecraft.util.Identifier
 

@@ -119,7 +119,7 @@ data class Config(
 
         // Validate version
         if (version != configVersion) {
-            throw RuntimeException("Config version doesn't match supported version!")
+            throw RuntimeException("Config version doesn't match supported version! Trying to update!")
         }
     }
 

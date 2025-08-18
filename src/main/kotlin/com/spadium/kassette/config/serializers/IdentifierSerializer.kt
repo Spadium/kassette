@@ -1,4 +1,4 @@
-package com.spadium.kassette.serializers
+package com.spadium.kassette.config.serializers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

@@ -5,7 +5,7 @@ Kassette allows you to see and control what is playing in the background, curren
 
 ## Setup
 You currently need:
-- a Spotify account, preferably a *premium* account, free accounts are currently untested and aren't guaranteed to work
+- a Spotify account, preferably a *premium* account, free accounts DO work but with *some* caveats (no skipping and play/pause function)
 - a Spotify developer account with an app set up
 - a working internet connection
 

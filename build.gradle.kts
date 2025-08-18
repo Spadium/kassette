@@ -50,6 +50,15 @@ dependencies {
 	include(implementation("com.neovisionaries:nv-i18n:1.29")!!)
 }
 
+sourceSets {
+	main {
+		kotlin {
+			// exclude Kolor sources from build to save some space
+			exclude("com/spadium/kassette/ui/kolor")
+		}
+	}
+}
+
 tasks.processResources {
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
