@@ -1,8 +1,9 @@
-package com.spadium.kassette.ui
+package com.spadium.kassette.ui.overlays
 
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
+import com.spadium.kassette.ui.MarqueeTextManager
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.MinecraftClient
@@ -25,14 +26,7 @@ class MediaInfoHUD {
     private var mediaInfo: MediaInfo = MediaManager.provider.info
     private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
-    private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(
-        { "coverart" }, MediaManager.getDefaultCoverArt()
-    )
-    private var largeCoverArt: NativeImageBackedTexture = NativeImageBackedTexture(
-        { "coverart_large" }, MediaManager.getDefaultCoverArt()
-    )
-    private val coverArtIdentifier = Identifier.of("kassette:coverart")
-    private val largeCoverArtIdentifier = Identifier.of("kassette:coverart_large")
+
     private var config = Config.Instance
     private var hudConfig = config.hud
     private var isFancy = hudConfig.fancyText
@@ -104,28 +98,7 @@ class MediaInfoHUD {
         }
     }
 
-    private fun setupCoverArt() {
-        if (MediaManager.provider.getMedia().coverArt != coverArt.image) {
-            val textureManager = MinecraftClient.getInstance().textureManager
-            val coverImage = MediaManager.provider.getMedia().coverArt
-            coverArt.close()
-            coverArt = NativeImageBackedTexture(
-                { "coverart" }, coverImage
-            )
-            coverArt.setFilter(true, true)
-            coverArt.upload()
 
-            largeCoverArt.close()
-            largeCoverArt = NativeImageBackedTexture(
-                { "coverart_large" }, coverImage
-            )
-            largeCoverArt.setFilter(false, false)
-            largeCoverArt.upload()
-
-            textureManager.registerTexture(coverArtIdentifier, coverArt)
-            textureManager.registerTexture(largeCoverArtIdentifier, largeCoverArt)
-        }
-    }
 
     private fun getFirstLine(): String {
         return "${mediaInfo.title} - ${mediaInfo.artist}"
@@ -142,7 +115,6 @@ class MediaInfoHUD {
             thirdLineManager = MarqueeTextManager(context)
         }
         mediaInfo = MediaManager.provider.info
-        setupCoverArt()
         val scrollThreshold: Float = 1f
         val currentTime: Long = Util.getMeasuringTimeNano()
         val artSize: Int = ((hudConfig.height.toFloat() - hudConfig.progressBarThickness) * (3f/4f)).toInt()

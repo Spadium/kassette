@@ -4,7 +4,7 @@ import com.spadium.kassette.config.Config
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.ui.MediaInfoHUD
+import com.spadium.kassette.ui.overlays.MediaInfoHUD
 import com.spadium.kassette.ui.screens.MediaInfoScreen
 import com.spadium.kassette.ui.toasts.ErrorToast
 import kotlinx.coroutines.runBlocking
@@ -73,7 +73,7 @@ open class Kassette : ClientModInitializer {
                 while (client.isRunning) {
                     try {
                         runBlocking {
-                            MediaManager.provider.update()
+                            MediaManager.update()
                         }
                     } catch (e: Throwable) {
                         e.printStackTrace()

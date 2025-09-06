@@ -6,6 +6,7 @@ import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.util.ImageUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
+import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.util.Identifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -28,6 +29,10 @@ object MediaManager {
                 .open(Identifier.of("kassette", "textures/placeholder.jpg"))!!,
             true
         )
+    }
+
+    suspend fun update() {
+        provider.update()
     }
 
     fun setProvider(identifier: Identifier) {

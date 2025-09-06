@@ -60,6 +60,9 @@ class SpotifyProvider : AccountMediaProvider {
             if (!config.providers.spotify.refreshToken.isBlank() && !config.providers.spotify.accessToken.isBlank()) {
                 clientApi.refreshToken = config.providers.spotify.refreshToken
                 clientApi.accessToken = config.providers.spotify.accessToken
+                if (System.currentTimeMillis() >= nextTokenRefresh - 2000) {
+                    refreshTokens()
+                }
             }
             requestsMadeBeforeLimit++
         }
