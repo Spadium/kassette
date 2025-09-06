@@ -2,9 +2,9 @@ package com.spadium.kassette.config
 
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
+import com.spotify.connectstate.Connect
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
@@ -34,6 +34,10 @@ data class Config(
     var providers: ProvidersConfig = ProvidersConfig(
         defaultProvider = Identifier.of("kassette:placeholder"),
         spotify = SpotifyConfig("", "", "", "", 0L, 0L, false),
+        librespot = LibreSpotConfig(
+            Connect.DeviceType.COMPUTER, "Kassette LibreSpot Provider", "", "",
+            0
+        )
     ),
     var hud: HUDConfig = HUDConfig(
         width = 128,
