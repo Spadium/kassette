@@ -65,14 +65,12 @@ class ConfigScreen : Screen {
                 AboutScreen(this)
             )
         )
-        if (!Kassette.errors.isEmpty()) {
             buttonList.add(
                 KassetteUtils.createButtonToScreen(
-                    Text.translatable("kassette.config.button.errors"),
-                    ErrorScreen(this, Kassette.errors)
+                    Text.translatable("kassette.config.button.notifications"),
+                    NotificationScreen(this, Kassette.notifications)
                 )
             )
-        }
         buttonList.refreshPositions()
         sections = LayoutListWidget(
             client, buttonList, this, layout

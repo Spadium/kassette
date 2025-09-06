@@ -103,7 +103,7 @@ class SpotifyProvider : AccountMediaProvider {
                 usingPremiumAccount = (profile.product == ProductType.PREMIUM)
 
                 if (!usingPremiumAccount) {
-
+                    MediaManager.throwWarning()
                     availableCommands.removeAll(arrayOf("togglePlay", "nextTrack", "previousTrack"))
                 }
 

@@ -1,6 +1,6 @@
 package com.spadium.kassette.ui.screens.config
 
-import com.spadium.kassette.util.KassetteUtils
+import com.spadium.kassette.util.ModNotification
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
@@ -8,14 +8,14 @@ import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
 
-class ErrorScreen: Screen {
+class NotificationScreen: Screen {
     val layout = ThreePartsLayoutWidget(this, 32)
     val parent: Screen?
-    var errors: MutableMap<String, Throwable>
+    var notifications: MutableList<ModNotification>
 
-    constructor(parent: Screen?, errors: MutableMap<String, Throwable>) : super(Text.translatable("kassette.error.title")) {
+    constructor(parent: Screen?, notifications: MutableList<ModNotification>) : super(Text.translatable("kassette.notifications.title")) {
         this.parent = parent
-        this.errors = errors
+        this.notifications = notifications
     }
 
     override fun init() {

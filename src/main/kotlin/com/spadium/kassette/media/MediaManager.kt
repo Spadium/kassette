@@ -2,12 +2,16 @@ package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.Config
+import com.spadium.kassette.media.spotify.LibreSpotProvider
 import com.spadium.kassette.media.spotify.SpotifyProvider
+import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.util.ImageUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.createInstance
@@ -18,9 +22,25 @@ object MediaManager {
     val providers: MutableMap<Identifier, KClass<out MediaProvider>> = mutableMapOf(
         Identifier.of("kassette:placeholder") to PlaceholderProvider::class,
         Identifier.of("kassette:spotify") to SpotifyProvider::class,
+        Identifier.of("kassette:librespot") to LibreSpotProvider::class,
         Identifier.of("kassette:debug") to DebugProvider::class
     ).withDefault {
         PlaceholderProvider::class
+    }
+    val warningListeners: MutableList<(KProperty<*>, LinkedHashMap<String, Text>, LinkedHashMap<String, Text>) -> Unit> = mutableListOf()
+    val warnings: LinkedHashMap<String, Text> by Delegates.observable(linkedMapOf()) {
+            prop, oldVal, newVal ->
+        if (oldVal.lastEntry() != newVal.lastEntry()) {
+            if (MinecraftClient.getInstance().toastManager != null) {
+                MinecraftClient.getInstance().toastManager.add(
+                    WarningToast(newVal.lastEntry().value)
+                )
+            }
+        }
+    }
+
+    fun throwWarning() {
+
     }
 
     fun getDefaultCoverArt(): NativeImage {

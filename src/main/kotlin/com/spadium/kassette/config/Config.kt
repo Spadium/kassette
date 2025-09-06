@@ -2,12 +2,16 @@ package com.spadium.kassette.config
 
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
+import com.spadium.kassette.config.overlays.DefaultOverlayConfig
+import com.spadium.kassette.config.overlays.MasterOverlayConfig
+import com.spadium.kassette.util.ModNotification
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
@@ -39,21 +43,23 @@ data class Config(
             0
         )
     ),
-    var hud: HUDConfig = HUDConfig(
-        width = 128,
-        height = 48,
-        imageSize = 32,
-        backgroundColor = intArrayOf(0, 0, 0, 128),
-        borderColor = intArrayOf(0, 128, 0, 255),
-        progressBackgroundColor = intArrayOf(32, 32, 32, 255),
-        progressForegroundColor = intArrayOf(16, 32, 128, 255),
-        textSpeed = 1, // Characters per second
-        fancyTextSpeed = 5, // Pixels per second
-        showCover = true,
-        fancyText = true,
-        progressType = HUDConfig.ProgressType.BAR,
-        lineSpacing = 1,
-        progressBarThickness = 4
+    var overlays: MasterOverlayConfig = MasterOverlayConfig(
+        default = DefaultOverlayConfig(
+            width = 128,
+            height = 48,
+            imageSize = 32,
+            backgroundColor = intArrayOf(0, 0, 0, 128),
+            borderColor = intArrayOf(0, 128, 0, 255),
+            progressBackgroundColor = intArrayOf(32, 32, 32, 255),
+            progressForegroundColor = intArrayOf(16, 32, 128, 255),
+            textSpeed = 1, // Characters per second
+            fancyTextSpeed = 5, // Pixels per second
+            showCover = true,
+            fancyText = true,
+            progressType = DefaultOverlayConfig.ProgressType.BAR,
+            lineSpacing = 1,
+            progressBarThickness = 4
+        )
     ),
     var callbackPort: UInt = 61008u,
     var infoMode: InfoMode = InfoMode.HUD,
@@ -106,7 +112,14 @@ data class Config(
                     config.validate()
                 } catch (e: Exception) {
                     logger.error("Error loading config! ${e.toString()}")
-                    Kassette.errors.put("Kassette Configuration", e)
+                    Kassette.notifications.add(
+                        ModNotification(
+                            ModNotification.NotificationType.ERROR,
+                            Text.literal("Kassette Configuration"),
+                            ModNotification.SourceType.MOD,
+                            e
+                        )
+                    )
                     config = Config()
                 }
             } else {
@@ -118,8 +131,8 @@ data class Config(
 
     fun validate() {
         // Validate colors
-        hud.backgroundColor = checkColorArray(hud.backgroundColor, 3, 4, 255)
-        hud.borderColor = checkColorArray(hud.borderColor, 3, 4, 255)
+        overlays.default.backgroundColor = checkColorArray(overlays.default.backgroundColor, 3, 4, 255)
+        overlays.default.borderColor = checkColorArray(overlays.default.borderColor, 3, 4, 255)
 
         // Validate version
         if (version != configVersion) {

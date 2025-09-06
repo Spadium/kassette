@@ -9,11 +9,14 @@ import net.minecraft.text.Text
 class WarningToast : Toast {
     private var visibility = Toast.Visibility.SHOW
     private val message: Text
+    private val details: Text
 
     constructor(
-        message: Text
+        message: Text,
+        details: Text = Text.empty()
     ) {
         this.message = message
+        this.details = details
     }
 
     override fun getVisibility(): Toast.Visibility? {
@@ -24,6 +27,13 @@ class WarningToast : Toast {
         if (time > 7500) {
             visibility = Toast.Visibility.HIDE
         }
+    }
+
+    override fun getHeight(): Int {
+        if (details.string.isNullOrBlank()) {
+            return 96
+        }
+        return 96
     }
 
     override fun draw(
@@ -38,6 +48,11 @@ class WarningToast : Toast {
         context?.drawText(
             textRenderer!!, Text.literal("Warning"),
             4, 4, 0xFFFFFFFF.toInt(), false
+        )
+        context?.drawWrappedText(
+            textRenderer!!, message,
+            4, (4 + (textRenderer.fontHeight * 1.5)).toInt(), (width - 16),
+            0xFFFFFFFF.toInt(), false
         )
         context?.drawWrappedText(
             textRenderer!!, message,

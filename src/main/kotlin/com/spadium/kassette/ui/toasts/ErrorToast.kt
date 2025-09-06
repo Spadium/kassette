@@ -28,7 +28,6 @@ class ErrorToast: Toast {
     }
 
     override fun getHeight(): Int {
-
         return 96
     }
 

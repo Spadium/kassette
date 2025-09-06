@@ -35,6 +35,10 @@ class MarqueeTextManager {
         this.marqueeCounter = 0
     }
 
+    private fun getEmLength(count: Int): String {
+        return " ".repeat(count)
+    }
+
     fun renderText(
         x: Int,
         y: Int,
@@ -44,7 +48,7 @@ class MarqueeTextManager {
         spacingBetween: Int,
         shouldScroll: Boolean
     ) {
-        if (Config.Instance.hud.fancyText) {
+        if (Config.Instance.overlays.default.fancyText) {
             renderFancyText(
                 x, y, color, shadow, maxLength, spacingBetween, shouldScroll
             )
@@ -106,7 +110,7 @@ class MarqueeTextManager {
 
         val textToScroll: String = "$text$spacing$text$spacing"
 
-        if (text.length <= maxLength) {
+        if (textRenderer.getWidth(text) <= textRenderer.getWidth(getEmLength(maxLength))) {
             // Don't bother scrolling when the text can fit within the maximum length before scrolling
             context.drawText(
                 textRenderer, text,
@@ -119,7 +123,7 @@ class MarqueeTextManager {
             // very janky but i dont care
             context.enableScissor(
                 x, y,
-                x + textRenderer.getWidth(" ".repeat(maxLength)),
+                x + textRenderer.getWidth(getEmLength(maxLength)),
                 y + 8
             )
             context.drawText(textRenderer, textToScroll, x - fancyOffset, y, color, shadow)

@@ -5,6 +5,7 @@
 
   "key.kassette.info": "Show Media Information",
   "kassette.error.title": "Kassette - Errors",
+  "kassette.notifications.title": "Kassette - Notifications",
   "kassette.popup.title": "Media (%1$s)",
   "kassette.config.title": "Kassette - Configuration",
   "kassette.config.button.openfile": "Open config file",
@@ -17,7 +18,7 @@
   "kassette.config.button.generic.boolean.false": "No",
   "kassette.config.button.hud": "HUD",
   "kassette.config.button.providers": "Providers",
-  "kassette.config.button.errors": "Errors",
+  "kassette.config.button.notifications": "Errors/Notifications",
   "kassette.config.button.currentprovider": "Current Provider",
   "kassette.config.button.spotify": "Spotify",
   "kassette.config.providers.title": "Kassette - Providers",

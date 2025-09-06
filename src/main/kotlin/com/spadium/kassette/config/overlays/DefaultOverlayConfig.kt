@@ -1,9 +1,9 @@
-package com.spadium.kassette.config
+package com.spadium.kassette.config.overlays
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class HUDConfig(
+data class DefaultOverlayConfig(
     var width: Int,
     var height: Int,
     val imageSize: Int,
