@@ -40,6 +40,8 @@ dependencies {
 
 	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+	// very much not temporary, gives us more features than the web api
+	implementation("xyz.gianlu.librespot:librespot-lib:1.6.5")
 	// temporary until i get to writing my own implementation
 	include(implementation("se.michaelthelin.spotify:spotify-web-api-java:9.2.0")!!)
 	// required to not crash outside the dev environment
