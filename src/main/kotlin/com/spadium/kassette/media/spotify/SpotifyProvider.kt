@@ -96,15 +96,18 @@ class SpotifyProvider : AccountMediaProvider {
                 providerState = ProviderState.POST_TOKEN_SETUP
             }
             ProviderState.POST_TOKEN_SETUP -> {
-                isAuthenticated = true
                 val profile = clientApi.currentUsersProfile.build().execute()
                 usingPremiumAccount = (profile.product == ProductType.PREMIUM)
+
+                if (!usingPremiumAccount) {
+
+                    availableCommands.removeAll(arrayOf("togglePlay", "nextTrack", "previousTrack"))
+                }
+
+                isAuthenticated = true
                 providerState = ProviderState.SIGNED_IN
             }
             ProviderState.SIGNED_IN -> {
-                if (!usingPremiumAccount) {
-                    availableCommands.removeAll(arrayOf("togglePlay", "nextTrack", "previousTrack"))
-                }
                 try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
             }
             ProviderState.COOLDOWN -> {
