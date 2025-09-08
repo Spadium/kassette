@@ -1,6 +1,5 @@
-package com.spadium.kassette.config
+package com.spadium.kassette.config.providers
 
-import com.spadium.kassette.config.LibreSpotConfig
 import com.spadium.kassette.config.serializers.IdentifierSerializer
 import kotlinx.serialization.Serializable
 import net.minecraft.util.Identifier

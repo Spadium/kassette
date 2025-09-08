@@ -2,7 +2,9 @@ package com.spadium.kassette.config
 
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.providers.LibreSpotConfig
+import com.spadium.kassette.config.providers.ProvidersConfig
+import com.spadium.kassette.config.providers.SpotifyConfig
 import com.spadium.kassette.util.ModNotification
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.ExperimentalSerializationApi

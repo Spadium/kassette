@@ -3,7 +3,7 @@ package com.spadium.kassette.media.spotify
 import com.google.gson.JsonParseException
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.MainConfig
-import com.spadium.kassette.config.SpotifyConfig
+import com.spadium.kassette.config.providers.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager

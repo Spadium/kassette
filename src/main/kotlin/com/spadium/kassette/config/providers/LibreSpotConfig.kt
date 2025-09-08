@@ -1,4 +1,4 @@
-package com.spadium.kassette.config
+package com.spadium.kassette.config.providers
 
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.Serializable
