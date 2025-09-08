@@ -1,10 +1,8 @@
 package com.spadium.kassette.ui
 
-import com.spadium.kassette.config.Config
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
 import kotlin.properties.Delegates
 
 /**
@@ -46,9 +44,10 @@ class MarqueeTextManager {
         shadow: Boolean,
         maxLength: Int,
         spacingBetween: Int,
-        shouldScroll: Boolean
+        shouldScroll: Boolean,
+        useFancyText: Boolean = true
     ) {
-        if (Config.Instance.overlays.default.fancyText) {
+        if (useFancyText) {
             renderFancyText(
                 x, y, color, shadow, maxLength, spacingBetween, shouldScroll
             )

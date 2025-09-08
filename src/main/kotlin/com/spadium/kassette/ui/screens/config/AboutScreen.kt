@@ -1,40 +1,26 @@
 package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.ModInfo
-import com.spadium.kassette.config.Config
 import com.spadium.kassette.ui.widgets.LayoutListWidget
-import com.spadium.kassette.util.KassetteUtils
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.font.MultilineText
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget
 import net.minecraft.client.gui.widget.GridWidget
 import net.minecraft.client.gui.widget.IconWidget
-import net.minecraft.client.gui.widget.MultilineTextWidget
 import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.ScrollableLayoutWidget
-import net.minecraft.client.gui.widget.ScrollableWidget
 import net.minecraft.client.gui.widget.TextWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
-import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 class AboutScreen: Screen {
     private val parent: Screen?

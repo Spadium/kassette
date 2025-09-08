@@ -1,6 +1,6 @@
 package com.spadium.kassette.ui.screens.onboarding
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaManager
 import net.minecraft.client.gui.screen.Screen
@@ -10,15 +10,13 @@ import net.minecraft.client.gui.widget.MultilineTextWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.Util
 
 class TutorialPageTwo: Screen {
     val layout = ThreePartsLayoutWidget(this)
 
     constructor(): super(Text.translatable("kassette.onboarding.three.title")) {
-        Config.Instance.firstRun = false
-        Config.Instance.save()
+        MainConfig.Instance.firstRun = false
+        MainConfig.Instance.save()
     }
 
     override fun init() {
@@ -34,7 +32,7 @@ class TutorialPageTwo: Screen {
             ButtonWidget.builder(
                 ScreenTexts.PROCEED,
                 { button ->
-                    Config.Instance = Config.load()
+                    MainConfig.Instance = MainConfig.load()
                     if (MediaManager.provider is AccountMediaProvider) {
                         (MediaManager.provider as AccountMediaProvider).initiateLogin(false)
                         close()

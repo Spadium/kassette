@@ -1,7 +1,7 @@
 package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.Kassette
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
 import net.fabricmc.loader.api.FabricLoader
@@ -96,7 +96,7 @@ class ConfigScreen : Screen {
     }
 
     override fun close() {
-        Config.Instance.save()
+        MainConfig.Instance.save()
         this.client!!.setScreen(parent)
     }
 }

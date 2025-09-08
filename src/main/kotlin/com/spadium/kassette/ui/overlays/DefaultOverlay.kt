@@ -1,6 +1,7 @@
 package com.spadium.kassette.ui.overlays
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
+import com.spadium.kassette.config.overlays.DefaultOverlayConfig
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.MarqueeTextManager
@@ -17,14 +18,15 @@ import kotlin.reflect.KProperty
 
 
 class DefaultOverlay : OverlayTheme {
+    private val scrollThreshold: Float = 1f
     private var timeDelta: Double = 0.0
     private var positionIndicator: Double = 0.0
-    private var previousTime: Long = 0
+    private var previousEndTime: Long = 0
     private var mediaInfo: MediaInfo = MediaManager.provider.info
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
 
-    private var config = Config.Instance
-    private var hudConfig = config.overlays.default
+    private var config = MainConfig.Instance
+    private var hudConfig = MainConfig.load<DefaultOverlayConfig>()
     private var isFancy = hudConfig.fancyText
     private var borderColor = ColorHelper.getArgb(
         hudConfig.backgroundColor[3],
@@ -55,15 +57,14 @@ class DefaultOverlay : OverlayTheme {
     private lateinit var thirdLineManager: MarqueeTextManager
 
     constructor() {
-
-        Config.addListener(this::updateVariables)
+//        Config.addListener(this::updateVariables)
     }
 
-    private fun updateVariables(property: KProperty<*>, oldValue: Config, newValue: Config) {
+    private fun updateVariables(property: KProperty<*>, oldValue: MainConfig, newValue: MainConfig) {
         // avoid stuttering when we don't need to reload variables
         if (oldValue != newValue) {
             config = newValue
-            hudConfig = config.overlays.default
+//            hudConfig = config.overlays.default
             borderColor = ColorHelper.getArgb(
                 hudConfig.backgroundColor[3],
                 hudConfig.borderColor[0],
@@ -106,12 +107,11 @@ class DefaultOverlay : OverlayTheme {
             thirdLineManager = MarqueeTextManager(context)
         }
         mediaInfo = MediaManager.provider.info
-        val scrollThreshold: Float = 1f
-        val currentTime: Long = Util.getMeasuringTimeNano()
+        val startTime: Long = Util.getMeasuringTimeNano()
         val artSize: Int = ((hudConfig.height.toFloat() - hudConfig.progressBarThickness) * (3f/4f)).toInt()
 
         // Delta-Time in seconds
-        timeDelta = (currentTime - previousTime).toDouble()  / (1000000000)
+        timeDelta = (startTime - previousEndTime).toDouble()  / (1000000000)
         positionIndicator += timeDelta / (1 / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble())
 
         context.fill(
@@ -161,7 +161,7 @@ class DefaultOverlay : OverlayTheme {
         if (positionIndicator >= scrollThreshold) {
             positionIndicator -= scrollThreshold
         }
-        previousTime = currentTime
+        previousEndTime = startTime
     }
 
     private fun drawProgressBar(context: DrawContext) {

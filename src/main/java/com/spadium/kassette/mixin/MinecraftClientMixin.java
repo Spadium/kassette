@@ -1,6 +1,6 @@
 package com.spadium.kassette.mixin;
 
-import com.spadium.kassette.config.Config;
+import com.spadium.kassette.config.MainConfig;
 import com.spadium.kassette.ui.screens.onboarding.DisclaimerPage;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class MinecraftClientMixin {
     @Inject(method = "createInitScreens", at = @At(value = "RETURN"))
     private static void addOnboardingToInit(List<Function<Runnable, Screen>> list, CallbackInfoReturnable<Boolean> cir) {
-        if (Config.Companion.getInstance().getFirstRun()) {
+        if (MainConfig.Companion.getInstance().getFirstRun()) {
             list.add(
                     onClose -> (new DisclaimerPage())
             );

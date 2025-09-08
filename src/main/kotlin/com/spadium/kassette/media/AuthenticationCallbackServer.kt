@@ -1,16 +1,15 @@
 package com.spadium.kassette.media
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
-import java.io.InputStream
 import java.io.OutputStream
 import java.net.InetSocketAddress
 
 class AuthenticationCallbackServer {
     lateinit var server: HttpServer
-    var config = Config.Instance
+    var config = MainConfig.Instance
     constructor() {
     }
 

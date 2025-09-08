@@ -1,12 +1,11 @@
 package com.spadium.kassette
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.media.MediaManager
-import com.spadium.kassette.ui.overlays.DefaultOverlay
 import com.spadium.kassette.ui.overlays.OverlayManager
-import com.spadium.kassette.ui.screens.MediaInfoScreen
+import com.spadium.kassette.ui.screens.media.MediaInfoScreen
 import com.spadium.kassette.ui.toasts.ErrorToast
 import com.spadium.kassette.util.ModNotification
 import kotlinx.coroutines.runBlocking
@@ -25,8 +24,6 @@ import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
-import kotlin.properties.Delegates
-import kotlin.reflect.KProperty
 
 
 open class Kassette : ClientModInitializer {
@@ -49,7 +46,7 @@ open class Kassette : ClientModInitializer {
                 )
             )
         }
-        Config.Instance = Config.reload()
+        MainConfig.Instance = MainConfig.reload()
 
         val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(
             KeyBinding(
@@ -74,8 +71,8 @@ open class Kassette : ClientModInitializer {
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             OverlayManager
-            Config.addListener(MediaManager::onConfigChange)
-            MediaManager.setProvider(Config.Instance.providers.defaultProvider)
+            MainConfig.addListener(MediaManager::onConfigChange)
+            MediaManager.setProvider(MainConfig.Instance.providers.defaultProvider)
             if (MediaManager.provider is AccountMediaProvider) {
                 (MediaManager.provider as AccountMediaProvider).initiateLogin(true)
             }

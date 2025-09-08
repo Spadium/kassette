@@ -2,7 +2,7 @@ package com.spadium.kassette.media.spotify
 
 import com.google.gson.JsonParseException
 import com.spadium.kassette.Kassette
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.config.SpotifyConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
@@ -17,6 +17,7 @@ import net.minecraft.util.Util
 import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.enums.ProductType
+import se.michaelthelin.spotify.exceptions.detailed.TooManyRequestsException
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials
 import se.michaelthelin.spotify.model_objects.specification.Track
 import java.net.URI
@@ -24,7 +25,7 @@ import kotlin.reflect.KProperty
 
 class SpotifyProvider : AccountMediaProvider {
     private var clientApi: SpotifyApi
-    private var config = Config.Instance
+    private var config = MainConfig.Instance
     private var spotifySettings: SpotifyConfig = config.providers.spotify
     private var infoToReturn: MediaInfo = MediaInfo(
         0L, 0L, "", "", "",
@@ -68,7 +69,7 @@ class SpotifyProvider : AccountMediaProvider {
         }
     }
 
-    private fun onConfigUpdate(property: KProperty<*>, oldValue: Config, newValue: Config) {
+    private fun onConfigUpdate(property: KProperty<*>, oldValue: MainConfig, newValue: MainConfig) {
         config = newValue
     }
 
@@ -111,7 +112,13 @@ class SpotifyProvider : AccountMediaProvider {
                 providerState = ProviderState.SIGNED_IN
             }
             ProviderState.SIGNED_IN -> {
-                try { getCurrentPlayback() } catch (jsonException: JsonParseException) {}
+                try {
+                    getCurrentPlayback()
+                } catch (jsonException: JsonParseException) {
+
+                } catch (tooManyRequestsException: TooManyRequestsException) {
+                    Kassette.logger.error("Rate limit reached/exceeded! (${requestsMadeBeforeLimit})")
+                }
             }
             ProviderState.COOLDOWN -> {
                 delay(1000)
@@ -137,7 +144,7 @@ class SpotifyProvider : AccountMediaProvider {
     }
 
     override fun initiateLogin(titleScreen: Boolean) {
-        Config.addListener(this::onConfigUpdate)
+        MainConfig.addListener(this::onConfigUpdate)
         if (config.providers.spotify.refreshToken.isEmpty() && config.providers.spotify.accessToken.isEmpty() && !titleScreen) {
             val authCodeUriReq = clientApi.authorizationCodeUri()
                 .show_dialog(true)

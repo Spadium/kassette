@@ -1,14 +1,13 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.spotify.LibreSpotProvider
 import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.util.ImageUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
-import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import kotlin.properties.Delegates
@@ -59,7 +58,7 @@ object MediaManager {
         this.provider = providers.getValue(identifier).createInstance()
     }
 
-    fun onConfigChange(property: KProperty<*>, oldValue: Config, newValue: Config) {
+    fun onConfigChange(property: KProperty<*>, oldValue: MainConfig, newValue: MainConfig) {
         setProvider(newValue.providers.defaultProvider)
         Kassette.logger.info("Changing provider to ${newValue.providers.defaultProvider}")
     }

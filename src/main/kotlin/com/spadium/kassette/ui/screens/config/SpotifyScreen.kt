@@ -1,20 +1,16 @@
 package com.spadium.kassette.ui.screens.config
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.spotify.SpotifyProvider
-import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.tooltip.Tooltip
 import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
 import net.minecraft.client.gui.widget.GridWidget
-import net.minecraft.client.gui.widget.Positioner
 import net.minecraft.client.gui.widget.TextWidget
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
 import net.minecraft.screen.ScreenTexts
 import net.minecraft.text.Text
-import net.minecraft.util.Util
 
 class SpotifyScreen: Screen {
     private val parent: Screen?
@@ -52,10 +48,10 @@ class SpotifyScreen: Screen {
         bypassRateLimitText.width = 100
         val bypassRateLimitButton = gridAdder.add(
             ButtonWidget.builder(
-                Text.translatable("kassette.config.button.generic.boolean.${Config.Instance.providers.spotify.ignoreRateLimits}"),
+                Text.translatable("kassette.config.button.generic.boolean.${MainConfig.Instance.providers.spotify.ignoreRateLimits}"),
                 { button ->
-                    Config.Instance.providers.spotify.ignoreRateLimits = !Config.Instance.providers.spotify.ignoreRateLimits
-                    button.message = Text.translatable("kassette.config.button.generic.boolean.${Config.Instance.providers.spotify.ignoreRateLimits}")
+                    MainConfig.Instance.providers.spotify.ignoreRateLimits = !MainConfig.Instance.providers.spotify.ignoreRateLimits
+                    button.message = Text.translatable("kassette.config.button.generic.boolean.${MainConfig.Instance.providers.spotify.ignoreRateLimits}")
                     clearAndInit()
                 }
             ).width(100).build()
@@ -85,7 +81,7 @@ class SpotifyScreen: Screen {
     }
 
     override fun close() {
-        Config.Instance.save()
+        MainConfig.Instance.save()
         this.client!!.setScreen(parent)
 
     }

@@ -1,6 +1,6 @@
 package com.spadium.kassette.ui.screens.config
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
@@ -76,7 +76,7 @@ class ProvidersScreen: Screen {
     }
 
     override fun close() {
-        Config.Instance.save()
+        MainConfig.Instance.save()
         this.client!!.setScreen(parent)
     }
 }

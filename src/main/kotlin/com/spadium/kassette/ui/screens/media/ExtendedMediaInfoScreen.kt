@@ -1,4 +1,4 @@
-package com.spadium.kassette.ui.screens
+package com.spadium.kassette.ui.screens.media
 
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.widget.*
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 
-class MediaInfoScreen : Screen {
+class ExtendedMediaInfoScreen : Screen {
     private val screenWidth = 256
     private val screenHeight = 128
     private var centeredX = 0
@@ -124,7 +124,7 @@ class MediaInfoScreen : Screen {
         super.renderBackground(context, mouseX, mouseY, deltaTicks)
         context?.drawTexture(
             RenderPipelines.GUI_TEXTURED,
-            Identifier.of("kassette", "textures/gui/info_background.png"),
+            Identifier.of("kassette", "textures/gui/ext_info_background.png"),
             centeredX, centeredY, 0f, 0f, screenWidth, screenHeight, screenWidth, screenHeight
         )
     }

@@ -1,6 +1,6 @@
 package com.spadium.kassette.media.spotify
 
-import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.MediaProvider
@@ -33,7 +33,7 @@ class LibreSpotProvider : MediaProvider {
         .setCacheEnabled(true)
         .build()
 
-    var config = Config.Instance
+    var config = MainConfig.Instance
 
     override fun getServiceName(): String {
         return "Spotify"
