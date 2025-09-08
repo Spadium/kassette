@@ -37,7 +37,7 @@ class ConfigScreen : Screen {
             ButtonWidget.builder(
                 Text.translatable("kassette.config.button.openfile"),
                 { button ->
-                    Util.getOperatingSystem().open(FabricLoader.getInstance().configDir.resolve("kassette.json"))
+                    Util.getOperatingSystem().open(MainConfig.configPath)
                 }
             ).width(200).build()
         )
