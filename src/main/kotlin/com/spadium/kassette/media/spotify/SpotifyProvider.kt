@@ -8,7 +8,7 @@ import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.toasts.WarningToast
-import com.spadium.kassette.util.ImageUtils
+import com.spadium.kassette.media.images.ImageUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.MinecraftClient
@@ -57,7 +57,7 @@ class SpotifyProvider : AccountMediaProvider {
         runBlocking {
             clientApi = SpotifyApi.builder()
                 .setClientId(spotifySettings.clientId).setClientSecret(spotifySettings.clientSecret)
-                .setRedirectUri(URI("http://127.0.0.1:${config.callbackPort}/callback")).build()
+                .setRedirectUri(URI("http://127.0.0.1:${config.providers.callbackPort}/callback")).build()
             if (!config.providers.spotify.refreshToken.isBlank() && !config.providers.spotify.accessToken.isBlank()) {
                 clientApi.refreshToken = config.providers.spotify.refreshToken
                 clientApi.accessToken = config.providers.spotify.accessToken

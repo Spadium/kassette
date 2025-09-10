@@ -1,24 +1,10 @@
 package com.spadium.kassette.config.overlays
 
 import com.spadium.kassette.config.Config
-import com.spadium.kassette.config.MainConfig.Companion.checkColorArray
 import com.spadium.kassette.config.ConfigMeta
+import com.spadium.kassette.media.images.ImageScalers
 import kotlinx.serialization.Serializable
-
-// width = 128,
-//            height = 48,
-//            imageSize = 32,
-//            backgroundColor = intArrayOf(0, 0, 0, 128),
-//            borderColor = intArrayOf(0, 128, 0, 255),
-//            progressBackgroundColor = intArrayOf(32, 32, 32, 255),
-//            progressForegroundColor = intArrayOf(16, 32, 128, 255),
-//            textSpeed = 1, // Characters per second
-//            fancyTextSpeed = 5, // Pixels per second
-//            showCover = true,
-//            fancyText = true,
-//            progressType = DefaultOverlayConfig.ProgressType.BAR,
-//            lineSpacing = 1,
-//            progressBarThickness = 4
+import kotlin.properties.Delegates
 
 @ConfigMeta(
     "default",
@@ -39,12 +25,23 @@ data class DefaultOverlayConfig(
     var progressBarThickness: Int = 4,
     var showCover: Boolean = true,
     var fancyText: Boolean = true,
+    var downscaleMethod: ImageScalers = ImageScalers.BILINEAR,
+    var upscaleMethod: ImageScalers = ImageScalers.BILINEAR,
+    var downscaleCoverArt: Boolean = true,
     var progressType: ProgressType = ProgressType.BAR
-) : Config<DefaultOverlayConfig> {
+) : Config<DefaultOverlayConfig>() {
     override fun validate() {
         // Validate colors
         backgroundColor = checkColorArray(backgroundColor, 3, 4, 255)
         borderColor = checkColorArray(borderColor, 3, 4, 255)
+    }
+
+    companion object : ConfigCompanion<DefaultOverlayConfig>() {
+        override var Instance: DefaultOverlayConfig by Delegates.observable(DefaultOverlayConfig()) {
+                property, oldValue, newValue ->
+            yellAtListeners(property, oldValue, newValue)
+        }
+
     }
 
     @Serializable

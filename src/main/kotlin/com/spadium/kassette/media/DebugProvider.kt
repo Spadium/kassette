@@ -1,7 +1,7 @@
 package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
-import com.spadium.kassette.util.ImageUtils
+import com.spadium.kassette.media.images.ImageUtils
 import kotlinx.coroutines.delay
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier

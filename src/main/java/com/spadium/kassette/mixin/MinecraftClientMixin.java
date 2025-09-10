@@ -17,9 +17,7 @@ public class MinecraftClientMixin {
     @Inject(method = "createInitScreens", at = @At(value = "RETURN"))
     private static void addOnboardingToInit(List<Function<Runnable, Screen>> list, CallbackInfoReturnable<Boolean> cir) {
         if (MainConfig.Companion.getInstance().getFirstRun()) {
-            list.add(
-                    onClose -> (new DisclaimerPage())
-            );
+            list.add(onClose -> (new DisclaimerPage()));
         }
     }
 }

@@ -18,7 +18,6 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
 import kotlin.properties.Delegates
-import kotlin.reflect.KProperty
 
 /*
     Config class
@@ -35,22 +34,18 @@ private val configVersion = 0u
 data class MainConfig(
     var providers: ProvidersConfig = ProvidersConfig(
         defaultProvider = Identifier.of("kassette:placeholder"),
-        spotify = SpotifyConfig("", "", "", "", 0L, 0L, false),
-        librespot = LibreSpotConfig(
-            Connect.DeviceType.COMPUTER, "Kassette LibreSpot Provider", "", "",
-            0
-        )
+        spotify = SpotifyConfig(),
+        librespot = LibreSpotConfig()
     ),
-    var callbackPort: UInt = 61008u,
     var infoMode: InfoMode = InfoMode.HUD,
     var firstRun: Boolean = true,
     val version: UInt = configVersion
-) : Config<MainConfig> {
+) : Config<MainConfig>() {
     enum class InfoMode {
         HIDDEN, HUD, TOAST
     }
 
-    companion object {
+    companion object : ConfigCompanion<MainConfig>() {
         val configPath: Path = FabricLoader.getInstance().configDir.resolve("kassette/")
         private val configFile = configPath.resolve("main.json")
         @OptIn(ExperimentalSerializationApi::class)
@@ -61,31 +56,11 @@ data class MainConfig(
             allowComments = true
         }
 
-        var Instance: MainConfig by Delegates.observable(MainConfig()) {
+        override var Instance: MainConfig by Delegates.observable(MainConfig()) {
             property, oldValue, newValue ->
             yellAtListeners(property, oldValue, newValue)
         }
-        val configUpdateListeners: MutableList<(KProperty<*>, MainConfig, MainConfig) -> Unit> = mutableListOf()
-
-        fun addListener(listener: (KProperty<*>, MainConfig, MainConfig) -> Unit) {
-            configUpdateListeners.add(listener)
-        }
-
-        private fun yellAtListeners(property: KProperty<*>, oldValue: MainConfig, newValue: MainConfig) {
-            val invalidListeners: MutableList<(KProperty<*>, MainConfig, MainConfig) -> Unit> = mutableListOf()
-            configUpdateListeners.forEach {
-                try {
-                    it.invoke(property, oldValue, newValue)
-                } catch (t: Throwable) {
-                    invalidListeners.add(it)
-                }
-            }
-            if (invalidListeners.isNotEmpty()) {
-                invalidListeners.forEach {
-                    configUpdateListeners.remove(it)
-                }
-            }
-        }
+//        override val configUpdateListeners: MutableList<(KProperty<*>, MainConfig, MainConfig) -> Unit> = mutableListOf()
         @OptIn(ExperimentalSerializationApi::class)
         fun load(): MainConfig {
 //            val jsonIn: Config = json.decodeFromStream(configFile.toFile().inputStream())
@@ -129,26 +104,9 @@ data class MainConfig(
                 throw Exception("Invalid class!")
             }
         }
-
-        @JvmStatic
-        fun checkColorArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
-            val list = arr.toMutableList()
-            if (arr.size in minimumSize..maximumSize && (maximumSize - minimumSize) == 1) {
-                if (arr.size == maximumSize) {
-                    return arr
-                } else if (arr.size == minimumSize) {
-                    list.addLast(defaultValue)
-                }
-            } else {
-                throw RuntimeException("Kassette Config: Color array to small/too big!")
-            }
-            return list.toIntArray()
-        }
     }
 
     override fun validate() {
-
-
         // Validate version
         if (version != configVersion) {
             throw RuntimeException("Config version doesn't match supported version! Trying to update!")

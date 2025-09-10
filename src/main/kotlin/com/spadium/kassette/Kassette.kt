@@ -5,6 +5,7 @@ import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.overlays.OverlayManager
+import com.spadium.kassette.ui.screens.media.ExtendedMediaInfoScreen
 import com.spadium.kassette.ui.screens.media.MediaInfoScreen
 import com.spadium.kassette.ui.toasts.ErrorToast
 import com.spadium.kassette.util.ModNotification
@@ -58,7 +59,7 @@ open class Kassette : ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { client: MinecraftClient? ->
             while (openMediaInfoKeybind.wasPressed()) {
-                client!!.setScreen(MediaInfoScreen())
+                client!!.setScreen(ExtendedMediaInfoScreen())
             }
         })
 

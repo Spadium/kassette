@@ -5,7 +5,7 @@ import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.spotify.LibreSpotProvider
 import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.ui.toasts.WarningToast
-import com.spadium.kassette.util.ImageUtils
+import com.spadium.kassette.media.images.ImageUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.text.Text

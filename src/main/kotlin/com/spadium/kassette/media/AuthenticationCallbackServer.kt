@@ -14,7 +14,7 @@ class AuthenticationCallbackServer {
     }
 
     fun setup() {
-        server = HttpServer.create(InetSocketAddress(config.callbackPort.toInt()), 0)
+        server = HttpServer.create(InetSocketAddress(config.providers.callbackPort.toInt()), 0)
         server.createContext("/", FileHandler("index.html"))
         server.createContext("/callback", AuthCallbackHandler())
         server.createContext("/favicon.ico", FileHandler("favicon.ico"))

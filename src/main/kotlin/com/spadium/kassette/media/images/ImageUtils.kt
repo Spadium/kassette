@@ -1,4 +1,4 @@
-package com.spadium.kassette.util
+package com.spadium.kassette.media.images
 
 import net.minecraft.client.texture.NativeImage
 import java.awt.image.BufferedImage

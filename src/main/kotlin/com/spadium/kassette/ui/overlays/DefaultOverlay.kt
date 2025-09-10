@@ -10,6 +10,7 @@ import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import net.minecraft.util.math.ColorHelper
@@ -133,18 +134,18 @@ class DefaultOverlay : OverlayTheme {
             textRenderer.fontHeight, textRenderer.fontHeight
         )
 
-        firstLineManager.text = getFirstLine()
+        firstLineManager.text = Text.literal(getFirstLine())
         firstLineManager.renderText(
             50, 2 + textRenderer.fontHeight, 0xFFFFFFFF.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
 
-        secondLineManager.text = getSecondLine()
+        secondLineManager.text = Text.literal(getSecondLine())
         secondLineManager.renderText(
             50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
-        thirdLineManager.text = MediaManager.provider.info.provider
+        thirdLineManager.text = Text.literal(MediaManager.provider.info.provider)
         thirdLineManager.renderText(
             50, 2 + (textRenderer.fontHeight * 3) + (hudConfig.lineSpacing * 2),
             0xFFAAAAAA.toInt(),
