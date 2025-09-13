@@ -3,6 +3,7 @@ package com.spadium.kassette.ui.overlays
 import com.spadium.kassette.media.MediaProvider
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.util.Identifier
@@ -34,6 +35,9 @@ object OverlayManager {
     }
 
     fun onRender(context: DrawContext, tickCounter: RenderTickCounter) {
-        currentOverlay.render(context, tickCounter)
+        // render when we are in the world, helps with the super-duper sped up spinning text on world load
+        if (MinecraftClient.getInstance().gameRenderer.camera.isReady) {
+            currentOverlay.render(context, tickCounter)
+        }
     }
 }
