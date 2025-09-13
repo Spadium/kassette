@@ -5,6 +5,7 @@ import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.providers.LibreSpotConfig
 import com.spadium.kassette.config.providers.ProvidersConfig
 import com.spadium.kassette.config.providers.SpotifyConfig
+import com.spadium.kassette.config.serializers.IdentifierSerializer
 import com.spadium.kassette.util.ModNotification
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -37,13 +38,10 @@ data class MainConfig(
         spotify = SpotifyConfig(),
         librespot = LibreSpotConfig()
     ),
-    var infoMode: InfoMode = InfoMode.HUD,
+    @Serializable(with = IdentifierSerializer::class) var overlayName: Identifier = Identifier.of("kassette:default"),
     var firstRun: Boolean = true,
     val version: UInt = configVersion
 ) : Config<MainConfig>() {
-    enum class InfoMode {
-        HIDDEN, HUD, TOAST
-    }
 
     companion object : ConfigCompanion<MainConfig>() {
         val configPath: Path = FabricLoader.getInstance().configDir.resolve("kassette/")

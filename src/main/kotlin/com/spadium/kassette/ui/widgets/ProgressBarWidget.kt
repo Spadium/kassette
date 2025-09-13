@@ -11,6 +11,8 @@ import kotlin.math.floor
 class ProgressBarWidget : ClickableWidget {
     var currentValue: Long = 1L
     var maxValue: Long = 2L
+    var backgroundColor: Int = 0xFFFFFFFF.toInt()
+    var foregroundColor: Int = 0xFFAAFF22.toInt()
 
     constructor(x: Int, y: Int, width: Int, height: Int, currentValue: Long, maxValue: Long) : super(
         x,
@@ -50,8 +52,8 @@ class ProgressBarWidget : ClickableWidget {
         }
         val progressBarWidth = floor(width * progress).toInt()
 
-        context?.fill(x, y, x + width, y + height, 0xFFFFFFFF.toInt())
-        context?.fill(x, y, x + progressBarWidth, y + height, 0xFFAAFF22.toInt())
+        context?.fill(x, y, x + width, y + height, backgroundColor)
+        context?.fill(x, y, x + progressBarWidth, y + height, foregroundColor)
     }
 
     override fun appendClickableNarrations(builder: NarrationMessageBuilder?) {

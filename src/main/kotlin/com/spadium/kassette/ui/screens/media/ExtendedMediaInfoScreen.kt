@@ -4,6 +4,7 @@ import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.widgets.MarqueeTextWidget
 import com.spadium.kassette.ui.widgets.ProgressBarWidget
+ import com.spadium.kassette.util.KassetteUtils
 import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
@@ -18,7 +19,9 @@ class ExtendedMediaInfoScreen : Screen {
     private var centeredX = 0
     private var centeredY = 0
     private var savedInfo: MediaInfo = MediaInfo(1L, 0L, "", "", "", MediaManager.getDefaultCoverArt(), "")
+    private val progressBar = ProgressBarWidget(savedInfo.currentPosition, savedInfo.maximumTime)
     constructor() : super(Text.translatable("kassette.popup.title", MediaManager.provider.info.provider))
+    private var progressBarFgColor = 0xFF0FF00
 
     override fun init() {
         centeredX = (this.width / 2) - (screenWidth / 2)
@@ -45,9 +48,9 @@ class ExtendedMediaInfoScreen : Screen {
         secondLine.width = 100
         thirdLine.width = 100
 
-        val progressBar = ProgressBarWidget(savedInfo.currentPosition, savedInfo.maximumTime)
         progressBar.height = 8
         progressBar.width = 100
+
         containerWidget.add(
             IconWidget.create(
                 48, 48,
@@ -133,6 +136,8 @@ class ExtendedMediaInfoScreen : Screen {
     override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
             savedInfo = MediaManager.provider.info.copy()
+            progressBarFgColor = KassetteUtils.getAverageColor(savedInfo.coverArt)
+            progressBar.foregroundColor = progressBarFgColor
             clearAndInit()
         }
         context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)

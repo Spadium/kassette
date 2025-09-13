@@ -26,32 +26,32 @@ class DefaultOverlay : OverlayTheme {
     private var mediaInfo: MediaInfo = MediaManager.provider.info
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
 
-    private var config = MainConfig.Instance
-    private var hudConfig = MainConfig.load<DefaultOverlayConfig>()
-    private var isFancy = hudConfig.fancyText
+//    private var config = MainConfig.Instance
+    private var config = MainConfig.load<DefaultOverlayConfig>()
+    private var isFancy = config.fancyText
     private var borderColor = ColorHelper.getArgb(
-        hudConfig.backgroundColor[3],
-        hudConfig.borderColor[0],
-        hudConfig.borderColor[1],
-        hudConfig.borderColor[2]
+        config.backgroundColor[3],
+        config.borderColor[0],
+        config.borderColor[1],
+        config.borderColor[2]
     )
     private var backgroundColor = ColorHelper.getArgb(
-        hudConfig.backgroundColor[3],
-        hudConfig.backgroundColor[0],
-        hudConfig.backgroundColor[1],
-        hudConfig.backgroundColor[2]
+        config.backgroundColor[3],
+        config.backgroundColor[0],
+        config.backgroundColor[1],
+        config.backgroundColor[2]
     )
     private var progressBarBg = ColorHelper.getArgb(
-        hudConfig.progressBackgroundColor[3],
-        hudConfig.progressBackgroundColor[0],
-        hudConfig.progressBackgroundColor[1],
-        hudConfig.progressBackgroundColor[2]
+        config.progressBackgroundColor[3],
+        config.progressBackgroundColor[0],
+        config.progressBackgroundColor[1],
+        config.progressBackgroundColor[2]
     )
     private var progressBarFg = ColorHelper.getArgb(
-        hudConfig.progressForegroundColor[3],
-        hudConfig.progressForegroundColor[0],
-        hudConfig.progressForegroundColor[1],
-        hudConfig.progressForegroundColor[2]
+        config.progressForegroundColor[3],
+        config.progressForegroundColor[0],
+        config.progressForegroundColor[1],
+        config.progressForegroundColor[2]
     )
     private lateinit var firstLineManager: MarqueeTextManager
     private lateinit var secondLineManager: MarqueeTextManager
@@ -59,36 +59,36 @@ class DefaultOverlay : OverlayTheme {
 
     constructor() {
 //        Config.addListener(this::updateVariables)
+        DefaultOverlayConfig.addListener(this::updateVariables)
     }
 
-    private fun updateVariables(property: KProperty<*>, oldValue: MainConfig, newValue: MainConfig) {
+    private fun updateVariables(property: KProperty<*>, oldValue: DefaultOverlayConfig, newValue: DefaultOverlayConfig) {
         // avoid stuttering when we don't need to reload variables
         if (oldValue != newValue) {
             config = newValue
-//            hudConfig = config.overlays.default
             borderColor = ColorHelper.getArgb(
-                hudConfig.backgroundColor[3],
-                hudConfig.borderColor[0],
-                hudConfig.borderColor[1],
-                hudConfig.borderColor[2]
+                config.backgroundColor[3],
+                config.borderColor[0],
+                config.borderColor[1],
+                config.borderColor[2]
             )
             backgroundColor = ColorHelper.getArgb(
-                hudConfig.backgroundColor[3],
-                hudConfig.backgroundColor[0],
-                hudConfig.backgroundColor[1],
-                hudConfig.backgroundColor[2]
+                config.backgroundColor[3],
+                config.backgroundColor[0],
+                config.backgroundColor[1],
+                config.backgroundColor[2]
             )
             progressBarBg = ColorHelper.getArgb(
-                hudConfig.progressBackgroundColor[3],
-                hudConfig.progressBackgroundColor[0],
-                hudConfig.progressBackgroundColor[1],
-                hudConfig.progressBackgroundColor[2]
+                config.progressBackgroundColor[3],
+                config.progressBackgroundColor[0],
+                config.progressBackgroundColor[1],
+                config.progressBackgroundColor[2]
             )
             progressBarFg = ColorHelper.getArgb(
-                hudConfig.progressForegroundColor[3],
-                hudConfig.progressForegroundColor[0],
-                hudConfig.progressForegroundColor[1],
-                hudConfig.progressForegroundColor[2]
+                config.progressForegroundColor[3],
+                config.progressForegroundColor[0],
+                config.progressForegroundColor[1],
+                config.progressForegroundColor[2]
             )
         }
     }
@@ -109,20 +109,21 @@ class DefaultOverlay : OverlayTheme {
         }
         mediaInfo = MediaManager.provider.info
         val startTime: Long = Util.getMeasuringTimeNano()
-        val artSize: Int = ((hudConfig.height.toFloat() - hudConfig.progressBarThickness) * (3f/4f)).toInt()
+        val artSize: Int = ((config.height.toFloat() - config.progressBarThickness) * (3f/4f)).toInt()
 
         // Delta-Time in seconds
         timeDelta = (startTime - previousEndTime).toDouble()  / (1000000000)
-        positionIndicator += timeDelta / (1 / (if (isFancy) hudConfig.fancyTextSpeed else hudConfig.textSpeed).toDouble())
+        positionIndicator += timeDelta / (1 / (if (isFancy) config.fancyTextSpeed else config.textSpeed).toDouble())
+        val shouldScroll = (positionIndicator >= scrollThreshold)
 
         context.fill(
-            0, 0, hudConfig.width, hudConfig.height, backgroundColor
+            0, 0, config.width, config.height, backgroundColor
         )
         context.drawTexture(
             RenderPipelines.GUI_TEXTURED,
             Identifier.of("kassette:coverart"),
             8,
-            (((hudConfig.height + hudConfig.progressBarThickness) / 2) - (artSize / 2)),
+            (((config.height + config.progressBarThickness) / 2) - (artSize / 2)),
             0f, 0f,
             artSize, artSize,
             artSize, artSize
@@ -130,7 +131,7 @@ class DefaultOverlay : OverlayTheme {
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
             MediaManager.provider.info.state.texture,
-            hudConfig.width - 17, 2 + (textRenderer.fontHeight * 3) + (hudConfig.lineSpacing * 2),
+            config.width - 17, 2 + (textRenderer.fontHeight * 3) + (config.lineSpacing * 2),
             textRenderer.fontHeight, textRenderer.fontHeight
         )
 
@@ -142,25 +143,28 @@ class DefaultOverlay : OverlayTheme {
 
         secondLineManager.text = Text.literal(getSecondLine())
         secondLineManager.renderText(
-            50, 2 + (textRenderer.fontHeight * 2) + hudConfig.lineSpacing, 0xFFFFFFFF.toInt(),
+            50, 2 + (textRenderer.fontHeight * 2) + config.lineSpacing, 0xFFFFFFFF.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
         thirdLineManager.text = Text.literal(MediaManager.provider.info.provider)
         thirdLineManager.renderText(
-            50, 2 + (textRenderer.fontHeight * 3) + (hudConfig.lineSpacing * 2),
+            50, 2 + (textRenderer.fontHeight * 3) + (config.lineSpacing * 2),
             0xFFAAAAAA.toInt(),
-            true, 14, 3, (positionIndicator >= scrollThreshold)
+            true, 14, 3, shouldScroll
         )
 
         drawProgressBar(context)
         context.drawBorder(
             0, 0,
-            hudConfig.width, hudConfig.height,
+            config.width, config.height,
             borderColor
         )
-
-        if (positionIndicator >= scrollThreshold) {
-            positionIndicator -= scrollThreshold
+        if (shouldScroll) {
+            if (positionIndicator >= scrollThreshold && positionIndicator <= scrollThreshold*1.25) {
+                positionIndicator -= scrollThreshold
+            } else {
+                positionIndicator = 0.0
+            }
         }
         previousEndTime = startTime
     }
@@ -171,15 +175,15 @@ class DefaultOverlay : OverlayTheme {
         } else {
             (mediaInfo.currentPosition.toDouble() / mediaInfo.maximumTime)
         }
-        val progressBarWidth = floor((hudConfig.width - 1) * progress).toInt()
+        val progressBarWidth = floor((config.width - 1) * progress).toInt()
         // Progressbar background
         context.fill(
-            1, 1, hudConfig.width - 1, hudConfig.progressBarThickness, progressBarBg
+            1, 1, config.width - 1, config.progressBarThickness, progressBarBg
         )
         // Progressbar
         if (progressBarWidth > 0) {
             context.fill(
-                1, 1, floor((hudConfig.width - 1) * progress).toInt(), hudConfig.progressBarThickness, progressBarFg
+                1, 1, floor((config.width - 1) * progress).toInt(), config.progressBarThickness, progressBarFg
             )
         }
     }

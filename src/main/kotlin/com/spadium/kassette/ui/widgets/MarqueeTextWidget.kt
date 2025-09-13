@@ -16,6 +16,7 @@ class MarqueeTextWidget: TextWidget {
     private var lastRenderTime: Long = 0L
     private var delta: Double = 0.0
     private var deltaAccumulator: Double = 0.0
+    private val scrollThreshold = 1
 
     constructor(
         x: Int,
@@ -55,20 +56,20 @@ class MarqueeTextWidget: TextWidget {
     override fun renderWidget(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         delta = (Util.getMeasuringTimeNano().toDouble() - lastRenderTime.toDouble()) / 1000000000
         deltaAccumulator += delta / (1 / (hudConfig.fancyTextSpeed).toDouble())
-        val shouldScroll = (deltaAccumulator >= 1)
+        val shouldScroll = (deltaAccumulator >= scrollThreshold)
         if (textManager.context != context) {
             textManager.context = context
         }
         // 5 is the size of  .
         textManager.renderText(x, y, textColor, true, width / 5, 3, shouldScroll)
 
-        if (shouldScroll)
-            if (deltaAccumulator < 2) {
-                deltaAccumulator -= 1
+        if (shouldScroll) {
+            if (deltaAccumulator >= scrollThreshold && deltaAccumulator <= scrollThreshold*2) {
+                deltaAccumulator -= scrollThreshold
             } else {
                 deltaAccumulator = 0.0
             }
-
+        }
         lastRenderTime = Util.getMeasuringTimeNano()
     }
 
