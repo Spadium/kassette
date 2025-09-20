@@ -1,42 +1,42 @@
-package com.spadium.kassette.media.spotify
+package com.spadium.kassette.media.librespot
 
 import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.media.MediaProvider
 import com.spotify.connectstate.Connect
-import com.spotify.connectstate.Player
 import xyz.gianlu.librespot.ZeroconfServer
 import xyz.gianlu.librespot.core.Session
 
-
 class LibreSpotProvider : MediaProvider {
+    private val server: ZeroconfServer
+    private var librespotSession: Session? = null
     private var infoToReturn: MediaInfo = MediaInfo(
         0L, 0L, "", "", "",
         MediaManager.getDefaultCoverArt(), getServiceName()
     )
     override var info: MediaInfo = infoToReturn
     val properties: Map<String, Any?> = mapOf(
-        "commands" to listOf("togglePlay", "nextTrack", "previousTrack")
+
     )
-    override val availableCommands: List<String> = properties["commands"] as List<String>
+    override val availableCommands: List<String> = listOf("togglePlay", "nextTrack", "previousTrack")
 
     override fun destroy() {
-        TODO("Not yet implemented")
+        server.closeSession()
     }
 
     override suspend fun update() {
-        TODO("Not yet implemented")
+
     }
 
     val sessionConf = Session.Configuration.Builder()
         .setCacheEnabled(true)
         .build()
 
-    var config = MainConfig.Instance
+    var config = MainConfig.Companion.Instance
 
     override fun getServiceName(): String {
-        return "Spotify"
+        return "LIBRESPOTify"
     }
 
     constructor() {
@@ -44,17 +44,26 @@ class LibreSpotProvider : MediaProvider {
             .setPreferredLocale("en-US").setDeviceType(Connect.DeviceType.COMPUTER)
             .setDeviceName("Kassette LibreSpot Provider").setClientToken("")
 
-        val server: ZeroconfServer = serverBuilder.create()
+        server = serverBuilder.create()
         server.addSessionListener(object : ZeroconfServer.SessionListener {
-            var lastPlayer: Player? = null
+            var lastPlayer: Any? = null
 
             override fun sessionClosing(session: Session) {
-
+                this@LibreSpotProvider.librespotSession = null
             }
 
             override fun sessionChanged(session: Session) {
-
+                this@LibreSpotProvider.librespotSession = session
             }
         })
+    }
+
+    override fun sendCommand(cmd: String, payload: Any?): Int {
+        if (cmd == "togglePlay" && this.librespotSession != null) {
+
+        } else {
+            return Int.MIN_VALUE
+        }
+        return 0;
     }
 }

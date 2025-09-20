@@ -2,7 +2,7 @@ package com.spadium.kassette.media
 
 import com.spadium.kassette.Kassette
 import com.spadium.kassette.config.MainConfig
-import com.spadium.kassette.media.spotify.LibreSpotProvider
+import com.spadium.kassette.media.librespot.LibreSpotProvider
 import com.spadium.kassette.media.spotify.SpotifyProvider
 import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.media.images.ImageUtils
