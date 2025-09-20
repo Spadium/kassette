@@ -65,7 +65,7 @@ object MediaManager {
 
     fun addProvider(identifier: Identifier, klazz: KClass<out MediaProvider>) {
         if (providers[identifier] == null) {
-            providers.put(identifier, klazz)
+            providers[identifier] = klazz
         }
     }
 

@@ -39,7 +39,7 @@ abstract class Config<T> {
                     list.addLast(defaultValue)
                 }
             } else {
-                throw RuntimeException("Kassette Config: Color array to small/too big!")
+                throw RuntimeException("Kassette Config: Color array too small/too big!")
             }
             return list.toIntArray()
         }
