@@ -55,6 +55,7 @@ object MediaManager {
     }
 
     fun setProvider(identifier: Identifier) {
+        this.provider.destroy()
         this.provider = providers.getValue(identifier).createInstance()
     }
 
