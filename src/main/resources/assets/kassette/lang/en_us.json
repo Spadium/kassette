@@ -36,5 +36,5 @@
   "kassette.onboarding.two.title": "Kassette - Set up tutorial (1/2)",
   "kassette.onboarding.two.section.one": "Currently, Kassette only has one useful MediaProvider, the Spotify MediaProvider. To use this as your provider you need three things:\n- A Spotify Premium account\n- A Spotify developer account and app\n- A working internet connection",
   "kassette.onboarding.three.title": "Kassette - Set up tutorial (2/2)",
-  "kassette.onboarding.three.section.config": "To choose the Spotify provider, you need to set the default provider as \"kassette:spotify\" in '.minecraft/config/kassette.json', and fill in the values for clientId and clientSecret according to your Spotify application.\nAs soon as you are ready click on \"Proceed\", this will open your default browser and give you a Spotify login dialog!"
+  "kassette.onboarding.three.section.config": "To choose the Spotify provider, you need to set the default provider as \"kassette:spotify\" in '.minecraft/config/kassette/main.json', and fill in the values for clientId and clientSecret according to your Spotify application.\nAs soon as you are ready click on \"Proceed\", this will open your default browser and give you a Spotify login dialog!"
 }

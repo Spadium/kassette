@@ -111,8 +111,9 @@ data class MainConfig(
         }
     }
 
-    fun save() {
+    override fun save() {
         val jsonOut = json.encodeToString(this)
         configFile.writeBytes(jsonOut.toByteArray())
+        reload()
     }
 }

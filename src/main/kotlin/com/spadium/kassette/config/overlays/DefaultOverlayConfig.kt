@@ -36,6 +36,10 @@ data class DefaultOverlayConfig(
         borderColor = checkColorArray(borderColor, 3, 4, 255)
     }
 
+    override fun save() {
+        TODO("Not yet implemented")
+    }
+
     companion object : ConfigCompanion<DefaultOverlayConfig>() {
         override var Instance: DefaultOverlayConfig by Delegates.observable(DefaultOverlayConfig()) {
                 property, oldValue, newValue ->

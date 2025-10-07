@@ -1,5 +1,7 @@
 package com.spadium.kassette
 
+import com.spadium.kassette.config.Config
+import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
@@ -9,6 +11,8 @@ import com.spadium.kassette.ui.screens.media.ExtendedMediaInfoScreen
 import com.spadium.kassette.ui.screens.media.MediaInfoScreen
 import com.spadium.kassette.ui.toasts.ErrorToast
 import com.spadium.kassette.util.ModNotification
+import io.github.classgraph.ClassGraph
+import io.github.classgraph.ScanResult
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
@@ -34,6 +38,13 @@ open class Kassette : ClientModInitializer {
     }
 
     override fun onInitializeClient() {
+        // Scan for classes with the ConfigMeta annotation
+        logger.debug("Scanning for ConfigMeta annoations! Please wait...")
+        val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
+        scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
+            Config.annotatedClassCache.add(it.loadClass(true))
+        }
+
         try {
             AuthenticationCallbackServer().start()
         } catch (e: Exception) {
@@ -64,10 +75,11 @@ open class Kassette : ClientModInitializer {
         })
 
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
-            dispatcher.register(ClientCommandManager.literal("kassette").executes { ctx ->
-                ctx.source.sendFeedback(Text.literal("Kassette command"))
-                return@executes 1
-            })
+            dispatcher.register(ClientCommandManager.literal("kassette")
+                .then(ClientCommandManager.literal("reload").executes({ c ->
+                    Config.reloadAll()
+                    return@executes 1
+                })))
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->

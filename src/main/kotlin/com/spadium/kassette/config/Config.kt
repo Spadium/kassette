@@ -30,6 +30,9 @@ abstract class Config<T> {
 
     companion object {
         @JvmStatic
+        var annotatedClassCache: MutableList<Class<*>> = mutableListOf();
+
+        @JvmStatic
         fun checkColorArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
             val list = arr.toMutableList()
             if (arr.size in minimumSize..maximumSize && (maximumSize - minimumSize) == 1) {
@@ -43,7 +46,20 @@ abstract class Config<T> {
             }
             return list.toIntArray()
         }
+
+        @JvmStatic
+        fun reloadAll() {
+            annotatedClassCache.forEach { clazz ->
+                println("-- ${clazz.name}")
+                clazz.classes.forEach {
+                    println(it.name)
+                }
+                clazz.getMethod("reload").invoke(clazz)
+            }
+        }
     }
 
     abstract fun validate()
+
+    abstract fun save()
 }
