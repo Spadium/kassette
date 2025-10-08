@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui.screens.onboarding
 
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.MediaManager
@@ -32,7 +33,7 @@ class TutorialPageTwo: Screen {
             ButtonWidget.builder(
                 ScreenTexts.PROCEED,
                 { button ->
-                    MainConfig.Instance = MainConfig.load()
+                    MainConfig.Instance = Config.load()
                     if (MediaManager.provider is AccountMediaProvider) {
                         (MediaManager.provider as AccountMediaProvider).initiateLogin(false)
                         close()

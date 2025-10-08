@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui.widgets
 
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.config.overlays.DefaultOverlayConfig
 import com.spadium.kassette.ui.MarqueeTextManager
@@ -10,7 +11,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Util
 
 class MarqueeTextWidget: TextWidget {
-    private var hudConfig = MainConfig.load<DefaultOverlayConfig>()
+    private var hudConfig = Config.load<DefaultOverlayConfig>()
     var maxWidth: Int
     private var textManager = MarqueeTextManager()
     private var lastRenderTime: Long = 0L

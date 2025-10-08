@@ -42,7 +42,7 @@ open class Kassette : ClientModInitializer {
         logger.debug("Scanning for ConfigMeta annoations! Please wait...")
         val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
         scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
-            Config.annotatedClassCache.add(it.loadClass(true))
+            Config.annotatedClassCache.add(it.loadClass(true).kotlin)
         }
 
         try {
@@ -58,7 +58,7 @@ open class Kassette : ClientModInitializer {
                 )
             )
         }
-        MainConfig.Instance = MainConfig.reload()
+        Config.reloadAll()
 
         val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(
             KeyBinding(

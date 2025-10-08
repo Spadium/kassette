@@ -1,9 +1,14 @@
 package com.spadium.kassette.config.overlays
 
+import com.spadium.kassette.Kassette
+import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.media.images.ImageScalers
+import com.spadium.kassette.util.ModNotification
 import kotlinx.serialization.Serializable
+import net.minecraft.text.Text
+import kotlin.io.path.exists
 import kotlin.properties.Delegates
 
 @ConfigMeta(
@@ -36,14 +41,37 @@ data class DefaultOverlayConfig(
         borderColor = checkColorArray(borderColor, 3, 4, 255)
     }
 
-    override fun save() {
-        TODO("Not yet implemented")
-    }
-
     companion object : ConfigCompanion<DefaultOverlayConfig>() {
+        private val configFile = configPath.resolve("overlays/default.json")
         override var Instance: DefaultOverlayConfig by Delegates.observable(DefaultOverlayConfig()) {
                 property, oldValue, newValue ->
             yellAtListeners(property, oldValue, newValue)
+        }
+
+        override fun reload(): DefaultOverlayConfig {
+            var config = DefaultOverlayConfig()
+
+            if (configFile.exists()) {
+                try {
+                    config = load()
+                    config.validate()
+                } catch (e: Exception) {
+                    logger.error("Error loading config! ${e.toString()}")
+                    Kassette.notifications.add(
+                        ModNotification(
+                            ModNotification.NotificationType.ERROR,
+                            Text.literal("Kassette Configuration"),
+                            ModNotification.SourceType.MOD,
+                            e
+                        )
+                    )
+                    config = DefaultOverlayConfig()
+                }
+            } else {
+                config.save()
+            }
+
+            return config
         }
 
     }

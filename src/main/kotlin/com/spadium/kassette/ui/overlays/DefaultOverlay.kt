@@ -1,5 +1,6 @@
 package com.spadium.kassette.ui.overlays
 
+import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.config.overlays.DefaultOverlayConfig
 import com.spadium.kassette.media.MediaInfo
@@ -27,7 +28,7 @@ class DefaultOverlay : OverlayTheme {
     private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
 
 //    private var config = MainConfig.Instance
-    private var config = MainConfig.load<DefaultOverlayConfig>()
+    private var config = Config.load<DefaultOverlayConfig>()
     private var isFancy = config.fancyText
     private var borderColor = ColorHelper.getArgb(
         config.backgroundColor[3],

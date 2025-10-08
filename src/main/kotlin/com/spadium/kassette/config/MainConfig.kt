@@ -44,7 +44,6 @@ data class MainConfig(
 ) : Config<MainConfig>() {
 
     companion object : ConfigCompanion<MainConfig>() {
-        val configPath: Path = FabricLoader.getInstance().configDir.resolve("kassette/")
         private val configFile = configPath.resolve("main.json")
         @OptIn(ExperimentalSerializationApi::class)
         val json: Json = Json {
@@ -58,15 +57,9 @@ data class MainConfig(
             property, oldValue, newValue ->
             yellAtListeners(property, oldValue, newValue)
         }
-//        override val configUpdateListeners: MutableList<(KProperty<*>, MainConfig, MainConfig) -> Unit> = mutableListOf()
-        @OptIn(ExperimentalSerializationApi::class)
-        fun load(): MainConfig {
-//            val jsonIn: Config = json.decodeFromStream(configFile.toFile().inputStream())
-            return load<MainConfig>()
-        }
 
         @OptIn(ExperimentalSerializationApi::class)
-        fun reload(): MainConfig {
+        override fun reload(): MainConfig {
             var config = MainConfig()
             // Config stuff
             if (configFile.exists()) {
@@ -89,18 +82,6 @@ data class MainConfig(
                 config.save()
             }
             return config
-        }
-
-        @OptIn(ExperimentalSerializationApi::class)
-        inline fun <reified T> load(): T where T : Config<T> {
-            if (T::class.java.isAnnotationPresent(ConfigMeta::class.java)) {
-                val annotationMeta = T::class.java.getAnnotation(ConfigMeta::class.java)
-                val configFile = configPath.resolve("${annotationMeta.type.path}${annotationMeta.configCategory}.json")
-                val jsonIn: T = json.decodeFromStream(configFile.toFile().inputStream())
-                return jsonIn
-            } else {
-                throw Exception("Invalid class!")
-            }
         }
     }
 
