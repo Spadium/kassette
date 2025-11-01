@@ -29,6 +29,7 @@ import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
+import kotlin.reflect.KClass
 
 
 open class Kassette : ClientModInitializer {
@@ -42,7 +43,7 @@ open class Kassette : ClientModInitializer {
         logger.debug("Scanning for ConfigMeta annoations! Please wait...")
         val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
         scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
-            Config.annotatedClassCache.add(it.loadClass(true).kotlin)
+            Config.annotatedClassCache.add(it.loadClass(true).kotlin as? KClass<Config<*>> ?: error("Somehow, someway, not a Config<*> class!"))
         }
 
         try {

@@ -5,23 +5,26 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
 import java.nio.file.Path
+import kotlin.collections.forEach
 import kotlin.io.path.writeBytes
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.findAnnotation
 
 abstract class Config<T> {
     abstract class ConfigCompanion<T> where T : Config<T> {
         abstract var Instance: T
         open val configUpdateListeners: MutableList<(KProperty<*>, T, T) -> Unit> = mutableListOf()
 
-        abstract fun reload(): T
-
         fun addListener(listener: (KProperty<*>, T, T) -> Unit) {
             configUpdateListeners.add(listener)
         }
+
+        abstract fun reload(): T
 
         protected fun yellAtListeners(property: KProperty<*>, oldValue: T, newValue: T) {
             val invalidListeners: MutableList<(KProperty<*>, T, T) -> Unit> = mutableListOf()
@@ -44,7 +47,7 @@ abstract class Config<T> {
         @JvmStatic
         val configPath: Path = FabricLoader.getInstance().configDir.resolve("kassette/")
         @JvmStatic
-        var annotatedClassCache: MutableList<KClass<*>> = mutableListOf();
+        var annotatedClassCache: MutableList<KClass<Config<*>>> = mutableListOf();
 
         @JvmStatic
         fun checkColorArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
@@ -67,13 +70,21 @@ abstract class Config<T> {
                 val companionObj = clazz.companionObjectInstance as? ConfigCompanion<Config<*>>
                     ?: error("Invalid class, somehow")
                 println(companionObj::class.qualifiedName)
-                companionObj.Instance = companionObj.reload()
+                if (clazz::objectInstance != null) {
+                    companionObj.Instance = companionObj.reload()
+                }
+
             }
         }
 
         @OptIn(ExperimentalSerializationApi::class)
-        inline fun <reified T> load(): T where T : Config<T> {
-            var configOut: T = T::class.createInstance()
+        inline fun <reified T : Config<T>> load(): T {
+            return load(T::class)
+        }
+
+        @OptIn(ExperimentalSerializationApi::class)
+        inline fun <reified T: Config<T>> load(klazz: KClass<T>): T {
+            var configOut: T = klazz.createInstance()
             if (T::class.java.isAnnotationPresent(ConfigMeta::class.java)) {
                 val annotationMeta = T::class.java.getAnnotation(ConfigMeta::class.java)
                 val configFile = configPath.resolve("${annotationMeta.type.path}${annotationMeta.configCategory}.json")

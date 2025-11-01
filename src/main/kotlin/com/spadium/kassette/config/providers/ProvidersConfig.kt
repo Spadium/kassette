@@ -6,7 +6,8 @@ import net.minecraft.util.Identifier
 
 @Serializable
 data class ProvidersConfig(
-    @Serializable(with = IdentifierSerializer::class) var defaultProvider: Identifier,
+    @Serializable(with = IdentifierSerializer::class)
+    var defaultProvider: Identifier,
     var spotify: SpotifyConfig,
     var librespot: LibreSpotConfig,
     var callbackPort: UInt = 61008u
