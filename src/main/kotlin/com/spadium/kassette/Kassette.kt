@@ -20,7 +20,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.KeyMapping
+import net.minecraft.client.Minecraft
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
@@ -61,16 +62,16 @@ open class Kassette : ClientModInitializer {
         }
         Config.reloadAll()
 
-        val openMediaInfoKeybind: KeyBinding = KeyBindingHelper.registerKeyBinding(
-            KeyBinding(
+        val openMediaInfoKeybind: KeyMapping = KeyBindingHelper.registerKeyBinding(
+            KeyMapping(
                 "key.kassette.info",
                 InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.kassette.kassette"
             )
         )
 
-        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { client: MinecraftClient? ->
-            while (openMediaInfoKeybind.wasPressed()) {
+        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { client: Minecraft? ->
+            while (openMediaInfoKeybind.isDown) {
                 client!!.setScreen(ExtendedMediaInfoScreen())
             }
         })

@@ -4,14 +4,9 @@ import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.widgets.MarqueeTextWidget
 import com.spadium.kassette.ui.widgets.ProgressBarWidget
- import com.spadium.kassette.util.KassetteUtils
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.tooltip.Tooltip
-import net.minecraft.client.gui.widget.*
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import com.spadium.kassette.util.KassetteUtils
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 
 class ExtendedMediaInfoScreen : Screen {
     private val screenWidth = 256
@@ -20,7 +15,7 @@ class ExtendedMediaInfoScreen : Screen {
     private var centeredY = 0
     private var savedInfo: MediaInfo = MediaInfo(1L, 0L, "", "", "", MediaManager.getDefaultCoverArt(), "")
     private val progressBar = ProgressBarWidget(savedInfo.currentPosition, savedInfo.maximumTime)
-    constructor() : super(Text.translatable("kassette.popup.title", MediaManager.provider.info.provider))
+    constructor() : super(Component.translatable("kassette.popup.title", MediaManager.provider.info.provider))
     private var progressBarFgColor = 0xFF0FF00
 
     override fun init() {

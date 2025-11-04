@@ -10,17 +10,17 @@ import kotlinx.datetime.format
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.ExperimentalSerializationApi
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.gui.widget.GridWidget
-import net.minecraft.client.gui.widget.IconWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.ImageWidget
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.client.gui.layouts.GridLayout
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 
 class AboutScreen: Screen {
     private val parent: Screen?
@@ -30,10 +30,10 @@ class AboutScreen: Screen {
         date(LocalDate.Formats.ISO); chars("  ")
         amPmHour(); chars(":"); minute(); chars(":"); second(); amPmMarker("AM", "PM")
     }
-    private val layout = ThreePartsLayoutWidget(this, 128, 32)
+    private val layout = HeaderAndFooterLayout(this, 128, 32)
     private lateinit var sections: LayoutListWidget
 
-    constructor(parent: Screen?) : super(Text.translatable("kassette.config.about.title")) {
+    constructor(parent: Screen?) : super(Component.translatable("kassette.config.about.title")) {
         this.parent = parent
     }
 
@@ -49,120 +49,120 @@ class AboutScreen: Screen {
     }
 
     override fun init() {
-        val headerLayout = layout.addHeader(DirectionalLayoutWidget.vertical().spacing(8))
-        headerLayout.add(TextWidget(title, textRenderer), Positioner::alignHorizontalCenter)
-        headerLayout.add(IconWidget.create(
+        val headerLayout = layout.addToHeader(LinearLayout.vertical().spacing(8))
+        headerLayout.addChild(StringWidget(title, font), LayoutSettings::alignHorizontallyCenter)
+        headerLayout.addChild(ImageWidget.texture(
             256, 64,
-            Identifier.of(
+            ResourceLocation.fromNamespaceAndPath(
                 "kassette",
                 "textures/gui/about_banner.png"
             ),
             256, 64
         ))
-        headerLayout.mainPositioner.alignVerticalCenter()
+        headerLayout.defaultCellSetting().alignVerticallyMiddle()
 
-        val gridLayout = GridWidget()
-        gridLayout.setSpacing(8)
-        gridLayout.mainPositioner
-            .marginX(4)
-            .marginBottom(4)
-            .alignHorizontalCenter()
+        val gridLayout = GridLayout()
+        gridLayout.spacing(8)
+        gridLayout.defaultCellSetting()
+            .paddingHorizontal(4)
+            .paddingBottom(4)
+            .alignHorizontallyCenter()
 
-        val gridAdder = gridLayout.createAdder(2)
-        gridAdder.add(
-            TextWidget(
-                Text.translatable("kassette.config.about.version"),
-                textRenderer
+        val gridAdder = gridLayout.createRowHelper(2)
+        gridAdder.addChild(
+            StringWidget(
+                Component.translatable("kassette.config.about.version"),
+                font
             )
         )
-        gridAdder.add(
-            TextWidget(
-                Text.literal(FabricLoader.getInstance().getModContainer("kassette").get().metadata.version.friendlyString),
-                textRenderer
+        gridAdder.addChild(
+            StringWidget(
+                Component.literal(FabricLoader.getInstance().getModContainer("kassette").get().metadata.version.friendlyString),
+                font
             )
         )
-        gridAdder.add(
-            TextWidget(
-                Text.translatable("kassette.config.about.type"),
-                textRenderer
+        gridAdder.addChild(
+            StringWidget(
+                Component.translatable("kassette.config.about.type"),
+                font
             )
         )
-        gridAdder.add(
-            TextWidget(
-                Text.literal("${aboutInfo.buildType}"),
-                textRenderer
-            )
-        )
-
-        gridAdder.add(
-            TextWidget(
-                Text.translatable("kassette.config.about.commit"),
-                textRenderer
-            )
-        )
-        gridAdder.add(
-            TextWidget(
-                Text.literal("${aboutInfo.gitCommitId}"),
-                textRenderer
+        gridAdder.addChild(
+            StringWidget(
+                Component.literal("${aboutInfo.buildType}"),
+                font
             )
         )
 
-        gridAdder.add(
-            TextWidget(
-                Text.translatable("kassette.config.about.branch"),
-                textRenderer
+        gridAdder.addChild(
+            StringWidget(
+                Component.translatable("kassette.config.about.commit"),
+                font
             )
         )
-        gridAdder.add(
-            TextWidget(
-                Text.literal("${aboutInfo.gitBranchRef}"),
-                textRenderer
+        gridAdder.addChild(
+            StringWidget(
+                Component.literal("${aboutInfo.gitCommitId}"),
+                font
             )
         )
 
-        gridAdder.add(
-            TextWidget(
-                Text.translatable("kassette.config.about.date"),
-                textRenderer
+        gridAdder.addChild(
+            StringWidget(
+                Component.translatable("kassette.config.about.branch"),
+                font
             )
         )
-        gridAdder.add(
-            TextWidget(
-                Text.literal(
+        gridAdder.addChild(
+            StringWidget(
+                Component.literal("${aboutInfo.gitBranchRef}"),
+                font
+            )
+        )
+
+        gridAdder.addChild(
+            StringWidget(
+                Component.translatable("kassette.config.about.date"),
+                font
+            )
+        )
+        gridAdder.addChild(
+            StringWidget(
+                Component.literal(
                     Instant.fromEpochMilliseconds(aboutInfo.buildDate)
                         .toLocalDateTime(TimeZone.currentSystemDefault()).format(dateFormat)
                 ),
-                textRenderer
+                font
             )
         )
-        gridLayout.refreshPositions()
+        gridLayout.arrangeElements()
         sections = LayoutListWidget(
-            client, gridLayout, this, layout
+            minecraft, gridLayout, this, layout
         )
-        layout.addBody(sections)
+        layout.addToContents<>(sections)
 
-        layout.addFooter(
-            ButtonWidget.builder(
-                ScreenTexts.DONE,
-                { button -> close() }
+        layout.addToFooter(
+            Button.builder(
+                CommonComponents.GUI_DONE,
+                { button -> onClose() }
             ).width(200).build()
         )
 
-        headerLayout.forEachChild { widget ->
-            addDrawableChild(widget)
+        headerLayout.visitWidgets { widget ->
+            addRenderableWidget(widget)
         }
-        layout.forEachChild { widget ->
-            addDrawableChild(widget)
+        layout.visitWidgets { widget ->
+            addRenderableWidget(widget)
         }
-        refreshWidgetPositions()
+        repositionElements()
     }
 
-    override fun refreshWidgetPositions() {
-        layout.refreshPositions()
+    override fun repositionElements() {
+        layout.arrangeElements()
         sections.position(width, layout)
     }
 
-    override fun close() {
-        client!!.setScreen(parent)
+    override fun onClose() {
+        minecraft!!.setScreen(parent)
     }
 }

@@ -1,26 +1,25 @@
 package com.spadium.kassette.ui.widgets
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Element
-import net.minecraft.client.gui.Selectable
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ElementListWidget
-import net.minecraft.client.gui.widget.LayoutWidget
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.ContainerObjectSelectionList
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
+import net.minecraft.client.gui.layouts.Layout
+import net.minecraft.client.gui.screens.Screen
 import kotlin.properties.Delegates
 
-class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
-    val layout: LayoutWidget
+// i love mojmap
+class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutElement> {
+    val layout: Layout
 
-    constructor(client: MinecraftClient?, layout: LayoutWidget, parent: Screen, parentLayout: ThreePartsLayoutWidget) :
+    constructor(client: Minecraft?, layout: Layout, parent: Screen, parentLayout: HeaderAndFooterLayout) :
             super(client, parent.width, parentLayout.contentHeight, parentLayout.headerHeight, layout.height) {
         addEntry(LayoutElement(layout))
         this.layout = layout
     }
 
     companion object {
-        fun <T: LayoutWidget> of(layout: T, client: MinecraftClient?, parent: Screen, parentLayout: ThreePartsLayoutWidget): Pair<T, LayoutListWidget> {
+        fun <T: Layout> of(layout: T, client: Minecraft?, parent: Screen, parentLayout: HeaderAndFooterLayout): Pair<T, LayoutListWidget> {
             val list: LayoutListWidget = LayoutListWidget(client, layout, parent, parentLayout)
             return Pair(layout, list)
         }
@@ -31,14 +30,14 @@ class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
     }
 
     inner class LayoutElement : Entry<LayoutElement> {
-        val layout: LayoutWidget
+        val layout: Layout
 
-        constructor(layout: LayoutWidget) {
+        constructor(layout: Layout) {
             this.layout = layout
         }
 
         override fun render(
-            context: DrawContext?,
+            context: GuiGraphics,
             index: Int,
             y: Int,
             x: Int,
@@ -50,7 +49,7 @@ class LayoutListWidget : ElementListWidget<LayoutListWidget.LayoutElement> {
             tickProgress: Float
         ) {
             layout.setPosition(x, y)
-            layout.forEachChild {
+            layout.visitWidgets {
                 it.render(context, mouseX, mouseY, tickProgress)
             }
         }
