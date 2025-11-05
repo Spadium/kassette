@@ -11,9 +11,9 @@ import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.media.images.ImageUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import net.minecraft.client.MinecraftClient
-import net.minecraft.text.Text
-import net.minecraft.util.Util
+import net.minecraft.Util
+import net.minecraft.client.Minecraft
+import net.minecraft.network.chat.Component
 import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.enums.ProductType
@@ -153,7 +153,7 @@ class SpotifyProvider : AccountMediaProvider {
                 ).build()
             val authReqUri = authCodeUriReq.execute()
             requestsMadeBeforeLimit++
-            Util.getOperatingSystem().open(authReqUri)
+            Util.getPlatform().openUri(authReqUri)
         } else if ((config.providers.spotify.nextRefresh - 2000) >= System.currentTimeMillis()) {
             Kassette.logger.info("Spotify tokens need a refresh!")
             refreshTokens()
@@ -246,7 +246,7 @@ class SpotifyProvider : AccountMediaProvider {
                 }
             } catch (e: Exception) {
                 if (e.message == "Player command failed: No active device found") {
-                    MinecraftClient.getInstance().toastManager.add(WarningToast(Text.translatable("kassette.warning.spotify.device")))
+                    Minecraft.getInstance().toastManager.addToast(WarningToast(Component.translatable("kassette.warning.spotify.device")))
 
                 } else {
                     e.printStackTrace()

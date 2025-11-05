@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
@@ -34,11 +34,11 @@ private val configVersion = 0u
 @Serializable
 data class MainConfig(
     var providers: ProvidersConfig = ProvidersConfig(
-        defaultProvider = Identifier.of("kassette:placeholder"),
+        defaultProvider = ResourceLocation.parse("kassette:placeholder"),
         spotify = SpotifyConfig(),
         librespot = LibreSpotConfig()
     ),
-    @Serializable(with = IdentifierSerializer::class) var overlayName: Identifier = Identifier.of("kassette:default"),
+    @Serializable(with = IdentifierSerializer::class) var overlayName: ResourceLocation = ResourceLocation.parse("kassette:default"),
     var firstRun: Boolean = true,
     val version: UInt = configVersion
 ) : Config<MainConfig>() {
@@ -71,7 +71,7 @@ data class MainConfig(
                     Kassette.notifications.add(
                         ModNotification(
                             ModNotification.NotificationType.ERROR,
-                            Text.literal("Kassette Configuration"),
+                            Component.literal("Kassette Configuration"),
                             ModNotification.SourceType.MOD,
                             e
                         )

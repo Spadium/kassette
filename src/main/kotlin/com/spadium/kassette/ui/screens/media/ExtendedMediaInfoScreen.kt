@@ -70,7 +70,7 @@ class ExtendedMediaInfoScreen : Screen {
         infoLayout.addChild(secondLine)
         infoLayout.addChild(thirdLine)
         infoLayout.addChild(progressBar)
-        val previousTrackButton = buttonsLayout.add(
+        val previousTrackButton = buttonsLayout.addChild(
             SpriteIconButton.builder(
                 Component.empty(),
                 { button ->
@@ -78,7 +78,7 @@ class ExtendedMediaInfoScreen : Screen {
                     button.isFocused = false
                 },
                 true
-            ).texture(
+            ).sprite(
                 ResourceLocation.fromNamespaceAndPath("kassette", "previous"),
                 16, 16
             ).width(20).build()
@@ -86,14 +86,14 @@ class ExtendedMediaInfoScreen : Screen {
         previousTrackButton.active = MediaManager.provider.availableCommands.contains("previousTrack")
         previousTrackButton.setTooltip(Tooltip.create(Component.literal("Previous Track")))
 
-        val playPauseButton = buttonsLayout.add(
-            TextIconButtonWidget.builder(
+        val playPauseButton = buttonsLayout.addChild(
+            SpriteIconButton.builder(
                 Component.empty(),
                 { button ->
                     MediaManager.provider.sendCommand("togglePlay", null)
                 },
                 true
-            ).texture(
+            ).sprite(
                 when (MediaManager.provider.info.state) {
                     MediaManager.MediaState.PLAYING -> ResourceLocation.fromNamespaceAndPath("kassette", "pause")
                     MediaManager.MediaState.PAUSED -> ResourceLocation.fromNamespaceAndPath("kassette", "play")
@@ -104,12 +104,12 @@ class ExtendedMediaInfoScreen : Screen {
         playPauseButton.active = MediaManager.provider.availableCommands.contains("togglePlay")
         playPauseButton.setTooltip(Tooltip.create(Component.literal("Play/Pause")))
 
-        val nextTrackButton = buttonsLayout.add(
-            TextIconButtonWidget.builder(
+        val nextTrackButton = buttonsLayout.addChild(
+            SpriteIconButton.builder(
                 Component.empty(),
                 { button -> MediaManager.provider.sendCommand("nextTrack", null) },
                 true
-            ).texture(
+            ).sprite(
                 ResourceLocation.fromNamespaceAndPath("kassette", "next"),
                 16, 16
             ).width(20).build()

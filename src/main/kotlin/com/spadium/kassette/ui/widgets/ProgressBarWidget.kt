@@ -1,7 +1,10 @@
 package com.spadium.kassette.ui.widgets
 
 import com.spadium.kassette.media.MediaManager
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.narration.NarratedElementType
+import net.minecraft.client.gui.narration.NarrationElementOutput
 
 import kotlin.math.floor
 
@@ -35,7 +38,7 @@ class ProgressBarWidget : AbstractWidget {
     }
 
     override fun renderWidget(
-        context: DrawContext?,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float
@@ -53,7 +56,7 @@ class ProgressBarWidget : AbstractWidget {
         context?.fill(x, y, x + progressBarWidth, y + height, foregroundColor)
     }
 
-    override fun appendClickableNarrations(builder: NarrationMessageBuilder?) {
-        builder?.put(NarrationPart.TITLE, "Progressbar at x out of y")
+    override fun updateWidgetNarration(builder: NarrationElementOutput) {
+        builder.add(NarratedElementType.TITLE, "Progressbar at $currentValue out of $maxValue")
     }
 }

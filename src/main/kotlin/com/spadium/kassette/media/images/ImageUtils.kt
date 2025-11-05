@@ -1,6 +1,6 @@
 package com.spadium.kassette.media.images
 
-import net.minecraft.client.texture.NativeImage
+import com.mojang.blaze3d.platform.NativeImage
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
@@ -10,11 +10,11 @@ class ImageUtils {
         fun loadStream(input: InputStream, close: Boolean = false): NativeImage {
             val bufferedImage: BufferedImage = ImageIO.read(input)
             val nativeImage: NativeImage = NativeImage(bufferedImage.width, bufferedImage.height, true)
-            nativeImage.format
+            nativeImage.format()
             for (x in 0..bufferedImage.width-1) {
                 for (y in 0..bufferedImage.height-1) {
                     // AA BB GG RR
-                    nativeImage.setColor(x, y, rgbaToAbgr(bufferedImage.getRGB(x, y)))
+                    nativeImage.setPixel(x, y, rgbaToAbgr(bufferedImage.getRGB(x, y)))
                 }
             }
             if (close)

@@ -36,7 +36,7 @@ class TutorialPageTwo: Screen {
                     MainConfig.Instance = Config.load()
                     if (MediaManager.provider is AccountMediaProvider) {
                         (MediaManager.provider as AccountMediaProvider).initiateLogin(false)
-                        onClose()
+                        this@TutorialPageTwo.onClose()
                     }
                 }
             ).build()

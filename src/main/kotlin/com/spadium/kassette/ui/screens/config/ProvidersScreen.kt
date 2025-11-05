@@ -4,57 +4,57 @@ import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
+import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 
 class ProvidersScreen: Screen {
     private val parent: Screen?
-    private val layout = ThreePartsLayoutWidget(this, 32)
+    private val layout = HeaderAndFooterLayout(this, 32)
     private lateinit var sections: LayoutListWidget
 
-    constructor(parent: Screen?) : super(Text.translatable("kassette.config.providers.title")) {
+    constructor(parent: Screen?) : super(Component.translatable("kassette.config.providers.title")) {
         this.parent = parent
     }
 
     override fun init() {
-        layout.addHeader(title, textRenderer)
+        layout.addTitleHeader(title, font)
 
-        val sectionButtons = DirectionalLayoutWidget.vertical().spacing(8)
-        sectionButtons.add(
+        val sectionButtons = LinearLayout.vertical().spacing(8)
+        sectionButtons.addChild(
             KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.currentprovider"),
+                Component.translatable("kassette.config.button.currentprovider"),
                 getScreenForProvider()
             )
         )
-        sectionButtons.add(
+        sectionButtons.addChild(
             KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.spotify"),
+                Component.translatable("kassette.config.button.spotify"),
                 SpotifyScreen(this)
             )
         )
-        sectionButtons.refreshPositions()
+        sectionButtons.arrangeElements()
         sections = LayoutListWidget(
-            client, sectionButtons,
+            minecraft, sectionButtons,
             this, layout,
         )
-        layout.addBody(sections)
+        layout.addToContents(sections)
 
-        layout.addFooter(
-            ButtonWidget.builder(
-                ScreenTexts.DONE,
-                { button -> close() }
+        layout.addToFooter(
+            Button.builder(
+                CommonComponents.GUI_DONE,
+                { button -> onClose() }
             ).width(200).build()
         )
 
-        layout.forEachChild { widget ->
-            addDrawableChild(widget)
+        layout.visitWidgets { widget ->
+            addRenderableWidget(widget)
         }
-        refreshWidgetPositions()
+        repositionElements()
     }
 
     private fun getScreenForProvider(): Screen? {
@@ -65,18 +65,18 @@ class ProvidersScreen: Screen {
         }
     }
 
-    override fun refreshWidgetPositions() {
-        sections.position(width, layout)
-        layout.refreshPositions()
+    override fun repositionElements() {
+        sections.updateSize(width, layout)
+        layout.arrangeElements()
     }
 
-    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.render(context, mouseX, mouseY, deltaTicks)
 //        clearAndInit()
     }
 
-    override fun close() {
+    override fun onClose() {
         MainConfig.Instance.save()
-        this.client!!.setScreen(parent)
+        this.minecraft!!.setScreen(parent)
     }
 }

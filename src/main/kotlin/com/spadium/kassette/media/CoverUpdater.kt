@@ -2,44 +2,44 @@ package com.spadium.kassette.media
 
 import com.spadium.kassette.media.MediaManager.provider
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.texture.NativeImageBackedTexture
-import net.minecraft.util.Identifier
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.texture.DynamicTexture
+import net.minecraft.resources.ResourceLocation
 
 object CoverUpdater {
-    private var coverArt: NativeImageBackedTexture = NativeImageBackedTexture(
+    private var coverArt: DynamicTexture = DynamicTexture(
         { "coverart" }, MediaManager.getDefaultCoverArt()
     )
-    private var largeCoverArt: NativeImageBackedTexture = NativeImageBackedTexture(
+    private var largeCoverArt: DynamicTexture = DynamicTexture(
         { "coverart_large" }, MediaManager.getDefaultCoverArt()
     )
-    private val coverArtIdentifier = Identifier.of("kassette:coverart")
-    private val largeCoverArtIdentifier = Identifier.of("kassette:coverart_large")
+    private val coverArtIdentifier = ResourceLocation.parse("kassette:coverart")
+    private val largeCoverArtIdentifier = ResourceLocation.parse("kassette:coverart_large")
 
     @JvmStatic
     fun setupCoverArt() {
         if (
-            provider.getMedia().coverArt != coverArt.image &&
-            MinecraftClient.getInstance().textureManager != null
+            provider.getMedia().coverArt != coverArt.pixels &&
+            Minecraft.getInstance().textureManager != null
         ) {
-            val textureManager = MinecraftClient.getInstance().textureManager
+            val textureManager = Minecraft.getInstance().textureManager
             val coverImage = MediaManager.provider.getMedia().coverArt
             coverArt.close()
-            coverArt = NativeImageBackedTexture(
+            coverArt = DynamicTexture(
                 { "coverart" }, coverImage
             )
             coverArt.setFilter(true, true)
             coverArt.upload()
 
             largeCoverArt.close()
-            largeCoverArt = NativeImageBackedTexture(
+            largeCoverArt = DynamicTexture(
                 { "coverart_large" }, coverImage
             )
             largeCoverArt.setFilter(false, false)
             largeCoverArt.upload()
 
-            textureManager.registerTexture(coverArtIdentifier, coverArt)
-            textureManager.registerTexture(largeCoverArtIdentifier, largeCoverArt)
+            textureManager.register(coverArtIdentifier, coverArt)
+            textureManager.register(largeCoverArtIdentifier, largeCoverArt)
         }
     }
 }

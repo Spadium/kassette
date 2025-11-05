@@ -1,6 +1,6 @@
 package com.spadium.kassette.media
 
-import net.minecraft.client.texture.NativeImage
+import com.mojang.blaze3d.platform.NativeImage
 
 data class MediaInfo(
     var maximumTime: Long,

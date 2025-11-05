@@ -1,20 +1,19 @@
 package com.spadium.kassette.ui.overlays
 
 import com.spadium.kassette.config.Config
-import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.config.overlays.DefaultOverlayConfig
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.MarqueeTextManager
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.Util
-import net.minecraft.util.math.ColorHelper
+import net.minecraft.Util
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.ARGB
 import kotlin.math.floor
 import kotlin.reflect.KProperty
 
@@ -25,30 +24,30 @@ class DefaultOverlay : OverlayTheme {
     private var positionIndicator: Double = 0.0
     private var previousEndTime: Long = 0
     private var mediaInfo: MediaInfo = MediaManager.provider.info
-    private var textRenderer: TextRenderer = MinecraftClient.getInstance().textRenderer
+    private var textRenderer: Font = Minecraft.getInstance().font
 
 //    private var config = MainConfig.Instance
     private var config = Config.load<DefaultOverlayConfig>()
     private var isFancy = config.fancyText
-    private var borderColor = ColorHelper.getArgb(
+    private var borderColor = ARGB.color(
         config.backgroundColor[3],
         config.borderColor[0],
         config.borderColor[1],
         config.borderColor[2]
     )
-    private var backgroundColor = ColorHelper.getArgb(
+    private var backgroundColor = ARGB.color(
         config.backgroundColor[3],
         config.backgroundColor[0],
         config.backgroundColor[1],
         config.backgroundColor[2]
     )
-    private var progressBarBg = ColorHelper.getArgb(
+    private var progressBarBg = ARGB.color(
         config.progressBackgroundColor[3],
         config.progressBackgroundColor[0],
         config.progressBackgroundColor[1],
         config.progressBackgroundColor[2]
     )
-    private var progressBarFg = ColorHelper.getArgb(
+    private var progressBarFg = ARGB.color(
         config.progressForegroundColor[3],
         config.progressForegroundColor[0],
         config.progressForegroundColor[1],
@@ -67,25 +66,25 @@ class DefaultOverlay : OverlayTheme {
         // avoid stuttering when we don't need to reload variables
         if (oldValue != newValue) {
             config = newValue
-            borderColor = ColorHelper.getArgb(
+            borderColor = ARGB.color(
                 config.backgroundColor[3],
                 config.borderColor[0],
                 config.borderColor[1],
                 config.borderColor[2]
             )
-            backgroundColor = ColorHelper.getArgb(
+            backgroundColor = ARGB.color(
                 config.backgroundColor[3],
                 config.backgroundColor[0],
                 config.backgroundColor[1],
                 config.backgroundColor[2]
             )
-            progressBarBg = ColorHelper.getArgb(
+            progressBarBg = ARGB.color(
                 config.progressBackgroundColor[3],
                 config.progressBackgroundColor[0],
                 config.progressBackgroundColor[1],
                 config.progressBackgroundColor[2]
             )
-            progressBarFg = ColorHelper.getArgb(
+            progressBarFg = ARGB.color(
                 config.progressForegroundColor[3],
                 config.progressForegroundColor[0],
                 config.progressForegroundColor[1],
@@ -102,14 +101,14 @@ class DefaultOverlay : OverlayTheme {
         return mediaInfo.album
     }
 
-    override fun render(context: DrawContext, tickCounter: RenderTickCounter) {
+    override fun render(context: GuiGraphics, tickCounter: DeltaTracker) {
         if (!::firstLineManager.isInitialized) {
             firstLineManager = MarqueeTextManager(context)
             secondLineManager = MarqueeTextManager(context)
             thirdLineManager = MarqueeTextManager(context)
         }
         mediaInfo = MediaManager.provider.info
-        val startTime: Long = Util.getMeasuringTimeNano()
+        val startTime: Long = Util.getNanos()
         val artSize: Int = ((config.height.toFloat() - config.progressBarThickness) * (3f/4f)).toInt()
 
         // Delta-Time in seconds
@@ -120,42 +119,42 @@ class DefaultOverlay : OverlayTheme {
         context.fill(
             0, 0, config.width, config.height, backgroundColor
         )
-        context.drawTexture(
+        context.blit(
             RenderPipelines.GUI_TEXTURED,
-            Identifier.of("kassette:coverart"),
+            ResourceLocation.parse("kassette:coverart"),
             8,
             (((config.height + config.progressBarThickness) / 2) - (artSize / 2)),
             0f, 0f,
             artSize, artSize,
             artSize, artSize
         )
-        context.drawGuiTexture(
+        context.blitSprite(
             RenderPipelines.GUI_TEXTURED,
             MediaManager.provider.info.state.texture,
-            config.width - 17, 2 + (textRenderer.fontHeight * 3) + (config.lineSpacing * 2),
-            textRenderer.fontHeight, textRenderer.fontHeight
+            config.width - 17, 2 + (textRenderer.lineHeight * 3) + (config.lineSpacing * 2),
+            textRenderer.lineHeight, textRenderer.lineHeight
         )
 
-        firstLineManager.text = Text.literal(getFirstLine())
+        firstLineManager.text = Component.literal(getFirstLine())
         firstLineManager.renderText(
-            50, 2 + textRenderer.fontHeight, 0xFFFFFFFF.toInt(),
+            50, 2 + textRenderer.lineHeight, 0xFFFFFFFF.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
 
-        secondLineManager.text = Text.literal(getSecondLine())
+        secondLineManager.text = Component.literal(getSecondLine())
         secondLineManager.renderText(
-            50, 2 + (textRenderer.fontHeight * 2) + config.lineSpacing, 0xFFFFFFFF.toInt(),
+            50, 2 + (textRenderer.lineHeight * 2) + config.lineSpacing, 0xFFFFFFFF.toInt(),
             true, 14, 3, (positionIndicator >= scrollThreshold)
         )
-        thirdLineManager.text = Text.literal(MediaManager.provider.info.provider)
+        thirdLineManager.text = Component.literal(MediaManager.provider.info.provider)
         thirdLineManager.renderText(
-            50, 2 + (textRenderer.fontHeight * 3) + (config.lineSpacing * 2),
+            50, 2 + (textRenderer.lineHeight * 3) + (config.lineSpacing * 2),
             0xFFAAAAAA.toInt(),
             true, 14, 3, shouldScroll
         )
 
         drawProgressBar(context)
-        context.drawBorder(
+        context.renderOutline(
             0, 0,
             config.width, config.height,
             borderColor
@@ -170,7 +169,7 @@ class DefaultOverlay : OverlayTheme {
         previousEndTime = startTime
     }
 
-    private fun drawProgressBar(context: DrawContext) {
+    private fun drawProgressBar(context: GuiGraphics) {
         val progress: Double = if (mediaInfo.maximumTime == 0L) {
             0.0
         } else {

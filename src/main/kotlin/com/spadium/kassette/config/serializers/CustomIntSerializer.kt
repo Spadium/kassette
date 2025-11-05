@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 
 object CustomIntSerializer  : KSerializer<Int> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "net.minecraft.util.Identifier",
+        "kotlin.Int",
         PrimitiveKind.STRING
     )
 

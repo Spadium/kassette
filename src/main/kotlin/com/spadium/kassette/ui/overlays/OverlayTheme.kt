@@ -1,10 +1,7 @@
 package com.spadium.kassette.ui.overlays
 
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.util.Identifier
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.gui.GuiGraphics
 
 abstract class OverlayTheme {
 
@@ -12,5 +9,5 @@ abstract class OverlayTheme {
 
     }
 
-    abstract fun render(context: DrawContext, tickCounter: RenderTickCounter)
+    abstract fun render(context: GuiGraphics, tickCounter: DeltaTracker)
 }

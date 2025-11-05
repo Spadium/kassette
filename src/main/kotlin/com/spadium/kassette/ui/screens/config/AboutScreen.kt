@@ -144,7 +144,7 @@ class AboutScreen: Screen {
         layout.addToFooter(
             Button.builder(
                 CommonComponents.GUI_DONE,
-                { button -> onClose() }
+                { button -> this@AboutScreen.onClose() }
             ).width(200).build()
         )
 

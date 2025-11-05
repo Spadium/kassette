@@ -1,22 +1,21 @@
 package com.spadium.kassette.ui.overlays
 
-import com.spadium.kassette.media.MediaProvider
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.util.Identifier
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.resources.ResourceLocation
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 object OverlayManager {
-    private val MEDIA_LAYER: Identifier = Identifier.of("kassette", "media-layer")
+    private val MEDIA_LAYER: ResourceLocation = ResourceLocation.fromNamespaceAndPath("kassette", "media-layer")
 
     var currentOverlay: OverlayTheme = DefaultOverlay()
-    val overlays: MutableMap<Identifier, KClass<out OverlayTheme>> = mutableMapOf(
-        Identifier.of("kassette:default") to DefaultOverlay::class,
-        Identifier.of("kassette:emtree") to EmTreeOverlay::class
+    val overlays: MutableMap<ResourceLocation, KClass<out OverlayTheme>> = mutableMapOf(
+        ResourceLocation.parse("kassette:default") to DefaultOverlay::class,
+        ResourceLocation.parse("kassette:emtree") to EmTreeOverlay::class
     ).withDefault { DefaultOverlay::class }
 
     init {
@@ -26,17 +25,17 @@ object OverlayManager {
         )
     }
 
-    fun registerOverlay(identifier: Identifier, overlay: OverlayTheme) {
+    fun registerOverlay(identifier: ResourceLocation, overlay: OverlayTheme) {
         overlays.put(identifier, overlay::class)
     }
 
-    fun setOverlay(identifier: Identifier) {
+    fun setOverlay(identifier: ResourceLocation) {
         currentOverlay = overlays[identifier]?.createInstance() ?: DefaultOverlay()
     }
 
-    fun onRender(context: DrawContext, tickCounter: RenderTickCounter) {
+    fun onRender(context: GuiGraphics, tickCounter: DeltaTracker) {
         // render when we are in the world, helps with the super-duper sped up spinning text on world load
-        if (MinecraftClient.getInstance().gameRenderer.camera.isReady) {
+        if (Minecraft.getInstance().gameRenderer.mainCamera.isInitialized) {
             currentOverlay.render(context, tickCounter)
         }
     }

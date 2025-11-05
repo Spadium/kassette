@@ -6,87 +6,87 @@ import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.gui.widget.IconWidget
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.Util
+import net.minecraft.Util
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.ImageWidget
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
+import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 
 class ConfigScreen : Screen {
     val parent: Screen?
-    val layout = ThreePartsLayoutWidget(this, 32)
+    val layout = HeaderAndFooterLayout(this, 32)
     lateinit var sections: LayoutListWidget
 
-    constructor(parent: Screen?) : super(Text.translatable("kassette.config.title")) {
+    constructor(parent: Screen?) : super(Component.translatable("kassette.config.title")) {
         this.parent = parent
     }
 
     override fun init() {
         layout.addHeader(title, textRenderer)
-        val buttonList: DirectionalLayoutWidget = DirectionalLayoutWidget.vertical().spacing(2)
-        buttonList.add(
-            IconWidget.create(
-                200, 50, Identifier.of("kassette", "textures/gui/under_construction_banner.png"),
+        val buttonList: LinearLayout = LinearLayout.vertical().spacing(2)
+        buttonList.addChild(
+            ImageWidget.texture(
+                200, 50, ResourceLocation.fromNamespaceAndPath("kassette", "textures/gui/under_construction_banner.png"),
                 200, 50
             )
         )
-        buttonList.add(
-            ButtonWidget.builder(
-                Text.translatable("kassette.config.button.openfile"),
+        buttonList.addChild(
+            Button.builder(
+                Component.translatable("kassette.config.button.openfile"),
                 { button ->
-                    Util.getOperatingSystem().open(Config.configPath)
+                    Util.getPlatform().openPath(Config.configPath)
                 }
             ).width(200).build()
         )
-        buttonList.add(
+        buttonList.addChild(
             KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.providers"),
+                Component.translatable("kassette.config.button.providers"),
                 ProvidersScreen(this)
             )
         )
-        buttonList.add(
+        buttonList.addChild(
             KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.hud"),
+                Component.translatable("kassette.config.button.hud"),
                 null
             )
         )
-        buttonList.add(
+        buttonList.addChild(
             KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.help"),
+                Component.translatable("kassette.config.button.help"),
                 HelpScreen(this)
             )
         )
-        buttonList.add(
+        buttonList.addChild(
             KassetteUtils.createButtonToScreen(
-                Text.translatable("kassette.config.button.about"),
+                Component.translatable("kassette.config.button.about"),
                 AboutScreen(this)
             )
         )
-            buttonList.add(
+            buttonList.addChild(
                 KassetteUtils.createButtonToScreen(
-                    Text.translatable("kassette.config.button.notifications"),
+                    Component.translatable("kassette.config.button.notifications"),
                     NotificationScreen(this, Kassette.notifications)
                 )
             )
-        buttonList.refreshPositions()
+        buttonList.arrangeElements()
         sections = LayoutListWidget(
-            client, buttonList, this, layout
+            minecraft, buttonList, this, layout
         )
-        layout.addBody(sections)
+        layout.addToContents(sections)
 
-        layout.addFooter(
-            ButtonWidget.builder(
-                ScreenTexts.DONE,
+        layout.addToFooter(
+            Button.builder(
+                CommonComponents.GUI_DONE,
                 { button -> close() }
             ).width(200).build()
         )
 
-        layout.forEachChild { widget ->
-            addDrawableChild(widget)
+        layout.visitWidgets { widget ->
+            addRenderableOnly(widget)
         }
         refreshWidgetPositions()
     }

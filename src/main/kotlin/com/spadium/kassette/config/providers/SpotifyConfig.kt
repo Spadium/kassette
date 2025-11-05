@@ -6,7 +6,7 @@ import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.util.ModNotification
 import kotlinx.serialization.Serializable
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
 import kotlin.io.path.exists
 
 @ConfigMeta(
@@ -43,7 +43,7 @@ data class SpotifyConfig(
                     Kassette.notifications.add(
                         ModNotification(
                             ModNotification.NotificationType.ERROR,
-                            Text.literal("Kassette Configuration"),
+                            Component.literal("Kassette Configuration"),
                             ModNotification.SourceType.MOD,
                             e
                         )

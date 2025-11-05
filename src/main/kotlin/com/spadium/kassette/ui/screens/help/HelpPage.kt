@@ -1,12 +1,12 @@
 package com.spadium.kassette.ui.screens.help
 
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 
 class HelpPage: Screen {
     private val parent: Screen?
 
-    constructor(parent: Screen?, contents: Any?, title: Text): super(title) {
+    constructor(parent: Screen?, contents: Any?, title: Component): super(title) {
         this.parent = parent
     }
 
@@ -15,6 +15,6 @@ class HelpPage: Screen {
     }
 
     override fun close() {
-        client?.setScreen(parent)
+        minecraft?.setScreen(parent)
     }
 }

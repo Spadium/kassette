@@ -1,6 +1,6 @@
 package com.spadium.kassette.media
 
-import net.minecraft.util.Util
+import net.minecraft.Util
 
 class DBusProvider: MediaProvider {
     override val info: MediaInfo
@@ -9,7 +9,7 @@ class DBusProvider: MediaProvider {
         get() = TODO("Not yet implemented")
 
     constructor() {
-        if (Util.getOperatingSystem() != Util.OperatingSystem.LINUX) {
+        if (Util.getPlatform() != Util.OS.LINUX) {
             throw UnsupportedOperationException("Cannot use DBus on Windows/macOS for media information!")
         }
     }

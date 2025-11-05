@@ -1,49 +1,49 @@
 package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.util.ModNotification
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
+import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 
 class NotificationScreen: Screen {
-    val layout = ThreePartsLayoutWidget(this, 32)
+    val layout = HeaderAndFooterLayout(this, 32)
     val parent: Screen?
     var notifications: MutableList<ModNotification>
 
-    constructor(parent: Screen?, notifications: MutableList<ModNotification>) : super(Text.translatable("kassette.notifications.title")) {
+    constructor(parent: Screen?, notifications: MutableList<ModNotification>) : super(Component.translatable("kassette.notifications.title")) {
         this.parent = parent
         this.notifications = notifications
     }
 
     override fun init() {
-        layout.addHeader(title, textRenderer)
-        val details = layout.addBody(DirectionalLayoutWidget.vertical().spacing(8))
+        layout.addTitleHeader(title, font)
+        val details = layout.addToContents(LinearLayout.vertical().spacing(8))
 
 
-        val footerButtons = layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(4))
-        footerButtons.add(
-            ButtonWidget.builder(
-                ScreenTexts.DONE,
-                { button -> close() }
+        val footerButtons = layout.addToFooter(LinearLayout.horizontal().spacing(4))
+        footerButtons.addChild(
+            Button.builder(
+                CommonComponents.GUI_DONE,
+                { button -> this@NotificationScreen.onClose() }
             ).width(98).build()
         )
-        footerButtons.add(
-            ButtonWidget.builder(
-                Text.literal("Clear"),
+        footerButtons.addChild(
+            Button.builder(
+                Component.literal("Clear"),
                 { button -> }
             ).width(98).build()
         )
 
-        layout.forEachChild { widget ->
-            addDrawableChild(widget)
+        layout.visitWidgets { widget ->
+            addRenderableWidget(widget)
         }
-        layout.refreshPositions()
+        layout.arrangeElements()
     }
 
-    override fun close() {
-        client?.setScreen(parent)
+    override fun onClose() {
+        minecraft?.setScreen(parent)
     }
 }
