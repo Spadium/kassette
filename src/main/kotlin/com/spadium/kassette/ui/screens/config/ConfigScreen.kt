@@ -26,7 +26,7 @@ class ConfigScreen : Screen {
     }
 
     override fun init() {
-        layout.addHeader(title, textRenderer)
+        layout.addTitleHeader(title, font)
         val buttonList: LinearLayout = LinearLayout.vertical().spacing(2)
         buttonList.addChild(
             ImageWidget.texture(
@@ -81,23 +81,23 @@ class ConfigScreen : Screen {
         layout.addToFooter(
             Button.builder(
                 CommonComponents.GUI_DONE,
-                { button -> close() }
+                { button -> onClose() }
             ).width(200).build()
         )
 
         layout.visitWidgets { widget ->
             addRenderableOnly(widget)
         }
-        refreshWidgetPositions()
+        repositionElements()
     }
 
-    override fun refreshWidgetPositions() {
-        layout.refreshPositions()
-        sections.position(width, layout)
+    override fun repositionElements() {
+        layout.arrangeElements()
+        sections.updateSize(width, layout)
     }
 
-    override fun close() {
+    override fun onClose() {
         MainConfig.Instance.save()
-        this.client!!.setScreen(parent)
+        this.minecraft!!.setScreen(parent)
     }
 }

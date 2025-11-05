@@ -14,7 +14,7 @@ class HelpPage: Screen {
         super.init()
     }
 
-    override fun close() {
+    override fun onClose() {
         minecraft?.setScreen(parent)
     }
 }

@@ -1,6 +1,5 @@
 package com.spadium.kassette.config.providers
 
-import com.spadium.kassette.config.serializers.IdentifierSerializer
 import com.spadium.kassette.config.serializers.ResourceLocationSerializer
 import kotlinx.serialization.Serializable
 import net.minecraft.resources.ResourceLocation

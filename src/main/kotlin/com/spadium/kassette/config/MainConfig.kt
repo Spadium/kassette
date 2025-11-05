@@ -5,7 +5,7 @@ import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.providers.LibreSpotConfig
 import com.spadium.kassette.config.providers.ProvidersConfig
 import com.spadium.kassette.config.providers.SpotifyConfig
-import com.spadium.kassette.config.serializers.IdentifierSerializer
+import com.spadium.kassette.config.serializers.ResourceLocationSerializer
 import com.spadium.kassette.util.ModNotification
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -38,7 +38,7 @@ data class MainConfig(
         spotify = SpotifyConfig(),
         librespot = LibreSpotConfig()
     ),
-    @Serializable(with = IdentifierSerializer::class) var overlayName: ResourceLocation = ResourceLocation.parse("kassette:default"),
+    @Serializable(with = ResourceLocationSerializer::class) var overlayName: ResourceLocation = ResourceLocation.parse("kassette:default"),
     var firstRun: Boolean = true,
     val version: UInt = configVersion
 ) : Config<MainConfig>() {
