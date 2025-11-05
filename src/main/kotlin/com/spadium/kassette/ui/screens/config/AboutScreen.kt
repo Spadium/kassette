@@ -139,7 +139,7 @@ class AboutScreen: Screen {
         sections = LayoutListWidget(
             minecraft, gridLayout, this, layout
         )
-        layout.addToContents<>(sections)
+        layout.addToContents(sections)
 
         layout.addToFooter(
             Button.builder(
@@ -159,7 +159,7 @@ class AboutScreen: Screen {
 
     override fun repositionElements() {
         layout.arrangeElements()
-        sections.position(width, layout)
+        sections.updateSize(width, layout)
     }
 
     override fun onClose() {

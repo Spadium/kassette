@@ -3,8 +3,10 @@ package com.spadium.kassette.ui.widgets
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.ContainerObjectSelectionList
+import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
 import net.minecraft.client.gui.layouts.Layout
+import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.client.gui.screens.Screen
 import kotlin.properties.Delegates
 
@@ -54,15 +56,19 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
             }
         }
 
-        override fun children(): List<Element?>? {
-            val children: MutableList<Element> = mutableListOf()
-            layout.forEachChild { children.add(it) }
+        override fun children(): List<GuiEventListener> {
+            val children: MutableList<GuiEventListener> = mutableListOf()
+
+            layout.visitWidgets {
+                children.add(it)
+            }
+
             return children
         }
 
-        override fun selectableChildren(): List<Selectable?>? {
-            val children: MutableList<Selectable> = mutableListOf()
-            layout.forEachChild { if (it is Selectable) children.add(it) }
+        override fun narratables(): List<NarratableEntry?> {
+            val children: MutableList<NarratableEntry> = mutableListOf()
+            layout.visitChildren { if (it is NarratableEntry) children.add(it) }
             return children
         }
     }

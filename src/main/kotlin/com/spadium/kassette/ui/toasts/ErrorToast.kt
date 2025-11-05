@@ -1,11 +1,11 @@
 package com.spadium.kassette.ui.toasts
 
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.toast.Toast
-import net.minecraft.client.toast.ToastManager
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.toasts.Toast
+import net.minecraft.client.gui.components.toasts.ToastManager
+import net.minecraft.client.gui.render.GuiRenderer
+import net.minecraft.network.chat.Component
 
 class ErrorToast: Toast {
     private var visibility = Toast.Visibility.SHOW
@@ -17,46 +17,46 @@ class ErrorToast: Toast {
         this.message = message
     }
 
-    override fun getVisibility(): Toast.Visibility? {
+    override fun getWantedVisibility(): Toast.Visibility {
         return visibility
     }
 
-    override fun update(manager: ToastManager?, time: Long) {
+    override fun update(manager: ToastManager, time: Long) {
         if (time > 7500) {
             visibility = Toast.Visibility.HIDE
         }
     }
 
-    override fun getHeight(): Int {
+    override fun height(): Int {
         return 96
     }
 
-    override fun draw(
-        context: DrawContext?,
-        textRenderer: TextRenderer?,
+    override fun render(
+        context: GuiGraphics,
+        textRenderer: Font,
         startTime: Long
     ) {
-        context?.fill(
-            0, 0, width, height, 0xFF882222.toInt()
+        context.fill(
+            0, 0, this.width(), this.height(), 0xFF882222.toInt()
         )
 
-        context?.drawText(
-            textRenderer!!, Text.literal("Error loading Kassette!"),
+        context.drawString(
+            textRenderer, Component.literal("Error loading Kassette!"),
             8, 8, 0xFFFFFFFF.toInt(), false
         )
-        context?.drawWrappedText(
-            textRenderer!!, Text.literal(message),
-            8, 8 + (textRenderer.fontHeight * 2), (width - 16),
+        context.drawWordWrap(
+            textRenderer, Component.literal(message),
+            8, 8 + (textRenderer.lineHeight * 2), (width() - 16),
             0xFFFFFFFF.toInt(), false
         )
 
-        context?.drawText(
-            textRenderer!!, Text.literal("Check settings for more info"),
-            8, (height - textRenderer.fontHeight) - 8, 0xFFFFFFFF.toInt(), false
+        context.drawString(
+            textRenderer, Component.literal("Check settings for more info"),
+            8, (height() - textRenderer.lineHeight) - 8, 0xFFFFFFFF.toInt(), false
         )
 
-        context?.drawBorder(
-            0, 0, width, height, 0xFFBBBBBB.toInt()
+        context.renderOutline(
+            0, 0, width(), height(), 0xFFBBBBBB.toInt()
         )
     }
 }

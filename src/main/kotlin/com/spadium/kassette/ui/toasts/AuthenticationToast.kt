@@ -1,21 +1,21 @@
 package com.spadium.kassette.ui.toasts
 
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.toast.Toast
-import net.minecraft.client.toast.ToastManager
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.toasts.Toast
+import net.minecraft.client.gui.components.toasts.ToastManager
 
 class AuthenticationToast: Toast {
-    override fun getVisibility(): Toast.Visibility? {
+    override fun getWantedVisibility(): Toast.Visibility {
         return Toast.Visibility.SHOW
     }
 
-    override fun update(manager: ToastManager?, time: Long) {
+    override fun update(manager: ToastManager, time: Long) {
     }
 
-    override fun draw(
-        context: DrawContext?,
-        textRenderer: TextRenderer?,
+    override fun render(
+        context: GuiGraphics,
+        textRenderer: Font,
         startTime: Long
     ) {
         context?.fill(0, 0, 128, 32, 0xFFFFFFFF.toInt())

@@ -1,18 +1,18 @@
 package com.spadium.kassette.util
 
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
 
 data class ModNotification(
     val notificationType: NotificationType,
-    val source: Text,
+    val source: Component,
     val sourceType: SourceType,
-    val message: Text,
-    val detailedMessage: Text = Text.empty()
+    val message: Component,
+    val detailedMessage: Component = Component.empty()
 ) {
-    constructor(notificationType: NotificationType, source: Text, sourceType: SourceType, throwable: Throwable) : this(
+    constructor(notificationType: NotificationType, source: Component, sourceType: SourceType, throwable: Throwable) : this(
         notificationType, source, sourceType,
-        Text.literal(throwable.message),
-        Text.literal(throwable.stackTraceToString())
+        Component.literal(throwable.message),
+        Component.literal(throwable.stackTraceToString())
     ) {
 
     }

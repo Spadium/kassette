@@ -1,5 +1,6 @@
 package com.spadium.kassette
 
+import com.mojang.blaze3d.platform.InputConstants
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.config.MainConfig
@@ -22,10 +23,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.util.InputUtil
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -54,7 +53,7 @@ open class Kassette : ClientModInitializer {
             notifications.add(
                 ModNotification(
                     ModNotification.NotificationType.ERROR,
-                    Text.literal("Authentication Callback Server"),
+                    Component.literal("Authentication Callback Server"),
                     ModNotification.SourceType.MOD,
                     e
                 )
@@ -65,7 +64,7 @@ open class Kassette : ClientModInitializer {
         val openMediaInfoKeybind: KeyMapping = KeyBindingHelper.registerKeyBinding(
             KeyMapping(
                 "key.kassette.info",
-                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.kassette.kassette"
             )
         )
@@ -104,13 +103,13 @@ open class Kassette : ClientModInitializer {
                         notifications.add(
                             ModNotification(
                                 ModNotification.NotificationType.ERROR,
-                                Text.literal("${MediaManager.provider.getServiceName()} MediaProvider"),
+                                Component.literal("${MediaManager.provider.getServiceName()} MediaProvider"),
                                 ModNotification.SourceType.PROVIDER,
                                 e
                             )
                         )
-                        client.toastManager.add(ErrorToast("Error from ${MediaManager.provider.getServiceName()}!"))
-                        MediaManager.setProvider(Identifier.of("kassette:placeholder"))
+                        client.toastManager.addToast(ErrorToast("Error from ${MediaManager.provider.getServiceName()}!"))
+                        MediaManager.setProvider(ResourceLocation.parse("kassette:placeholder"))
                     }
                 }
                 MediaManager.provider.destroy()

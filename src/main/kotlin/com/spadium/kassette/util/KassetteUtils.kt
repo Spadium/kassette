@@ -1,20 +1,20 @@
 package com.spadium.kassette.util
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.texture.NativeImage
-import net.minecraft.text.Text
+import com.mojang.blaze3d.platform.NativeImage
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 import kotlin.math.floor
 
 class KassetteUtils {
     companion object {
-        fun createButtonToScreen(message: Text, screen: Screen?): ButtonWidget {
-            val button = ButtonWidget.builder(
+        fun createButtonToScreen(message: Component, screen: Screen?): Button {
+            val button = Button.builder(
                 message,
                 { button ->
                     if (screen != null) {
-                        MinecraftClient.getInstance().setScreen(screen)
+                        Minecraft.getInstance().setScreen(screen)
                     }
                 }
             ).width(200).build()
@@ -23,15 +23,15 @@ class KassetteUtils {
             return button
         }
 
-        inline fun createBooleanOptionButton(crossinline setter: (Boolean) -> Unit, value: Boolean): ButtonWidget {
+        inline fun createBooleanOptionButton(crossinline setter: (Boolean) -> Unit, value: Boolean): Button {
             var valueToReturn = value
 
-            val button = ButtonWidget.builder(
-                Text.translatable("kassette.config.button.generic.boolean.$value"),
+            val button = Button.builder(
+                Component.translatable("kassette.config.button.generic.boolean.$value"),
                 { button ->
                     valueToReturn = !valueToReturn
                     setter(valueToReturn)
-                    button.message = Text.translatable("kassette.config.button.generic.boolean.$valueToReturn")
+                    button.message = Component.translatable("kassette.config.button.generic.boolean.$valueToReturn")
                 }
             ).width(100).build()
             return button
@@ -47,7 +47,7 @@ class KassetteUtils {
             var sigmaB = 0
             val width = image.width
             val height = image.height
-            val arr = image.copyPixelsArgb()
+            val arr = image.pixels
             for (y in 0..(height-1)) {
                 rowCount = y
                 for (x in 0..(width-1)) {
