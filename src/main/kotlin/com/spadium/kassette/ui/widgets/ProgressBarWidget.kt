@@ -1,14 +1,11 @@
 package com.spadium.kassette.ui.widgets
 
 import com.spadium.kassette.media.MediaManager
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder
-import net.minecraft.client.gui.screen.narration.NarrationPart
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.AbstractWidget
+
 import kotlin.math.floor
 
-class ProgressBarWidget : ClickableWidget {
+class ProgressBarWidget : AbstractWidget {
     var currentValue: Long = 1L
     var maxValue: Long = 2L
     var backgroundColor: Int = 0xFFFFFFFF.toInt()

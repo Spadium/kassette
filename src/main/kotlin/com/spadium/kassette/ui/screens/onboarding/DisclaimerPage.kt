@@ -1,32 +1,32 @@
 package com.spadium.kassette.ui.screens.onboarding
 
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget
-import net.minecraft.client.gui.widget.MultilineTextWidget
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.MultiLineTextWidget
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
+import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 
-class DisclaimerPage: Screen(Text.translatable("kassette.onboarding.one.title")) {
-    val layout = ThreePartsLayoutWidget(this)
+class DisclaimerPage: Screen(Component.translatable("kassette.onboarding.one.title")) {
+    val layout = HeaderAndFooterLayout(this)
     override fun init() {
-        layout.addHeader(title, textRenderer)
-        layout.addBody(
-            MultilineTextWidget(
-                Text.translatable("kassette.onboarding.one.alpha"),
-                 textRenderer
+        layout.addTitleHeader(title, font)
+        layout.addToContents(
+            MultiLineTextWidget(
+                Component.translatable("kassette.onboarding.one.alpha"),
+                font
             ).setMaxWidth(250)
         )
-        val footerButtons = layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(4))
-        footerButtons.add(
-            ButtonWidget.builder(
-                Text.translatable("kassette.onboarding.one.acknowledge"),
-                { button -> client?.setScreen(TutorialPageOne()) }
+        val footerButtons = layout.addToFooter(LinearLayout.horizontal().spacing(4))
+        footerButtons.addChild(
+            Button.builder(
+                Component.translatable("kassette.onboarding.one.acknowledge"),
+                { button -> minecraft?.setScreen(TutorialPageOne()) }
             ).build()
         )
-        layout.forEachChild { widget ->
-            addDrawableChild(widget)
+        layout.visitWidgets { widget ->
+            addRenderableWidget(widget)
         }
-        layout.refreshPositions()
+        layout.arrangeElements()
     }
 }

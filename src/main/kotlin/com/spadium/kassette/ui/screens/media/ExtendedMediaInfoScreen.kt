@@ -5,8 +5,15 @@ import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.widgets.MarqueeTextWidget
 import com.spadium.kassette.ui.widgets.ProgressBarWidget
 import com.spadium.kassette.util.KassetteUtils
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.ImageWidget
+import net.minecraft.client.gui.components.SpriteIconButton
+import net.minecraft.client.gui.components.Tooltip
+import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 
 class ExtendedMediaInfoScreen : Screen {
     private val screenWidth = 256
@@ -21,23 +28,23 @@ class ExtendedMediaInfoScreen : Screen {
     override fun init() {
         centeredX = (this.width / 2) - (screenWidth / 2)
         centeredY = (this.height / 2) - (screenHeight / 2)
-        val containerWidget = DirectionalLayoutWidget(
+        val containerWidget = LinearLayout(
             0, 0,
-            DirectionalLayoutWidget.DisplayAxis.VERTICAL
+            LinearLayout.Orientation.VERTICAL
         ).spacing(4)
-        val containerPositioner = containerWidget.mainPositioner
-        containerPositioner.alignHorizontalCenter()
+        val containerPositioner = containerWidget.defaultCellSetting()
+        containerPositioner.alignHorizontallyCenter()
         val firstLine = MarqueeTextWidget(
-            Text.literal(MediaManager.provider.info.title),
-            textRenderer, 100
+            Component.literal(MediaManager.provider.info.title),
+            font, 100
         ).alignLeft()
         val secondLine = MarqueeTextWidget(
-            Text.literal(MediaManager.provider.info.album),
-            textRenderer, 100
+            Component.literal(MediaManager.provider.info.album),
+            font, 100
         ).alignLeft()
         val thirdLine = MarqueeTextWidget(
-            Text.literal(MediaManager.provider.info.artist),
-            textRenderer, 100
+            Component.literal(MediaManager.provider.info.artist),
+            font, 100
         ).alignLeft()
         firstLine.width = 100
         secondLine.width = 100
@@ -46,96 +53,96 @@ class ExtendedMediaInfoScreen : Screen {
         progressBar.height = 8
         progressBar.width = 100
 
-        containerWidget.add(
-            IconWidget.create(
+        containerWidget.addChild(
+            ImageWidget.texture(
                 48, 48,
-                Identifier.of("kassette", "coverart_large"),
+                ResourceLocation.fromNamespaceAndPath("kassette", "coverart_large"),
                 48, 48
             )
         )
-        val infoLayout: DirectionalLayoutWidget = containerWidget.add(DirectionalLayoutWidget(0, 0,
-            DirectionalLayoutWidget.DisplayAxis.VERTICAL))
-        val buttonsLayout: DirectionalLayoutWidget = containerWidget.add(DirectionalLayoutWidget(0, 0,
-            DirectionalLayoutWidget.DisplayAxis.HORIZONTAL))
+        val infoLayout: LinearLayout = containerWidget.addChild(LinearLayout(0, 0,
+            LinearLayout.Orientation.VERTICAL))
+        val buttonsLayout: LinearLayout = containerWidget.addChild(LinearLayout(0, 0,
+            LinearLayout.Orientation.HORIZONTAL))
         buttonsLayout.spacing(4)
         infoLayout.spacing(2)
-        infoLayout.add(firstLine)
-        infoLayout.add(secondLine)
-        infoLayout.add(thirdLine)
-        infoLayout.add(progressBar)
+        infoLayout.addChild(firstLine)
+        infoLayout.addChild(secondLine)
+        infoLayout.addChild(thirdLine)
+        infoLayout.addChild(progressBar)
         val previousTrackButton = buttonsLayout.add(
-            TextIconButtonWidget.builder(
-                Text.empty(),
+            SpriteIconButton.builder(
+                Component.empty(),
                 { button ->
                     MediaManager.provider.sendCommand("previousTrack", null)
                     button.isFocused = false
                 },
                 true
             ).texture(
-                Identifier.of("kassette", "previous"),
+                ResourceLocation.fromNamespaceAndPath("kassette", "previous"),
                 16, 16
             ).width(20).build()
         )
         previousTrackButton.active = MediaManager.provider.availableCommands.contains("previousTrack")
-        previousTrackButton.setTooltip(Tooltip.of(Text.literal("Previous Track")))
+        previousTrackButton.setTooltip(Tooltip.create(Component.literal("Previous Track")))
 
         val playPauseButton = buttonsLayout.add(
             TextIconButtonWidget.builder(
-                Text.empty(),
+                Component.empty(),
                 { button ->
                     MediaManager.provider.sendCommand("togglePlay", null)
                 },
                 true
             ).texture(
                 when (MediaManager.provider.info.state) {
-                    MediaManager.MediaState.PLAYING -> Identifier.of("kassette", "pause")
-                    MediaManager.MediaState.PAUSED -> Identifier.of("kassette", "play")
-                    else -> Identifier.of("kassette", "loading")
+                    MediaManager.MediaState.PLAYING -> ResourceLocation.fromNamespaceAndPath("kassette", "pause")
+                    MediaManager.MediaState.PAUSED -> ResourceLocation.fromNamespaceAndPath("kassette", "play")
+                    else -> ResourceLocation.fromNamespaceAndPath("kassette", "loading")
                 }, 16, 16
             ).width(20).build()
         )
         playPauseButton.active = MediaManager.provider.availableCommands.contains("togglePlay")
-        playPauseButton.setTooltip(Tooltip.of(Text.literal("Play/Pause")))
+        playPauseButton.setTooltip(Tooltip.create(Component.literal("Play/Pause")))
 
         val nextTrackButton = buttonsLayout.add(
             TextIconButtonWidget.builder(
-                Text.empty(),
+                Component.empty(),
                 { button -> MediaManager.provider.sendCommand("nextTrack", null) },
                 true
             ).texture(
-                Identifier.of("kassette", "next"),
+                ResourceLocation.fromNamespaceAndPath("kassette", "next"),
                 16, 16
             ).width(20).build()
         )
         nextTrackButton.active = MediaManager.provider.availableCommands.contains("nextTrack")
-        nextTrackButton.setTooltip(Tooltip.of(Text.literal("Next Track")))
+        nextTrackButton.setTooltip(Tooltip.create(Component.literal("Next Track")))
 
-        containerWidget.forEachChild { widget ->
-            addDrawableChild(widget)
+        containerWidget.visitWidgets { widget ->
+            addRenderableOnly(widget)
         }
-        containerWidget.refreshPositions()
+        containerWidget.arrangeElements()
         containerWidget.x = ((width / 2) - (containerWidget.width / 2)) - 50
         containerWidget.y = (height / 2) - (containerWidget.height / 2) + 5
-        containerWidget.refreshPositions()
+        containerWidget.arrangeElements()
     }
 
-    override fun renderBackground(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun renderBackground(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.renderBackground(context, mouseX, mouseY, deltaTicks)
-        context?.drawTexture(
+        context?.blit(
             RenderPipelines.GUI_TEXTURED,
-            Identifier.of("kassette", "textures/gui/ext_info_background.png"),
+            ResourceLocation.fromNamespaceAndPath("kassette", "textures/gui/ext_info_background.png"),
             centeredX, centeredY, 0f, 0f, screenWidth, screenHeight, screenWidth, screenHeight
         )
     }
 
-    override fun render(context: DrawContext?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
             savedInfo = MediaManager.provider.info.copy()
             progressBarFgColor = KassetteUtils.getAverageColor(savedInfo.coverArt)
             progressBar.foregroundColor = progressBarFgColor
-            clearAndInit()
+            rebuildWidgets()
         }
-        context?.drawText(textRenderer, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
+        context?.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         super.render(context, mouseX, mouseY, deltaTicks)
     }
 
@@ -143,7 +150,7 @@ class ExtendedMediaInfoScreen : Screen {
 
     }
 
-    override fun shouldPause(): Boolean {
+    override fun isPauseScreen(): Boolean {
         return false
     }
 }
