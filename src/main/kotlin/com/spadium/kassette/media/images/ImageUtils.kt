@@ -14,7 +14,8 @@ class ImageUtils {
             for (x in 0..bufferedImage.width-1) {
                 for (y in 0..bufferedImage.height-1) {
                     // AA BB GG RR
-                    nativeImage.setPixel(x, y, rgbaToAbgr(bufferedImage.getRGB(x, y)))
+                    // nvm somehow this now works via rgb??????? where was this function when i needed it????
+                    nativeImage.setPixel(x, y, bufferedImage.getRGB(x, y))
                 }
             }
             if (close)
@@ -22,6 +23,8 @@ class ImageUtils {
             return nativeImage
         }
 
+        // keeping this just in case
+        @Suppress("unused")
         @OptIn(ExperimentalStdlibApi::class)
         private fun rgbaToAbgr(rgb: Int): Int {
             val r = (rgb shr 16) and 0xFF
@@ -30,6 +33,7 @@ class ImageUtils {
             val a = (rgb shr 24) and 0xFF
 
             return (a shl 24) or (b shl 16) or (g shl 8) or r
+//            return rgb
         }
     }
 }
