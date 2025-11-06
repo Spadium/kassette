@@ -53,7 +53,7 @@ class MarqueeTextWidget: StringWidget {
         this.maxWidth = maxWidth
     }
 
-    override fun renderWidget(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun renderWidget(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         delta = (Util.getNanos().toDouble() - lastRenderTime.toDouble()) / 1000000000
         deltaAccumulator += delta / (1 / (hudConfig.fancyTextSpeed).toDouble())
         val shouldScroll = (deltaAccumulator >= scrollThreshold)

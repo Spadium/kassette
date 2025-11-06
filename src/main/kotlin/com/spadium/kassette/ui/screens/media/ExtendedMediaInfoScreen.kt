@@ -89,7 +89,7 @@ class ExtendedMediaInfoScreen : Screen {
         val playPauseButton = buttonsLayout.addChild(
             SpriteIconButton.builder(
                 Component.empty(),
-                { button ->
+                { _ ->
                     MediaManager.provider.sendCommand("togglePlay", null)
                 },
                 true
@@ -107,7 +107,7 @@ class ExtendedMediaInfoScreen : Screen {
         val nextTrackButton = buttonsLayout.addChild(
             SpriteIconButton.builder(
                 Component.empty(),
-                { button -> MediaManager.provider.sendCommand("nextTrack", null) },
+                { _ -> MediaManager.provider.sendCommand("nextTrack", null) },
                 true
             ).sprite(
                 ResourceLocation.fromNamespaceAndPath("kassette", "next"),
@@ -126,23 +126,23 @@ class ExtendedMediaInfoScreen : Screen {
         containerWidget.arrangeElements()
     }
 
-    override fun renderBackground(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.renderBackground(context, mouseX, mouseY, deltaTicks)
-        context?.blit(
+        context.blit(
             RenderPipelines.GUI_TEXTURED,
             ResourceLocation.fromNamespaceAndPath("kassette", "textures/gui/ext_info_background.png"),
             centeredX, centeredY, 0f, 0f, screenWidth, screenHeight, screenWidth, screenHeight
         )
     }
 
-    override fun render(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
             savedInfo = MediaManager.provider.info.copy()
             progressBarFgColor = KassetteUtils.getAverageColor(savedInfo.coverArt)
             progressBar.foregroundColor = progressBarFgColor
             rebuildWidgets()
         }
-        context?.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
+        context.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         super.render(context, mouseX, mouseY, deltaTicks)
     }
 

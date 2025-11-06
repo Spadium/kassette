@@ -65,6 +65,7 @@ abstract class Config<T> {
         }
 
         @JvmStatic
+        @Suppress("UNCHECKED_CAST", "SENSELESS_COMPARISON")
         fun reloadAll() {
             annotatedClassCache.forEach { clazz ->
                 val companionObj = clazz.companionObjectInstance as? ConfigCompanion<Config<*>>
@@ -103,14 +104,5 @@ abstract class Config<T> {
 
     abstract fun validate()
 
-    open fun save() {
-        if (this.javaClass.isAnnotationPresent(ConfigMeta::class.java)) {
-            val annotationMeta = this.javaClass.getAnnotation(ConfigMeta::class.java)
-            val configFile = configPath.resolve("${annotationMeta.type.path}${annotationMeta.configCategory}.json")
-            val jsonOut = json.encodeToString(this)
-            configFile.writeBytes(jsonOut.toByteArray())
-        } else {
-            throw Exception("Invalid class!")
-        }
-    }
+    abstract fun save()
 }

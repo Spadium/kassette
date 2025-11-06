@@ -4,10 +4,12 @@ import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
+import com.spadium.kassette.config.MainConfig.Companion.json
 import com.spadium.kassette.util.ModNotification
 import kotlinx.serialization.Serializable
 import net.minecraft.network.chat.Component
 import kotlin.io.path.exists
+import kotlin.io.path.writeBytes
 
 @ConfigMeta(
     "spotify",
@@ -25,6 +27,12 @@ data class SpotifyConfig(
 ) : Config<SpotifyConfig>() {
     override fun validate() {
 
+    }
+
+    override fun save() {
+        val jsonOut = json.encodeToString(this)
+        configFile.writeBytes(jsonOut.toByteArray())
+        reload()
     }
 
     companion object : ConfigCompanion<SpotifyConfig>() {

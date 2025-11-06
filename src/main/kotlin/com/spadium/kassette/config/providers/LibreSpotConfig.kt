@@ -4,11 +4,13 @@ import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
+import com.spadium.kassette.config.MainConfig.Companion.json
 import com.spadium.kassette.util.ModNotification
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.Serializable
 import net.minecraft.network.chat.Component
 import kotlin.io.path.exists
+import kotlin.io.path.writeBytes
 
 //Connect.DeviceType.COMPUTER, "Kassette LibreSpot Provider", "", "",
 //            0
@@ -57,6 +59,12 @@ data class LibreSpotConfig(
 
     override fun validate() {
 
+    }
+
+    override fun save() {
+        val jsonOut = json.encodeToString(this)
+        configFile.writeBytes(jsonOut.toByteArray())
+        reload()
     }
 
 }

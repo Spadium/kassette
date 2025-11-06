@@ -4,11 +4,14 @@ import com.spadium.kassette.Kassette
 import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
+import com.spadium.kassette.config.MainConfig
+import com.spadium.kassette.config.MainConfig.Companion.json
 import com.spadium.kassette.media.images.ImageScalers
 import com.spadium.kassette.util.ModNotification
 import kotlinx.serialization.Serializable
 import net.minecraft.network.chat.Component
 import kotlin.io.path.exists
+import kotlin.io.path.writeBytes
 import kotlin.properties.Delegates
 
 @ConfigMeta(
@@ -39,6 +42,12 @@ data class DefaultOverlayConfig(
         // Validate colors
         backgroundColor = checkColorArray(backgroundColor, 3, 4, 255)
         borderColor = checkColorArray(borderColor, 3, 4, 255)
+    }
+
+    override fun save() {
+        val jsonOut = json.encodeToString(this)
+        configFile.writeBytes(jsonOut.toByteArray())
+        reload()
     }
 
     companion object : ConfigCompanion<DefaultOverlayConfig>() {
