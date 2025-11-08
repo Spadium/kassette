@@ -40,7 +40,7 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
 	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
-	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
+//	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 	// very much not temporary, gives us more features than the web api
     implementation("com.google.protobuf:protobuf-java:3.25.5")

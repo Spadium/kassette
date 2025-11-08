@@ -20,7 +20,7 @@ import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import kotlin.time.ExperimentalTime
 
 class AboutScreen: Screen {
@@ -55,7 +55,7 @@ class AboutScreen: Screen {
         headerLayout.addChild(StringWidget(title, font), LayoutSettings::alignHorizontallyCenter)
         headerLayout.addChild(ImageWidget.texture(
             256, 64,
-            ResourceLocation.fromNamespaceAndPath(
+            Identifier.fromNamespaceAndPath(
                 "kassette",
                 "textures/gui/about_banner.png"
             ),

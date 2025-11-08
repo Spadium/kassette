@@ -30,7 +30,7 @@ class WarningToast : Toast {
     }
 
     override fun height(): Int {
-        if (details.string.isNullOrBlank()) {
+        if (details.string.isBlank()) {
             return 96
         }
         return 96
@@ -41,26 +41,26 @@ class WarningToast : Toast {
         textRenderer: Font,
         startTime: Long
     ) {
-        context?.fill(
+        context.fill(
             0, 0, width(), height(), 0xFFDD9900.toInt()
         )
 
-        context?.drawString(
-            textRenderer!!, Component.literal("Warning"),
+        context.drawString(
+            textRenderer, Component.literal("Warning"),
             4, 4, 0xFFFFFFFF.toInt(), false
         )
-        context?.drawWordWrap(
-            textRenderer!!, message,
+        context.drawWordWrap(
+            textRenderer, message,
             4, (4 + (textRenderer.lineHeight * 1.5)).toInt(), (width() - 16),
             0xFFFFFFFF.toInt(), false
         )
-        context?.drawWordWrap(
-            textRenderer!!, message,
+        context.drawWordWrap(
+            textRenderer, message,
             4, (4 + (textRenderer.lineHeight * 1.5)).toInt(), (width() - 16),
             0xFFFFFFFF.toInt(), false
         )
 
-        context?.submitOutline(
+        context.renderOutline(
             0, 0, width(), height(), 0xFFBBBBBB.toInt()
         )
     }

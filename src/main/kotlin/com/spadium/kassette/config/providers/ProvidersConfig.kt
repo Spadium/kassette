@@ -1,13 +1,13 @@
 package com.spadium.kassette.config.providers
 
-import com.spadium.kassette.config.serializers.ResourceLocationSerializer
+import com.spadium.kassette.config.serializers.IdentifierSerializer
 import kotlinx.serialization.Serializable
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 @Serializable
 data class ProvidersConfig(
-    @Serializable(with = ResourceLocationSerializer::class)
-    var defaultProvider: ResourceLocation,
+    @Serializable(with = IdentifierSerializer::class)
+    var defaultProvider: Identifier,
     var spotify: SpotifyConfig,
     var librespot: LibreSpotConfig,
     var callbackPort: UInt = 61008u

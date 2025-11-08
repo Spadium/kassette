@@ -6,7 +6,7 @@ import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.ui.widgets.LayoutListWidget
 import com.spadium.kassette.util.KassetteUtils
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.Util
+import net.minecraft.util.Util
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.ImageWidget
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
@@ -14,7 +14,7 @@ import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 class ConfigScreen : Screen {
     val parent: Screen?
@@ -30,7 +30,7 @@ class ConfigScreen : Screen {
         val buttonList: LinearLayout = LinearLayout.vertical().spacing(2)
         buttonList.addChild(
             ImageWidget.texture(
-                200, 50, ResourceLocation.fromNamespaceAndPath("kassette", "textures/gui/under_construction_banner.png"),
+                200, 50, Identifier.fromNamespaceAndPath("kassette", "textures/gui/under_construction_banner.png"),
                 200, 50
             )
         )

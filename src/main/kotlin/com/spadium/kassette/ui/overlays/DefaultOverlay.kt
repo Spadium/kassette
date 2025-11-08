@@ -5,14 +5,14 @@ import com.spadium.kassette.config.overlays.DefaultOverlayConfig
 import com.spadium.kassette.media.MediaInfo
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.MarqueeTextManager
-import net.minecraft.Util
+import net.minecraft.util.Util
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.ARGB
 import kotlin.math.floor
 import kotlin.reflect.KProperty
@@ -121,7 +121,7 @@ class DefaultOverlay : OverlayTheme {
         )
         context.blit(
             RenderPipelines.GUI_TEXTURED,
-            ResourceLocation.parse("kassette:coverart"),
+            Identifier.parse("kassette:coverart"),
             8,
             (((config.height + config.progressBarThickness) / 2) - (artSize / 2)),
             0f, 0f,
@@ -154,7 +154,7 @@ class DefaultOverlay : OverlayTheme {
         )
 
         drawProgressBar(context)
-        context.submitOutline(
+        context.renderOutline(
             0, 0,
             config.width, config.height,
             borderColor

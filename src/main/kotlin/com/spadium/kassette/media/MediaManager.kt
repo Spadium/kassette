@@ -9,7 +9,7 @@ import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.media.images.ImageUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -18,11 +18,11 @@ import kotlin.reflect.full.createInstance
 object MediaManager {
     var provider: MediaProvider = PlaceholderProvider()
         private set
-    val providers: MutableMap<ResourceLocation, KClass<out MediaProvider>> = mutableMapOf(
-        ResourceLocation.parse("kassette:placeholder") to PlaceholderProvider::class,
-        ResourceLocation.parse("kassette:spotify") to SpotifyProvider::class,
-        ResourceLocation.parse("kassette:librespot") to LibreSpotProvider::class,
-        ResourceLocation.parse("kassette:debug") to DebugProvider::class
+    val providers: MutableMap<Identifier, KClass<out MediaProvider>> = mutableMapOf(
+        Identifier.parse("kassette:placeholder") to PlaceholderProvider::class,
+        Identifier.parse("kassette:spotify") to SpotifyProvider::class,
+        Identifier.parse("kassette:librespot") to LibreSpotProvider::class,
+        Identifier.parse("kassette:debug") to DebugProvider::class
     ).withDefault {
         PlaceholderProvider::class
     }
@@ -45,7 +45,7 @@ object MediaManager {
     fun getDefaultCoverArt(): NativeImage {
         return ImageUtils.loadStream(
             Minecraft.getInstance().resourceManager
-                .open(ResourceLocation.fromNamespaceAndPath("kassette", "textures/placeholder.jpg"))!!,
+                .open(Identifier.fromNamespaceAndPath("kassette", "textures/placeholder.jpg"))!!,
             true
         )
     }
@@ -54,7 +54,7 @@ object MediaManager {
         provider.update()
     }
 
-    fun setProvider(identifier: ResourceLocation) {
+    fun setProvider(identifier: Identifier) {
         this.provider.destroy()
         this.provider = providers.getValue(identifier).createInstance()
     }
@@ -64,16 +64,16 @@ object MediaManager {
         Kassette.logger.info("Changing provider to ${newValue.providers.defaultProvider}")
     }
 
-    fun addProvider(identifier: ResourceLocation, klazz: KClass<out MediaProvider>) {
+    fun addProvider(identifier: Identifier, klazz: KClass<out MediaProvider>) {
         if (providers[identifier] == null) {
             providers[identifier] = klazz
         }
     }
 
-    enum class MediaState(val texture: ResourceLocation) {
-        PLAYING(ResourceLocation.fromNamespaceAndPath("kassette", "play")),
-        PAUSED(ResourceLocation.fromNamespaceAndPath("kassette", "pause")),
-        LOADING(ResourceLocation.fromNamespaceAndPath("kassette", "loading")),
-        OTHER(ResourceLocation.fromNamespaceAndPath("kassette", "other"))
+    enum class MediaState(val texture: Identifier) {
+        PLAYING(Identifier.fromNamespaceAndPath("kassette", "play")),
+        PAUSED(Identifier.fromNamespaceAndPath("kassette", "pause")),
+        LOADING(Identifier.fromNamespaceAndPath("kassette", "loading")),
+        OTHER(Identifier.fromNamespaceAndPath("kassette", "other"))
     }
 }

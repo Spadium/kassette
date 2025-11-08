@@ -11,7 +11,7 @@ data class ModNotification(
 ) {
     constructor(notificationType: NotificationType, source: Component, sourceType: SourceType, throwable: Throwable) : this(
         notificationType, source, sourceType,
-        Component.literal(throwable.message),
+        Component.literal(throwable.message ?: "No message"),
         Component.literal(throwable.stackTraceToString())
     ) {
 

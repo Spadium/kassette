@@ -14,14 +14,14 @@ import kotlin.properties.Delegates
 class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutElement> {
     val layout: Layout
 
-    constructor(client: Minecraft?, layout: Layout, parent: Screen, parentLayout: HeaderAndFooterLayout) :
+    constructor(client: Minecraft, layout: Layout, parent: Screen, parentLayout: HeaderAndFooterLayout) :
             super(client, parent.width, parentLayout.contentHeight, parentLayout.headerHeight, layout.height) {
         addEntry(LayoutElement(layout))
         this.layout = layout
     }
 
     companion object {
-        fun <T: Layout> of(layout: T, client: Minecraft?, parent: Screen, parentLayout: HeaderAndFooterLayout): Pair<T, LayoutListWidget> {
+        fun <T: Layout> of(layout: T, client: Minecraft, parent: Screen, parentLayout: HeaderAndFooterLayout): Pair<T, LayoutListWidget> {
             val list: LayoutListWidget = LayoutListWidget(client, layout, parent, parentLayout)
             return Pair(layout, list)
         }
@@ -38,23 +38,23 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
             this.layout = layout
         }
 
-        override fun render(
-            context: GuiGraphics,
-            index: Int,
-            y: Int,
-            x: Int,
-            entryWidth: Int,
-            entryHeight: Int,
-            mouseX: Int,
-            mouseY: Int,
-            hovered: Boolean,
-            tickProgress: Float
-        ) {
-            layout.setPosition(x, y)
-            layout.visitWidgets {
-                it.render(context, mouseX, mouseY, tickProgress)
-            }
-        }
+//        override fun render(
+//            context: GuiGraphics,
+//            index: Int,
+//            y: Int,
+//            x: Int,
+//            entryWidth: Int,
+//            entryHeight: Int,
+//            mouseX: Int,
+//            mouseY: Int,
+//            hovered: Boolean,
+//            tickProgress: Float
+//        ) {
+//            layout.setPosition(x, y)
+//            layout.visitWidgets {
+//                it.render(context, mouseX, mouseY, tickProgress)
+//            }
+//        }
 
         override fun children(): List<GuiEventListener> {
             val children: MutableList<GuiEventListener> = mutableListOf()
@@ -66,10 +66,20 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
             return children
         }
 
-        override fun narratables(): List<NarratableEntry?> {
+        override fun narratables(): List<NarratableEntry> {
             val children: MutableList<NarratableEntry> = mutableListOf()
             layout.visitChildren { if (it is NarratableEntry) children.add(it) }
             return children
+        }
+
+        override fun renderContent(
+            guiGraphics: GuiGraphics,
+            x: Int,
+            y: Int,
+            bl: Boolean,
+            f: Float
+        ) {
+            TODO("Not yet implemented")
         }
     }
 }

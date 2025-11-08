@@ -4,7 +4,7 @@ import com.spadium.kassette.media.MediaManager.provider
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.DynamicTexture
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 object CoverUpdater {
     private var coverArt: DynamicTexture = DynamicTexture(
@@ -13,8 +13,8 @@ object CoverUpdater {
     private var largeCoverArt: DynamicTexture = DynamicTexture(
         { "coverart_large" }, MediaManager.getDefaultCoverArt()
     )
-    private val coverArtIdentifier = ResourceLocation.parse("kassette:coverart")
-    private val largeCoverArtIdentifier = ResourceLocation.parse("kassette:coverart_large")
+    private val coverArtIdentifier = Identifier.parse("kassette:coverart")
+    private val largeCoverArtIdentifier = Identifier.parse("kassette:coverart_large")
 
     @JvmStatic
     fun setupCoverArt() {
@@ -28,14 +28,14 @@ object CoverUpdater {
             coverArt = DynamicTexture(
                 { "coverart" }, coverImage
             )
-            coverArt.setFilter(true, true)
+//            coverArt.setFilter(true, true)
             coverArt.upload()
 
             largeCoverArt.close()
             largeCoverArt = DynamicTexture(
                 { "coverart_large" }, coverImage
             )
-            largeCoverArt.setFilter(false, false)
+//            largeCoverArt.setFilter(false, false)
             largeCoverArt.upload()
 
             textureManager.register(coverArtIdentifier, coverArt)

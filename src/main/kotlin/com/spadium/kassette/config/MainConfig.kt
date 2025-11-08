@@ -5,7 +5,7 @@ import com.spadium.kassette.Kassette.Companion.logger
 import com.spadium.kassette.config.providers.LibreSpotConfig
 import com.spadium.kassette.config.providers.ProvidersConfig
 import com.spadium.kassette.config.providers.SpotifyConfig
-import com.spadium.kassette.config.serializers.ResourceLocationSerializer
+import com.spadium.kassette.config.serializers.IdentifierSerializer
 import com.spadium.kassette.util.ModNotification
 import com.spotify.connectstate.Connect
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.writeBytes
@@ -34,11 +34,11 @@ private val configVersion = 0u
 @Serializable
 data class MainConfig(
     var providers: ProvidersConfig = ProvidersConfig(
-        defaultProvider = ResourceLocation.parse("kassette:placeholder"),
+        defaultProvider = Identifier.parse("kassette:placeholder"),
         spotify = SpotifyConfig(),
         librespot = LibreSpotConfig()
     ),
-    @Serializable(with = ResourceLocationSerializer::class) var overlayName: ResourceLocation = ResourceLocation.parse("kassette:default"),
+    @Serializable(with = IdentifierSerializer::class) var overlayName: Identifier = Identifier.parse("kassette:default"),
     var firstRun: Boolean = true,
     val version: UInt = configVersion
 ) : Config<MainConfig>() {

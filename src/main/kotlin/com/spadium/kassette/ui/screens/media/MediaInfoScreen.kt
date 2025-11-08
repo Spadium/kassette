@@ -12,7 +12,7 @@ import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 class MediaInfoScreen : Screen {
     private val screenWidth = 256
@@ -48,7 +48,7 @@ class MediaInfoScreen : Screen {
         containerWidget.addChild(
             ImageWidget.texture(
                 64, 64,
-                ResourceLocation.fromNamespaceAndPath("kassette", "coverart_large"),
+                Identifier.fromNamespaceAndPath("kassette", "coverart_large"),
                 64, 64
             )
         )
@@ -73,7 +73,7 @@ class MediaInfoScreen : Screen {
                 },
                 true
             ).sprite(
-                ResourceLocation.fromNamespaceAndPath("kassette", "previous"),
+                Identifier.fromNamespaceAndPath("kassette", "previous"),
                 16, 16
             ).width(20).build()
         )
@@ -89,9 +89,9 @@ class MediaInfoScreen : Screen {
                 true
             ).sprite(
                 when (MediaManager.provider.info.state) {
-                    MediaManager.MediaState.PLAYING -> ResourceLocation.fromNamespaceAndPath("kassette", "pause")
-                    MediaManager.MediaState.PAUSED -> ResourceLocation.fromNamespaceAndPath("kassette", "play")
-                    else -> ResourceLocation.fromNamespaceAndPath("kassette", "loading")
+                    MediaManager.MediaState.PLAYING -> Identifier.fromNamespaceAndPath("kassette", "pause")
+                    MediaManager.MediaState.PAUSED -> Identifier.fromNamespaceAndPath("kassette", "play")
+                    else -> Identifier.fromNamespaceAndPath("kassette", "loading")
                 }, 16, 16
             ).width(20).build()
         )
@@ -104,7 +104,7 @@ class MediaInfoScreen : Screen {
                 { button -> MediaManager.provider.sendCommand("nextTrack", null) },
                 true
             ).sprite(
-                ResourceLocation.fromNamespaceAndPath("kassette", "next"),
+                Identifier.fromNamespaceAndPath("kassette", "next"),
                 16, 16
             ).width(20).build()
         )
@@ -124,21 +124,21 @@ class MediaInfoScreen : Screen {
         gridWidget.arrangeElements()
     }
 
-    override fun renderBackground(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         super.renderBackground(context, mouseX, mouseY, deltaTicks)
-        context?.blit(
+        context.blit(
             RenderPipelines.GUI_TEXTURED,
-            ResourceLocation.fromNamespaceAndPath("kassette", "textures/gui/info_background.png"),
+            Identifier.fromNamespaceAndPath("kassette", "textures/gui/info_background.png"),
             centeredX, centeredY, 0f, 0f, screenWidth, screenHeight, screenWidth, screenHeight
         )
     }
 
-    override fun render(context: GuiGraphics?, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
             savedInfo = MediaManager.provider.info.copy()
             rebuildWidgets()
         }
-        context?.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
+        context.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
         super.render(context, mouseX, mouseY, deltaTicks)
     }
 

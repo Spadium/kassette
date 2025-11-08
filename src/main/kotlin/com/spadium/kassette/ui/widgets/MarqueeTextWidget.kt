@@ -3,7 +3,7 @@ package com.spadium.kassette.ui.widgets
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.overlays.DefaultOverlayConfig
 import com.spadium.kassette.ui.MarqueeTextManager
-import net.minecraft.Util
+import net.minecraft.util.Util
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.StringWidget
@@ -17,6 +17,7 @@ class MarqueeTextWidget: StringWidget {
     private var delta: Double = 0.0
     private var deltaAccumulator: Double = 0.0
     private val scrollThreshold = 1
+    private val color = 0
 
     constructor(
         x: Int,
@@ -32,13 +33,13 @@ class MarqueeTextWidget: StringWidget {
         width,
         height,
         message,
-        textRenderer
+        textRenderer!!
     ) {
         textManager.text = message
         this.maxWidth = maxWidth
     }
 
-    constructor(message: Component, textRenderer: Font?, maxWidth: Int) : super(message, textRenderer) {
+    constructor(message: Component, textRenderer: Font?, maxWidth: Int) : super(message, textRenderer!!) {
         textManager.text = message
         this.maxWidth = maxWidth
     }
@@ -47,7 +48,7 @@ class MarqueeTextWidget: StringWidget {
         width,
         height,
         message,
-        textRenderer
+        textRenderer!!
     ) {
         textManager.text = message
         this.maxWidth = maxWidth

@@ -55,7 +55,7 @@ class ErrorToast: Toast {
             8, (height() - textRenderer.lineHeight) - 8, 0xFFFFFFFF.toInt(), false
         )
 
-        context.submitOutline(
+        context.renderOutline(
             0, 0, width(), height(), 0xFFBBBBBB.toInt()
         )
     }

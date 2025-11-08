@@ -1,6 +1,6 @@
 package com.spadium.kassette.media
 
-import net.minecraft.Util
+import net.minecraft.util.Util
 
 class DBusProvider: MediaProvider {
     override val info: MediaInfo

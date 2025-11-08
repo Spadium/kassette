@@ -4,7 +4,7 @@ import com.spadium.kassette.Kassette
 import com.spadium.kassette.media.images.ImageUtils
 import kotlinx.coroutines.delay
 import net.minecraft.client.Minecraft
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.net.URI
 import javax.net.ssl.HttpsURLConnection
 import kotlin.math.floor
@@ -59,7 +59,7 @@ class DebugProvider: AccountMediaProvider {
             MediaManager.MediaState.OTHER -> {
                 info.coverArt = ImageUtils.loadStream(
                     Minecraft.getInstance().resourceManager
-                        .open(ResourceLocation.fromNamespaceAndPath("kassette", "textures/other_placeholder.png"))
+                        .open(Identifier.fromNamespaceAndPath("kassette", "textures/other_placeholder.png"))
                 )
             }
             MediaManager.MediaState.PAUSED -> {

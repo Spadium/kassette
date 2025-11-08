@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
 import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.network.chat.Component
 
 import kotlin.math.floor
 
@@ -19,7 +20,7 @@ class ProgressBarWidget : AbstractWidget {
         y,
         width,
         height,
-        null
+        Component.empty()
     ) {
         this.currentValue = currentValue
         this.maxValue = maxValue
@@ -27,12 +28,12 @@ class ProgressBarWidget : AbstractWidget {
 
     constructor(
         width: Int, height: Int, currentValue: Long, maxValue: Long
-    ) : super (0, 0, width, height, null) {
+    ) : super (0, 0, width, height, Component.empty()) {
         this.currentValue = currentValue
         this.maxValue = maxValue
     }
 
-    constructor(currentValue: Long, maxValue: Long) : super(0, 0, 0, 0, null) {
+    constructor(currentValue: Long, maxValue: Long) : super(0, 0, 0, 0, Component.empty()) {
         this.currentValue = currentValue
         this.maxValue = maxValue
     }

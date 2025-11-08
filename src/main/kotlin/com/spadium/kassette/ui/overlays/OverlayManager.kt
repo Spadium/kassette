@@ -5,17 +5,17 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 object OverlayManager {
-    private val MEDIA_LAYER: ResourceLocation = ResourceLocation.fromNamespaceAndPath("kassette", "media-layer")
+    private val MEDIA_LAYER: Identifier = Identifier.fromNamespaceAndPath("kassette", "media-layer")
 
     var currentOverlay: OverlayTheme = DefaultOverlay()
-    val overlays: MutableMap<ResourceLocation, KClass<out OverlayTheme>> = mutableMapOf(
-        ResourceLocation.parse("kassette:default") to DefaultOverlay::class,
-        ResourceLocation.parse("kassette:emtree") to EmTreeOverlay::class
+    val overlays: MutableMap<Identifier, KClass<out OverlayTheme>> = mutableMapOf(
+        Identifier.parse("kassette:default") to DefaultOverlay::class,
+        Identifier.parse("kassette:emtree") to EmTreeOverlay::class
     ).withDefault { DefaultOverlay::class }
 
     init {
@@ -25,11 +25,11 @@ object OverlayManager {
         )
     }
 
-    fun registerOverlay(identifier: ResourceLocation, overlay: OverlayTheme) {
+    fun registerOverlay(identifier: Identifier, overlay: OverlayTheme) {
         overlays.put(identifier, overlay::class)
     }
 
-    fun setOverlay(identifier: ResourceLocation) {
+    fun setOverlay(identifier: Identifier) {
         currentOverlay = overlays[identifier]?.createInstance() ?: DefaultOverlay()
     }
 

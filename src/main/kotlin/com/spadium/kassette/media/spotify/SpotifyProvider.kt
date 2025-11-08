@@ -11,7 +11,7 @@ import com.spadium.kassette.ui.toasts.WarningToast
 import com.spadium.kassette.media.images.ImageUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import net.minecraft.Util
+import net.minecraft.util.Util
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import se.michaelthelin.spotify.SpotifyApi

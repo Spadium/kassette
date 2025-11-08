@@ -8,6 +8,7 @@ import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
 import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.overlays.OverlayManager
+import com.spadium.kassette.ui.screens.config.ConfigScreen
 import com.spadium.kassette.ui.screens.media.ExtendedMediaInfoScreen
 import com.spadium.kassette.ui.screens.media.MediaInfoScreen
 import com.spadium.kassette.ui.toasts.ErrorToast
@@ -24,7 +25,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -38,13 +39,14 @@ open class Kassette : ClientModInitializer {
         val notifications: MutableList<ModNotification> = mutableListOf()
     }
 
-    private val KassetteKeyCategory = KeyMapping.Category.register(ResourceLocation.parse("kassette:kassette"))
+    private val KassetteKeyCategory = KeyMapping.Category.register(Identifier.parse("kassette:kassette"))
 
     override fun onInitializeClient() {
         // Scan for classes with the ConfigMeta annotation
         logger.debug("Scanning for ConfigMeta annoations! Please wait...")
         val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
         scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
+            @Suppress("UNCHECKED_CAST")
             Config.annotatedClassCache.add(it.loadClass(true).kotlin as? KClass<Config<*>> ?: error("Somehow, someway, not a Config<*> class!"))
         }
 
@@ -83,7 +85,10 @@ open class Kassette : ClientModInitializer {
                 .then(ClientCommandManager.literal("reload").executes({ c ->
                     Config.reloadAll()
                     return@executes 1
-                })))
+                })).then(ClientCommandManager.literal("config").executes {
+                    Minecraft.getInstance().setScreen(ConfigScreen(null))
+                    return@executes 1
+                }))
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
@@ -112,7 +117,7 @@ open class Kassette : ClientModInitializer {
                             )
                         )
                         client.toastManager.addToast(ErrorToast("Error from ${MediaManager.provider.getServiceName()}!"))
-                        MediaManager.setProvider(ResourceLocation.parse("kassette:placeholder"))
+                        MediaManager.setProvider(Identifier.parse("kassette:placeholder"))
                     }
                 }
                 MediaManager.provider.destroy()
