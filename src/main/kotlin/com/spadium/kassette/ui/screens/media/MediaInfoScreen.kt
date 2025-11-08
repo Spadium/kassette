@@ -32,15 +32,15 @@ class MediaInfoScreen : Screen {
         val firstLine = StringWidget(
             Component.literal(MediaManager.provider.info.title),
             font
-        ).alignLeft()
+        )
         val secondLine = StringWidget(
             Component.literal(MediaManager.provider.info.album),
             font
-        ).alignLeft()
+        )
         val thirdLine = StringWidget(
             Component.literal(MediaManager.provider.info.artist),
             font
-        ).alignLeft()
+        )
         firstLine.width = 150
         secondLine.width = 150
         thirdLine.width = 150

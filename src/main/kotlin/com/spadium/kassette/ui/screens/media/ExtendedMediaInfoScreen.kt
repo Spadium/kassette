@@ -37,15 +37,15 @@ class ExtendedMediaInfoScreen : Screen {
         val firstLine = MarqueeTextWidget(
             Component.literal(MediaManager.provider.info.title),
             font, 100
-        ).alignLeft()
+        )
         val secondLine = MarqueeTextWidget(
             Component.literal(MediaManager.provider.info.album),
             font, 100
-        ).alignLeft()
+        )
         val thirdLine = MarqueeTextWidget(
             Component.literal(MediaManager.provider.info.artist),
             font, 100
-        ).alignLeft()
+        )
         firstLine.width = 100
         secondLine.width = 100
         thirdLine.width = 100

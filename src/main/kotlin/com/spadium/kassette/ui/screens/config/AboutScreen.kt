@@ -2,7 +2,7 @@ package com.spadium.kassette.ui.screens.config
 
 import com.spadium.kassette.ModInfo
 import com.spadium.kassette.ui.widgets.LayoutListWidget
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import kotlin.time.ExperimentalTime
 
 class AboutScreen: Screen {
     private val parent: Screen?
@@ -48,6 +49,7 @@ class AboutScreen: Screen {
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun init() {
         val headerLayout = layout.addToHeader(LinearLayout.vertical().spacing(8))
         headerLayout.addChild(StringWidget(title, font), LayoutSettings::alignHorizontallyCenter)

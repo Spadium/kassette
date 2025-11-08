@@ -154,7 +154,7 @@ class DefaultOverlay : OverlayTheme {
         )
 
         drawProgressBar(context)
-        context.renderOutline(
+        context.submitOutline(
             0, 0,
             config.width, config.height,
             borderColor

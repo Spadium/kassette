@@ -60,7 +60,7 @@ class WarningToast : Toast {
             0xFFFFFFFF.toInt(), false
         )
 
-        context?.renderOutline(
+        context?.submitOutline(
             0, 0, width(), height(), 0xFFBBBBBB.toInt()
         )
     }

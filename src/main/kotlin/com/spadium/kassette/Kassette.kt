@@ -38,6 +38,8 @@ open class Kassette : ClientModInitializer {
         val notifications: MutableList<ModNotification> = mutableListOf()
     }
 
+    private val KassetteKeyCategory = KeyMapping.Category.register(ResourceLocation.parse("kassette:kassette"))
+
     override fun onInitializeClient() {
         // Scan for classes with the ConfigMeta annotation
         logger.debug("Scanning for ConfigMeta annoations! Please wait...")
@@ -65,7 +67,8 @@ open class Kassette : ClientModInitializer {
             KeyMapping(
                 "key.kassette.info",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M,
-                "category.kassette.kassette"
+                KassetteKeyCategory
+//                "category.kassette.kassette"
             )
         )
 
