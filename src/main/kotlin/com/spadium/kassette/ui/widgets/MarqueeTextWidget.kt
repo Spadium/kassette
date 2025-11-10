@@ -17,7 +17,7 @@ class MarqueeTextWidget: StringWidget {
     private var delta: Double = 0.0
     private var deltaAccumulator: Double = 0.0
     private val scrollThreshold = 1
-    private val color = 0
+    private val color = -1
 
     constructor(
         x: Int,
