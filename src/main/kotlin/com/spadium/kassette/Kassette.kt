@@ -1,6 +1,7 @@
 package com.spadium.kassette
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.config.MainConfig
@@ -24,6 +25,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
+import net.minecraft.commands.arguments.ResourceOrIdArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import org.lwjgl.glfw.GLFW
@@ -88,7 +90,7 @@ open class Kassette : ClientModInitializer {
                 })).then(ClientCommandManager.literal("config").executes {
                     Minecraft.getInstance().setScreen(ConfigScreen(null))
                     return@executes 1
-                }))
+                }).then(ClientCommandManager.literal("provider")))
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->

@@ -27,9 +27,9 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
         }
     }
 
-    override fun getRowWidth(): Int {
-        return layout.width.coerceAtMost(width)
-    }
+//    override fun getRowWidth(): Int {
+//        return layout.width.coerceAtMost(width)
+//    }
 
     inner class LayoutElement : Entry<LayoutElement> {
         val layout: Layout
@@ -79,7 +79,12 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
             bl: Boolean,
             f: Float
         ) {
-            TODO("Not yet implemented")
+            layout.setPosition(x, y)
+            layout.visitWidgets {
+                it.render(
+                    guiGraphics, x, y, f
+                )
+            }
         }
     }
 }

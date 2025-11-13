@@ -3,8 +3,9 @@
     "package": "com.spadium.kassette.mixin",
     "compatibilityLevel": "JAVA_21",
     "client": [
+        "GameRendererMixin",
         "MinecraftClientMixin",
-        "GameRendererMixin"
+        "TemporaryConfigPathMixin"
     ],
     "injectors": {
         "defaultRequire": 1

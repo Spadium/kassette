@@ -9,6 +9,6 @@ pluginManagement {
 	val loom_version: String by settings
 
 	plugins {
-		id("fabric-loom") version loom_version
+		id("net.fabricmc.fabric-loom-no-remap") version loom_version
 	}
 }
