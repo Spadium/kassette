@@ -3,7 +3,7 @@ import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-	id("net.fabricmc.fabric-loom-remap")
+	id("net.fabricmc.fabric-loom")
 	id("maven-publish")
 	kotlin("jvm") version "2.3.0"
 	kotlin("plugin.serialization") version "2.3.0"
@@ -33,17 +33,14 @@ dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${property("minecraft_version")}")
 //	mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-    mappings(loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.21.10:2025.10.12@zip")
-    })
-	modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+//    mappings(loom.officialMojangMappings())
+	implementation("net.fabricmc:fabric-loader:${property("loader_version")}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
-	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
+    implementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
-	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
+//	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 	// very much not temporary, gives us more features than the web api
     implementation("com.google.protobuf:protobuf-java:3.25.5")

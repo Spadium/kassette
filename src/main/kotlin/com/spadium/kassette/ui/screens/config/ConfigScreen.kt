@@ -18,7 +18,7 @@ import net.minecraft.resources.Identifier
 
 class ConfigScreen : Screen {
     val parent: Screen?
-    val layout: HeaderAndFooterLayout = HeaderAndFooterLayout(this, 32)
+    val layout = HeaderAndFooterLayout(this, 32)
     lateinit var sections: LayoutListWidget
 
     constructor(parent: Screen?) : super(Component.translatable("kassette.config.title")) {
@@ -86,22 +86,18 @@ class ConfigScreen : Screen {
         )
 
         layout.visitWidgets { widget ->
-            addRenderableWidget(widget)
+            addWidget(widget)
         }
-        repositionElements()
+//        repositionElements()
     }
 
-    override fun repositionElements() {
-        layout.arrangeElements()
-        sections.updateSize(width, layout)
-    }
+//    override fun repositionElements() {
+//        layout.arrangeElements()
+//        sections.updateSize(width, layout)
+//    }
 
-    override fun onClose() {
-        MainConfig.Instance.save()
-        this.minecraft.setScreen(parent)
-    }
-
-    override fun isPauseScreen(): Boolean {
-        return (parent != null)
-    }
+//    override fun onClose() {
+//        MainConfig.Instance.save()
+//        this.minecraft.setScreen(parent)
+//    }
 }

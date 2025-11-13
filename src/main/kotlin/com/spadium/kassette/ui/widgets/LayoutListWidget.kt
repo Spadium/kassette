@@ -74,15 +74,15 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
 
         override fun renderContent(
             guiGraphics: GuiGraphics,
-            mouseX: Int,
-            mouseY: Int,
-            hovered: Boolean,
-            a: Float
+            x: Int,
+            y: Int,
+            bl: Boolean,
+            f: Float
         ) {
             layout.setPosition(x, y)
             layout.visitWidgets {
                 it.render(
-                    guiGraphics, mouseX, mouseY, a
+                    guiGraphics, x, y, f
                 )
             }
         }
