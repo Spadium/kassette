@@ -86,18 +86,18 @@ class ConfigScreen : Screen {
         )
 
         layout.visitWidgets { widget ->
-            addRenderableOnly(widget)
+            addWidget(widget)
         }
-        repositionElements()
+//        repositionElements()
     }
 
-    override fun repositionElements() {
-        layout.arrangeElements()
-        sections.updateSize(width, layout)
-    }
+//    override fun repositionElements() {
+//        layout.arrangeElements()
+//        sections.updateSize(width, layout)
+//    }
 
-    override fun onClose() {
-        MainConfig.Instance.save()
-        this.minecraft!!.setScreen(parent)
-    }
+//    override fun onClose() {
+//        MainConfig.Instance.save()
+//        this.minecraft.setScreen(parent)
+//    }
 }
