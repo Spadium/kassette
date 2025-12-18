@@ -3,10 +3,10 @@ import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-	id("net.fabricmc.fabric-loom-no-remap")
-	id("maven-publish")
-	kotlin("jvm") version "2.1.21"
-	kotlin("plugin.serialization") version "2.1.21"
+	id("net.fabricmc.fabric-loom")
+    id("maven-publish")
+	kotlin("jvm") version "2.3.0"
+	kotlin("plugin.serialization") version "2.3.0"
 }
 
 version = property("mod_version")!!
@@ -32,16 +32,14 @@ repositories {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-//	mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-//    mappings(loom.officialMojangMappings())
 	implementation("net.fabricmc:fabric-loader:${property("loader_version")}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
     implementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
     implementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
-//	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+//    implementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 	// very much not temporary, gives us more features than the web api
     implementation("com.google.protobuf:protobuf-java:3.25.5")
 	implementation("xyz.gianlu.librespot:librespot-lib:1.6.5")
@@ -120,12 +118,12 @@ tasks.processResources {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-	options.release = 21
+	options.release = 25
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
 	compilerOptions {
-		jvmTarget = JvmTarget.JVM_21
+		jvmTarget = JvmTarget.JVM_25
 	}
 }
 
@@ -135,8 +133,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.jar {
