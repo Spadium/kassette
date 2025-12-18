@@ -9,5 +9,6 @@
     ],
     "injectors": {
         "defaultRequire": 1
-    }
+    },
+    "plugin": "com.spadium.kassette.mixin.KassetteMixinPlugin"
 }
