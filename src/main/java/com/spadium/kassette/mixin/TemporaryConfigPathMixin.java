@@ -1,5 +1,7 @@
 package com.spadium.kassette.mixin;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.spadium.kassette.ui.screens.config.ConfigScreen;
