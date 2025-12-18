@@ -1,6 +1,7 @@
 package com.spadium.kassette
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.spadium.kassette.config.Config
 import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.config.MainConfig
@@ -24,6 +25,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
+import net.minecraft.commands.arguments.ResourceOrIdArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import org.lwjgl.glfw.GLFW
@@ -46,6 +48,7 @@ open class Kassette : ClientModInitializer {
         logger.debug("Scanning for ConfigMeta annoations! Please wait...")
         val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
         scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
+            @Suppress("UNCHECKED_CAST")
             Config.annotatedClassCache.add(it.loadClass(true).kotlin as? KClass<Config<*>> ?: error("Somehow, someway, not a Config<*> class!"))
         }
 
@@ -84,15 +87,13 @@ open class Kassette : ClientModInitializer {
                 .then(ClientCommandManager.literal("reload").executes({ c ->
                     Config.reloadAll()
                     return@executes 1
-                })).then(ClientCommandManager.literal("config").executes {
+                })).then(ClientCommandManager.literal("config").executes { c ->
                     val client = Minecraft.getInstance()
                     client.execute {
-                        val previousScreen = client.screen
-                        client.setScreen(ConfigScreen(previousScreen))
+                        client.setScreen(ConfigScreen(null))
                     }
-                    return@executes 1;
-                })
-            )
+                    return@executes 1
+                }).then(ClientCommandManager.literal("provider")))
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
