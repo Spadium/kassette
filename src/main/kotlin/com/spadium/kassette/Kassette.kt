@@ -87,7 +87,8 @@ open class Kassette : ClientModInitializer {
                 })).then(ClientCommandManager.literal("config").executes {
                     val client = Minecraft.getInstance()
                     client.execute {
-                        client.setScreen(ConfigScreen(null))
+                        val previousScreen = client.screen
+                        client.setScreen(ConfigScreen(previousScreen))
                     }
                     return@executes 1;
                 })
