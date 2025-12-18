@@ -3,10 +3,10 @@ import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-	id("fabric-loom")
+	id("net.fabricmc.fabric-loom-remap")
 	id("maven-publish")
-	kotlin("jvm") version "2.1.21"
-	kotlin("plugin.serialization") version "2.1.21"
+	kotlin("jvm") version "2.3.0"
+	kotlin("plugin.serialization") version "2.3.0"
 }
 
 version = property("mod_version")!!
@@ -33,7 +33,10 @@ dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${property("minecraft_version")}")
 //	mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-    mappings(loom.officialMojangMappings())
+    mappings(loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.21.10:2025.10.12@zip")
+    })
 	modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.

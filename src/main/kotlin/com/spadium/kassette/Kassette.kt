@@ -46,7 +46,6 @@ open class Kassette : ClientModInitializer {
         logger.debug("Scanning for ConfigMeta annoations! Please wait...")
         val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
         scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
-            @Suppress("UNCHECKED_CAST")
             Config.annotatedClassCache.add(it.loadClass(true).kotlin as? KClass<Config<*>> ?: error("Somehow, someway, not a Config<*> class!"))
         }
 
@@ -86,9 +85,13 @@ open class Kassette : ClientModInitializer {
                     Config.reloadAll()
                     return@executes 1
                 })).then(ClientCommandManager.literal("config").executes {
-                    Minecraft.getInstance().setScreen(ConfigScreen(null))
-                    return@executes 1
-                }))
+                    val client = Minecraft.getInstance()
+                    client.execute {
+                        client.setScreen(ConfigScreen(null))
+                    }
+                    return@executes 1;
+                })
+            )
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
