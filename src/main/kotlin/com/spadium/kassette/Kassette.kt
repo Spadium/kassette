@@ -87,8 +87,11 @@ open class Kassette : ClientModInitializer {
                 .then(ClientCommandManager.literal("reload").executes({ c ->
                     Config.reloadAll()
                     return@executes 1
-                })).then(ClientCommandManager.literal("config").executes {
-                    Minecraft.getInstance().setScreen(ConfigScreen(null))
+                })).then(ClientCommandManager.literal("config").executes { c ->
+                    val client = Minecraft.getInstance()
+                    client.execute {
+                        client.setScreen(ConfigScreen(null))
+                    }
                     return@executes 1
                 }).then(ClientCommandManager.literal("provider")))
         }

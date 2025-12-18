@@ -40,6 +40,7 @@ data class MainConfig(
     ),
     @Serializable(with = IdentifierSerializer::class) var overlayName: Identifier = Identifier.parse("kassette:default"),
     var firstRun: Boolean = true,
+    var configButtonReplacesTelemetry: Boolean = !(FabricLoader.getInstance().isModLoaded("modmenu")),
     val version: UInt = configVersion
 ) : Config<MainConfig>() {
 

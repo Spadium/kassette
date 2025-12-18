@@ -1,5 +1,7 @@
 package com.spadium.kassette.mixin;
 
+import com.spadium.kassette.config.Config;
+import com.spadium.kassette.config.MainConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -22,8 +24,8 @@ public class KassetteMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (FabricLoader.getInstance().isModLoaded("modmenu") && mixinClassName.equals("com.spadium.kassette.mixin.TemporaryConfigPathMixin")) {
-            return false;
+        if (mixinClassName.equals("com.spadium.kassette.mixin.TemporaryConfigPathMixincom.spadium.kassette.mixin.TemporaryConfigPathMixin")) {
+            return MainConfig.Companion.getInstance().getConfigButtonReplacesTelemetry();
         }
         return true;
     }

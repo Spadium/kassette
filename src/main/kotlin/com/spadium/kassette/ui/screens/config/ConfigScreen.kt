@@ -100,4 +100,8 @@ class ConfigScreen : Screen {
         MainConfig.Instance.save()
         this.minecraft.setScreen(parent)
     }
+
+    override fun isPauseScreen(): Boolean {
+        return (parent != null)
+    }
 }
