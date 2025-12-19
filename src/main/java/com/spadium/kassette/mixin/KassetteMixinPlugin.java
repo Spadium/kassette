@@ -24,7 +24,7 @@ public class KassetteMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.equals("com.spadium.kassette.mixin.TemporaryConfigPathMixincom.spadium.kassette.mixin.TemporaryConfigPathMixin")) {
+        if (mixinClassName.equals("com.spadium.kassette.mixin.TemporaryConfigPathMixin")) {
             return MainConfig.Companion.getInstance().getConfigButtonReplacesTelemetry();
         }
         return true;
