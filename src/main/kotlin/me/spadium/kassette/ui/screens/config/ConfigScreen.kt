@@ -44,6 +44,12 @@ class ConfigScreen : Screen {
         )
         buttonList.addChild(
             KassetteUtils.createButtonToScreen(
+                Component.translatable("kassette.config.button.kassette"),
+                KassetteConfigScreen(this)
+            )
+        )
+        buttonList.addChild(
+            KassetteUtils.createButtonToScreen(
                 Component.translatable("kassette.config.button.providers"),
                 ProvidersScreen(this)
             )
@@ -97,7 +103,7 @@ class ConfigScreen : Screen {
     }
 
     override fun onClose() {
-        MainConfig.Instance.save()
+        Config.saveAll();
         this.minecraft.setScreen(parent)
     }
 

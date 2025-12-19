@@ -1,19 +1,19 @@
 package me.spadium.kassette.config
 
 import me.spadium.kassette.config.MainConfig.Companion.json
+import me.spadium.kassette.Kassette.Companion.logger
+import me.spadium.kassette.config.MainConfig.Companion.json
+import io.github.classgraph.ClassGraph
+import io.github.classgraph.ScanResult
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.decodeFromStream
 import net.fabricmc.loader.api.FabricLoader
 import java.nio.file.Path
 import kotlin.collections.forEach
-import kotlin.io.path.writeBytes
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.findAnnotation
 
 abstract class Config<T> {
     abstract class ConfigCompanion<T> where T : Config<T> {
@@ -48,6 +48,20 @@ abstract class Config<T> {
         val configPath: Path = FabricLoader.getInstance().configDir.resolve("kassette/")
         @JvmStatic
         var annotatedClassCache: MutableList<KClass<Config<*>>> = mutableListOf();
+
+        @JvmStatic
+        fun init() {
+            // Scan for classes with the ConfigMeta annotation
+            logger.debug("Scanning for ConfigMeta annoations! Please wait...")
+            val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
+            scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
+
+                @Suppress("UNCHECKED_CAST")
+                Config.annotatedClassCache.add(it.loadClass(true).kotlin as? KClass<Config<*>> ?: error("Somehow, someway, not a Config<*> class!"))
+            }
+
+            Config.reloadAll()
+        }
 
         @JvmStatic
         fun checkColorArray(arr: IntArray, minimumSize: Int, maximumSize: Int, defaultValue: Int): IntArray {
@@ -99,6 +113,19 @@ abstract class Config<T> {
                 throw Exception("Invalid class!")
             }
             return configOut
+        }
+
+        @Suppress("SENSELESS_COMPARISON")
+        fun saveAll() {
+            annotatedClassCache.forEach { clazz ->
+                val companionObj = clazz.companionObjectInstance as? ConfigCompanion<Config<*>>
+                    ?: error("Invalid class, somehow")
+                println(companionObj::class.qualifiedName)
+                if (clazz::objectInstance != null) {
+                    companionObj.Instance.save()
+                }
+
+            }
         }
     }
 

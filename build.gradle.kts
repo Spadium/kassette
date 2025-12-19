@@ -73,11 +73,27 @@ tasks.processResources {
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
+    var commitHash = "N/A"
+    var gitBranch = "N/A"
+    val gitFolder = "$projectDir/.git"
+
+    if (File(gitFolder).exists()) {
+        val gitHead = File("$gitFolder/HEAD").readText().split(":")
+        val headIsCommit = gitHead.size == 1
+        if (headIsCommit) {
+            commitHash = gitHead[0].trim()
+        } else {
+            val refHead = File("$gitFolder/${gitHead[1].trim()}")
+            gitBranch = gitHead[1].trim()
+            commitHash = refHead.readText().trim()
+        }
+    }
+
 	if (env["CI"] == "true") {
 		if (env["GITHUB_EVENT_NAME"] != "release") {
 			inputs.property(
 				"version",
-				"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
+				"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", gitBranch)}"
 			)
 			inputs.property(
 				"buildType",
@@ -93,35 +109,13 @@ tasks.processResources {
 				"RELEASE"
 			)
 		}
-
-		inputs.property(
-			"gitCommitId",
-			env.getOrDefault("GITHUB_SHA", "N/A")
-		)
-		inputs.property(
-			"gitBranchRef",
-			env.getOrDefault("GITHUB_REF", "N/A")
-		)
 	} else {
-        var commitHash = "N/A"
-        var gitBranch = "N/A"
-        val gitFolder = "$projectDir/.git"
-        if (File(gitFolder).exists()) {
-            val gitHead = File("$gitFolder/HEAD").readText().split(":")
-            val headIsCommit = gitHead.size == 1
-            if (headIsCommit) {
-                commitHash = gitHead[0].trim()
-            } else {
-                val refHead = File("$gitFolder/${gitHead[1].trim()}")
-                gitBranch = gitHead[1].trim()
-                commitHash = refHead.readText().trim()
-            }
-        }
 		inputs.property("version", project.version)
 		inputs.property("buildType", "DEV")
-		inputs.property("gitCommitId", commitHash)
-		inputs.property("gitBranchRef", gitBranch)
 	}
+
+    inputs.property("gitCommitId", commitHash)
+    inputs.property("gitBranchRef", gitBranch)
 
 	filesMatching("fabric.mod.json") {
 		expand(

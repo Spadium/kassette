@@ -1,6 +1,7 @@
 package me.spadium.kassette.ui.screens.config
 
 import me.spadium.kassette.config.MainConfig
+import me.spadium.kassette.config.providers.SpotifyConfig
 import me.spadium.kassette.media.MediaManager
 import me.spadium.kassette.media.spotify.SpotifyProvider
 import net.minecraft.client.gui.components.Button
@@ -81,7 +82,7 @@ class SpotifyScreen: Screen {
     }
 
     override fun onClose() {
-        MainConfig.Instance.save()
+        SpotifyConfig.Instance.save()
         this.minecraft!!.setScreen(parent)
 
     }
