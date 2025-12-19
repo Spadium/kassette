@@ -1,9 +1,7 @@
 package com.spadium.kassette
 
 import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.spadium.kassette.config.Config
-import com.spadium.kassette.config.ConfigMeta
 import com.spadium.kassette.config.MainConfig
 import com.spadium.kassette.media.AccountMediaProvider
 import com.spadium.kassette.media.AuthenticationCallbackServer
@@ -11,11 +9,8 @@ import com.spadium.kassette.media.MediaManager
 import com.spadium.kassette.ui.overlays.OverlayManager
 import com.spadium.kassette.ui.screens.config.ConfigScreen
 import com.spadium.kassette.ui.screens.media.ExtendedMediaInfoScreen
-import com.spadium.kassette.ui.screens.media.MediaInfoScreen
 import com.spadium.kassette.ui.toasts.ErrorToast
 import com.spadium.kassette.util.ModNotification
-import io.github.classgraph.ClassGraph
-import io.github.classgraph.ScanResult
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
@@ -25,14 +20,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
-import net.minecraft.commands.arguments.ResourceOrIdArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
-import kotlin.reflect.KClass
 
 
 open class Kassette : ClientModInitializer {
@@ -44,13 +37,7 @@ open class Kassette : ClientModInitializer {
     private val KassetteKeyCategory = KeyMapping.Category.register(Identifier.parse("kassette:kassette"))
 
     override fun onInitializeClient() {
-        // Scan for classes with the ConfigMeta annotation
-        logger.debug("Scanning for ConfigMeta annoations! Please wait...")
-        val scanResult: ScanResult = ClassGraph().enableAnnotationInfo().scan()
-        scanResult.getClassesWithAnnotation(ConfigMeta::class.java).forEach {
-            @Suppress("UNCHECKED_CAST")
-            Config.annotatedClassCache.add(it.loadClass(true).kotlin as? KClass<Config<*>> ?: error("Somehow, someway, not a Config<*> class!"))
-        }
+        Config.init()
 
         try {
             AuthenticationCallbackServer().start()
@@ -65,7 +52,6 @@ open class Kassette : ClientModInitializer {
                 )
             )
         }
-        Config.reloadAll()
 
         val openMediaInfoKeybind: KeyMapping = KeyBindingHelper.registerKeyBinding(
             KeyMapping(

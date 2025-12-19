@@ -14,6 +14,8 @@
     "kassette.config.option.spotify.ratelimit": "Ignore rate limit",
     "kassette.config.button.generic.boolean.true": "Yes",
     "kassette.config.button.generic.boolean.false": "No",
+    "kassette.config.button.kassette": "General",
+    "kassette.config.kassette.title": "Kassette - General",
     "kassette.config.button.hud": "HUD",
     "kassette.config.button.help": "Help",
     "kassette.config.button.providers": "Providers",
