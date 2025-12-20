@@ -1,6 +1,7 @@
 // very janky because i prefer kotlin over groovy for these scripts and i rewrote them by hand
 import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.ByteArrayOutputStream
 
 plugins {
 	id("net.fabricmc.fabric-loom")
@@ -68,7 +69,15 @@ sourceSets {
 	}
 }
 
+tasks.register<Exec>("getGitInfo") {
+    commandLine = listOf("git", "rev-parse", "--abbrev-ref", "HEAD")
+    standardOutput = ByteArrayOutputStream()
+
+}
+
 tasks.processResources {
+    mustRunAfter
+
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
@@ -102,10 +111,20 @@ tasks.processResources {
 			env.getOrDefault("GITHUB_REF", "N/A")
 		)
 	} else {
+        var commitHash = "N/A"
+        val gitFolder = "$projectDir/.git"
+        val gitHead = File("$gitFolder/HEAD").readText().split(":")
+        val isCommit = gitHead.size == 1
+        if (isCommit) {
+            commitHash = gitHead[0].trim()
+        } else {
+            val refHead = File("$gitFolder/${gitHead[1].trim()}")
+            commitHash = refHead.readText().trim()
+        }
 		inputs.property("version", project.version)
 		inputs.property("buildType", "DEV")
-		inputs.property("gitCommitId", "N/A")
-		inputs.property("gitBranchRef", "N/A")
+		inputs.property("gitCommitId", commitHash)
+		inputs.property("gitBranchRef", null ?: "N/A")
 	}
 
 	filesMatching("fabric.mod.json") {

@@ -16,13 +16,13 @@
 	"entrypoints": {
 		"client": [
 			{
-				"value": "com.spadium.kassette.Kassette",
+				"value": "me.spadium.kassette.Kassette",
 				"adapter": "kotlin"
 			}
 		],
 		"modmenu": [
 			{
-				"value": "com.spadium.kassette.config.ModMenuImpl",
+				"value": "me.spadium.kassette.config.ModMenuImpl",
 				"adapter": "kotlin"
 			}
 		]

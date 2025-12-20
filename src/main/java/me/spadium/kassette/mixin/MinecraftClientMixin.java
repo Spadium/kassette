@@ -1,0 +1,23 @@
+package me.spadium.kassette.mixin;
+
+import me.spadium.kassette.config.MainConfig;
+import me.spadium.kassette.ui.screens.onboarding.DisclaimerPage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
+import java.util.function.Function;
+
+@Mixin(Minecraft.class)
+public class MinecraftClientMixin {
+    @Inject(method = "addInitialScreens", at = @At(value = "RETURN"))
+    private static void addOnboardingToInit(List<Function<Runnable, Screen>> list, CallbackInfoReturnable<Boolean> cir) {
+        if (MainConfig.Companion.getInstance().getFirstRun()) {
+            list.add(onClose -> (new DisclaimerPage()));
+        }
+    }
+}
