@@ -37,12 +37,12 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
     implementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
     implementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
-
-//    implementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
-    if (property("requiresModmenuStub") == true) {
-
+    val requiresModmenuStub: String by properties
+    if (requiresModmenuStub.toBooleanStrict()) {
+        compileOnly(project(":modmenu_dummy"))
+    } else {
+        implementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
     }
-    compileOnly(project(":modmenu_dummy"))
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 	// very much not temporary, gives us more features than the web api
     implementation("com.google.protobuf:protobuf-java:3.25.5")
