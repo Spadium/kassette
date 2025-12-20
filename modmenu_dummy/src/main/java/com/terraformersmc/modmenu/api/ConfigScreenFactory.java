@@ -1,8 +1,7 @@
 package com.terraformersmc.modmenu.api;
 
 import net.minecraft.client.gui.screens.Screen;
-import org.jetbrains.annotations.Nullable;
 
 public interface ConfigScreenFactory<S extends Screen> {
-    S create(@Nullable Screen scr);
+    S create(Screen scr);
 }
