@@ -8,8 +8,5 @@ version = "stub"
 
 dependencies {
     minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-}
-
-tasks.jar {
-    exclude("net/minecraft")
+    implementation("net.fabricmc:fabric-loader:${property("loader_version")}")
 }

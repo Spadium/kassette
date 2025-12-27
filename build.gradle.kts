@@ -69,15 +69,7 @@ sourceSets {
 	}
 }
 
-tasks.register<Exec>("getGitInfo") {
-    commandLine = listOf("git", "rev-parse", "--abbrev-ref", "HEAD")
-    standardOutput = ByteArrayOutputStream()
-
-}
-
 tasks.processResources {
-    mustRunAfter
-
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
@@ -112,19 +104,23 @@ tasks.processResources {
 		)
 	} else {
         var commitHash = "N/A"
+        var gitBranch = "N/A"
         val gitFolder = "$projectDir/.git"
-        val gitHead = File("$gitFolder/HEAD").readText().split(":")
-        val isCommit = gitHead.size == 1
-        if (isCommit) {
-            commitHash = gitHead[0].trim()
-        } else {
-            val refHead = File("$gitFolder/${gitHead[1].trim()}")
-            commitHash = refHead.readText().trim()
+        if (File(gitFolder).exists()) {
+            val gitHead = File("$gitFolder/HEAD").readText().split(":")
+            val headIsCommit = gitHead.size == 1
+            if (headIsCommit) {
+                commitHash = gitHead[0].trim()
+            } else {
+                val refHead = File("$gitFolder/${gitHead[1].trim()}")
+                gitBranch = gitHead[1].trim()
+                commitHash = refHead.readText().trim()
+            }
         }
 		inputs.property("version", project.version)
 		inputs.property("buildType", "DEV")
 		inputs.property("gitCommitId", commitHash)
-		inputs.property("gitBranchRef", null ?: "N/A")
+		inputs.property("gitBranchRef", gitBranch)
 	}
 
 	filesMatching("fabric.mod.json") {
