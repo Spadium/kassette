@@ -45,24 +45,6 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
             this.layout = layout
         }
 
-//        override fun render(
-//            context: GuiGraphics,
-//            index: Int,
-//            y: Int,
-//            x: Int,
-//            entryWidth: Int,
-//            entryHeight: Int,
-//            mouseX: Int,
-//            mouseY: Int,
-//            hovered: Boolean,
-//            tickProgress: Float
-//        ) {
-//            layout.setPosition(x, y)
-//            layout.visitWidgets {
-//                it.render(context, mouseX, mouseY, tickProgress)
-//            }
-//        }
-
         override fun children(): List<GuiEventListener> {
             val children: MutableList<GuiEventListener> = mutableListOf()
 
