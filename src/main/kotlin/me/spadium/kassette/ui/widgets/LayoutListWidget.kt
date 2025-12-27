@@ -1,5 +1,6 @@
 package me.spadium.kassette.ui.widgets
 
+import me.spadium.kassette.Kassette
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.ContainerObjectSelectionList
@@ -16,6 +17,7 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
 
     constructor(client: Minecraft, layout: Layout, parent: Screen, parentLayout: HeaderAndFooterLayout) :
             super(client, parent.width, parentLayout.contentHeight, parentLayout.headerHeight, layout.height) {
+        Kassette.logger.warn("LayoutListWidget(Minecraft, Layout, Screen, HeaderAndFooterLayout)")
         addEntry(LayoutElement(layout))
         this.layout = layout
     }
@@ -28,6 +30,8 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
     }
 
     override fun getRowWidth(): Int {
+        // this is null for some reason???????????????
+        @Suppress("SENSELESS_COMPARISON")
         if (layout != null) {
             return layout.width.coerceAtMost(width)
         }
