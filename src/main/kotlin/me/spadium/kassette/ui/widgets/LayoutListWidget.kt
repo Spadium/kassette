@@ -27,9 +27,12 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
         }
     }
 
-//    override fun getRowWidth(): Int {
-//        return layout.width.coerceAtMost(width)
-//    }
+    override fun getRowWidth(): Int {
+        if (layout != null) {
+            return layout.width.coerceAtMost(width)
+        }
+        return super.rowWidth
+    }
 
     inner class LayoutElement : Entry<LayoutElement> {
         val layout: Layout

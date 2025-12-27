@@ -68,7 +68,7 @@ class AboutScreen: Screen {
         gridLayout.defaultCellSetting()
             .paddingHorizontal(4)
             .paddingBottom(4)
-            .alignHorizontallyCenter()
+            .alignHorizontallyLeft()
 
         val gridAdder = gridLayout.createRowHelper(2)
         gridAdder.addChild(
