@@ -118,7 +118,7 @@ abstract class Config<T> {
         @Suppress("SENSELESS_COMPARISON")
         fun saveAll() {
             annotatedClassCache.forEach { clazz ->
-                val companionObj = clazz.companionObjectInstance as? ConfigCompanion<Config<*>>
+                val companionObj = clazz.companionObjectInstance as? ConfigCompanion<*>
                     ?: error("Invalid class, somehow")
                 println(companionObj::class.qualifiedName)
                 if (clazz::objectInstance != null) {
