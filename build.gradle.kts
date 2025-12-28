@@ -1,10 +1,11 @@
 // very janky because i prefer kotlin over groovy for these scripts and i rewrote them by hand
 import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.ByteArrayOutputStream
 
 plugins {
-	id("net.fabricmc.fabric-loom-remap")
-	id("maven-publish")
+	id("net.fabricmc.fabric-loom")
+    id("maven-publish")
 	kotlin("jvm") version "2.3.0"
 	kotlin("plugin.serialization") version "2.3.0"
 }
@@ -32,19 +33,18 @@ repositories {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-//	mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-    mappings(loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.21.10:2025.10.12@zip")
-    })
-	modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+	implementation("net.fabricmc:fabric-loader:${property("loader_version")}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
-	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
-
-	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
+    implementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
+    val requiresModmenuStub: String by properties
+    if (requiresModmenuStub.toBooleanStrict()) {
+        compileOnly(project(":modmenu_dummy"))
+    } else {
+        implementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
+    }
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 	// very much not temporary, gives us more features than the web api
     implementation("com.google.protobuf:protobuf-java:3.25.5")
 	implementation("xyz.gianlu.librespot:librespot-lib:1.6.5")
@@ -73,11 +73,27 @@ tasks.processResources {
 	// makes sure that all properties are up-to-date
 	outputs.upToDateWhen { false }
 	val env = System.getenv()
+    var commitHash = "N/A"
+    var gitBranch = "N/A"
+    val gitFolder = "$projectDir/.git"
+
+    if (File(gitFolder).exists()) {
+        val gitHead = File("$gitFolder/HEAD").readText().split(":")
+        val headIsCommit = gitHead.size == 1
+        if (headIsCommit) {
+            commitHash = gitHead[0].trim()
+        } else {
+            val refHead = File("$gitFolder/${gitHead[1].trim()}")
+            gitBranch = gitHead[1].trim()
+            commitHash = refHead.readText().trim()
+        }
+    }
+
 	if (env["CI"] == "true") {
 		if (env["GITHUB_EVENT_NAME"] != "release") {
 			inputs.property(
 				"version",
-				"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", "GIT")}"
+				"${project.version}-${env.getOrDefault("GITHUB_SHA", "CI")}-${env.getOrDefault("GITHUB_REF_NAME", gitBranch)}"
 			)
 			inputs.property(
 				"buildType",
@@ -93,21 +109,13 @@ tasks.processResources {
 				"RELEASE"
 			)
 		}
-
-		inputs.property(
-			"gitCommitId",
-			env.getOrDefault("GITHUB_SHA", "N/A")
-		)
-		inputs.property(
-			"gitBranchRef",
-			env.getOrDefault("GITHUB_REF", "N/A")
-		)
 	} else {
 		inputs.property("version", project.version)
 		inputs.property("buildType", "DEV")
-		inputs.property("gitCommitId", "N/A")
-		inputs.property("gitBranchRef", "N/A")
 	}
+
+    inputs.property("gitCommitId", commitHash)
+    inputs.property("gitBranchRef", gitBranch)
 
 	filesMatching("fabric.mod.json") {
 		expand(
@@ -123,12 +131,12 @@ tasks.processResources {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-	options.release = 21
+	options.release = 25
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
 	compilerOptions {
-		jvmTarget = JvmTarget.JVM_21
+		jvmTarget = JvmTarget.JVM_25
 	}
 }
 
@@ -138,8 +146,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.jar {

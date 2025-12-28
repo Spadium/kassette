@@ -16,13 +16,13 @@
 	"entrypoints": {
 		"client": [
 			{
-				"value": "com.spadium.kassette.Kassette",
+				"value": "me.spadium.kassette.Kassette",
 				"adapter": "kotlin"
 			}
 		],
 		"modmenu": [
 			{
-				"value": "com.spadium.kassette.config.ModMenuImpl",
+				"value": "me.spadium.kassette.config.ModMenuImpl",
 				"adapter": "kotlin"
 			}
 		]
@@ -47,8 +47,8 @@
 		"kassette.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.0",
-		"minecraft": ">=1.21.11",
+		"fabricloader": ">=0.18.3",
+		"minecraft": ">=26.1-alpha.1",
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
