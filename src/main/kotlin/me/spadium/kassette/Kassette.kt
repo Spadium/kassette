@@ -18,11 +18,11 @@ import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
 import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
@@ -58,7 +58,7 @@ open class Kassette : ClientModInitializer {
             )
         }
 
-        val openMediaInfoKeybind: KeyMapping = KeyBindingHelper.registerKeyBinding(
+        val openMediaInfoKeybind: KeyMapping = KeyMappingHelper.registerKeyMapping(
             KeyMapping(
                 "key.kassette.info",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M,
@@ -74,17 +74,17 @@ open class Kassette : ClientModInitializer {
         })
 
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
-            dispatcher.register(ClientCommandManager.literal("kassette")
-                .then(ClientCommandManager.literal("reload").executes({ c ->
+            dispatcher.register(ClientCommands.literal("kassette")
+                .then(ClientCommands.literal("reload").executes({ c ->
                     Config.reloadAll()
                     return@executes 1
-                })).then(ClientCommandManager.literal("config").executes { c ->
+                })).then(ClientCommands.literal("config").executes { c ->
                     val client = Minecraft.getInstance()
                     client.execute {
                         client.setScreen(ConfigScreen(null))
                     }
                     return@executes 1
-                }).then(ClientCommandManager.literal("provider")))
+                }).then(ClientCommands.literal("provider")))
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
