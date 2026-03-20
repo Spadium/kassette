@@ -2,7 +2,7 @@ package me.spadium.kassette.ui.screens.media
 
 import me.spadium.kassette.media.MediaInfo
 import me.spadium.kassette.media.MediaManager
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.ImageWidget
 import net.minecraft.client.gui.components.SpriteIconButton
 import net.minecraft.client.gui.components.StringWidget
@@ -124,8 +124,8 @@ class MediaInfoScreen : Screen {
         gridWidget.arrangeElements()
     }
 
-    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        super.renderBackground(context, mouseX, mouseY, deltaTicks)
+    override fun extractBackground(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.extractBackground(context, mouseX, mouseY, deltaTicks)
         context.blit(
             RenderPipelines.GUI_TEXTURED,
             Identifier.fromNamespaceAndPath("kassette", "textures/gui/info_background.png"),
@@ -133,13 +133,13 @@ class MediaInfoScreen : Screen {
         )
     }
 
-    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun extractRenderState(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
             savedInfo = MediaManager.provider.info.copy()
             rebuildWidgets()
         }
-        context.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
-        super.render(context, mouseX, mouseY, deltaTicks)
+        context.text(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
+        super.extractRenderState(context, mouseX, mouseY, deltaTicks)
     }
 
     override fun isPauseScreen(): Boolean {

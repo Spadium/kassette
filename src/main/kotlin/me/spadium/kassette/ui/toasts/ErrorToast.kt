@@ -1,7 +1,7 @@
 package me.spadium.kassette.ui.toasts
 
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.toasts.Toast
 import net.minecraft.client.gui.components.toasts.ToastManager
 import net.minecraft.client.gui.render.GuiRenderer
@@ -31,8 +31,8 @@ class ErrorToast: Toast {
         return 96
     }
 
-    override fun render(
-        context: GuiGraphics,
+    override fun extractRenderState(
+        context: GuiGraphicsExtractor,
         textRenderer: Font,
         startTime: Long
     ) {
@@ -40,22 +40,22 @@ class ErrorToast: Toast {
             0, 0, this.width(), this.height(), 0xFF882222.toInt()
         )
 
-        context.drawString(
+        context.text(
             textRenderer, Component.literal("Error loading Kassette!"),
             8, 8, 0xFFFFFFFF.toInt(), false
         )
-        context.drawWordWrap(
+        context.textWithWordWrap(
             textRenderer, Component.literal(message),
             8, 8 + (textRenderer.lineHeight * 2), (width() - 16),
             0xFFFFFFFF.toInt(), false
         )
 
-        context.drawString(
+        context.text(
             textRenderer, Component.literal("Check settings for more info"),
             8, (height() - textRenderer.lineHeight) - 8, 0xFFFFFFFF.toInt(), false
         )
 
-        context.renderOutline(
+        context.outline(
             0, 0, width(), height(), 0xFFBBBBBB.toInt()
         )
     }

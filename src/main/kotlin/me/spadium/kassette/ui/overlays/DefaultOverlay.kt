@@ -9,7 +9,7 @@ import net.minecraft.util.Util
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -101,7 +101,7 @@ class DefaultOverlay : OverlayTheme {
         return mediaInfo.album
     }
 
-    override fun render(context: GuiGraphics, tickCounter: DeltaTracker) {
+    override fun render(context: GuiGraphicsExtractor, tickCounter: DeltaTracker) {
         if (!::firstLineManager.isInitialized) {
             firstLineManager = MarqueeTextManager(context)
             secondLineManager = MarqueeTextManager(context)
@@ -154,7 +154,7 @@ class DefaultOverlay : OverlayTheme {
         )
 
         drawProgressBar(context)
-        context.renderOutline(
+        context.outline(
             0, 0,
             config.width, config.height,
             borderColor
@@ -169,7 +169,7 @@ class DefaultOverlay : OverlayTheme {
         previousEndTime = startTime
     }
 
-    private fun drawProgressBar(context: GuiGraphics) {
+    private fun drawProgressBar(context: GuiGraphicsExtractor) {
         val progress: Double = if (mediaInfo.maximumTime == 0L) {
             0.0
         } else {

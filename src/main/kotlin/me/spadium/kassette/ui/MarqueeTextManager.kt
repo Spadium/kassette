@@ -2,7 +2,7 @@ package me.spadium.kassette.ui
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
 import kotlin.properties.Delegates
 
@@ -23,9 +23,9 @@ class MarqueeTextManager {
             resetPosition()
         }
     }
-    var context: GuiGraphics?
+    var context: GuiGraphicsExtractor?
 
-    constructor(context: GuiGraphics?) {
+    constructor(context: GuiGraphicsExtractor?) {
         this.context = context
     }
 
@@ -82,7 +82,7 @@ class MarqueeTextManager {
         text.tryCollapseToString()?.length?.let {
             if (it <= maxLength) {
                 // Don't bother scrolling when the text can fit within the maximum length before scrolling
-                context?.drawString(
+                context?.text(
                     textRenderer, text,
                     x, y, color, shadow
                 )
@@ -95,7 +95,7 @@ class MarqueeTextManager {
                 val endIndex = marqueeCounter + maxLength
 
                 val scrolledText = textToScroll.substring(startIndex, endIndex)
-                context?.drawString(textRenderer, scrolledText, x, y, color, shadow)
+                context?.text(textRenderer, scrolledText, x, y, color, shadow)
             }
         }
     }
@@ -118,7 +118,7 @@ class MarqueeTextManager {
 
         if (textRenderer.width(text.visualOrderText) <= textRenderer.width(getEmLength(maxLength))) {
             // Don't bother scrolling when the text can fit within the maximum length before scrolling
-            context?.drawString(
+            context?.text(
                 textRenderer, text,
                 x, y, color, shadow
             )
@@ -132,7 +132,7 @@ class MarqueeTextManager {
                 x + textRenderer.width(getEmLength(maxLength)),
                 y + 8
             )
-            context?.drawString(textRenderer, textToScroll, x - fancyOffset, y, color, shadow)
+            context?.text(textRenderer, textToScroll, x - fancyOffset, y, color, shadow)
             context?.disableScissor()
         }
     }
@@ -148,13 +148,13 @@ class MarqueeTextManager {
     ) {
         if (text.length <= maxLength) {
             // Don't bother scrolling when the text can fit within the maximum length before scrolling
-            context?.drawString(
+            context?.text(
                 textRenderer, text,
                 x, y, color, shadow
             )
         } else {
             val textAfterShortening = "${text.substring(maxLength - 3)}..."
-            context?.drawString(textRenderer, textAfterShortening, x, y, color, shadow)
+            context?.text(textRenderer, textAfterShortening, x, y, color, shadow)
         }
     }
 }

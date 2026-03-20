@@ -1,9 +1,8 @@
 package me.spadium.kassette
 
 import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.brigadier.arguments.StringArgumentType
+import kotlinx.coroutines.runBlocking
 import me.spadium.kassette.config.Config
-import me.spadium.kassette.config.ConfigMeta
 import me.spadium.kassette.config.MainConfig
 import me.spadium.kassette.media.AccountMediaProvider
 import me.spadium.kassette.media.AuthenticationCallbackServer
@@ -11,15 +10,11 @@ import me.spadium.kassette.media.MediaManager
 import me.spadium.kassette.ui.overlays.OverlayManager
 import me.spadium.kassette.ui.screens.config.ConfigScreen
 import me.spadium.kassette.ui.screens.media.ExtendedMediaInfoScreen
-import me.spadium.kassette.ui.screens.media.MediaInfoScreen
 import me.spadium.kassette.ui.toasts.ErrorToast
 import me.spadium.kassette.util.ModNotification
-import io.github.classgraph.ClassGraph
-import io.github.classgraph.ScanResult
-import kotlinx.coroutines.runBlocking
 import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.fabric.api.client.command.v2.ClientCommands
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper
@@ -39,7 +34,7 @@ open class Kassette : ClientModInitializer {
         val notifications: MutableList<ModNotification> = mutableListOf()
     }
 
-    private val KassetteKeyCategory = KeyMapping.Category.register(Identifier.parse("kassette:kassette"))
+    private val kassetteKeyCategory = KeyMapping.Category.register(Identifier.parse("kassette:kassette"))
 
     override fun onInitializeClient() {
         Config.init()
@@ -62,7 +57,7 @@ open class Kassette : ClientModInitializer {
             KeyMapping(
                 "key.kassette.info",
                 InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M,
-                KassetteKeyCategory
+                kassetteKeyCategory
 //                "category.kassette.kassette"
             )
         )

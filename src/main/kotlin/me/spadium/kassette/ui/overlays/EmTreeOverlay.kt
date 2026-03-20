@@ -1,11 +1,11 @@
 package me.spadium.kassette.ui.overlays
 
 import net.minecraft.client.DeltaTracker
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 
 class EmTreeOverlay : OverlayTheme() {
     override fun render(
-        context: GuiGraphics,
+        context: GuiGraphicsExtractor,
         tickCounter: DeltaTracker
     ) {
     }

@@ -5,7 +5,7 @@ import me.spadium.kassette.config.overlays.DefaultOverlayConfig
 import me.spadium.kassette.ui.MarqueeTextManager
 import net.minecraft.util.Util
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.network.chat.Component
 
@@ -54,7 +54,7 @@ class MarqueeTextWidget: StringWidget {
         this.maxWidth = maxWidth
     }
 
-    override fun renderWidget(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun extractWidgetRenderState(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         delta = (Util.getNanos().toDouble() - lastRenderTime.toDouble()) / 1000000000
         deltaAccumulator += delta / (1 / (hudConfig.fancyTextSpeed).toDouble())
         val shouldScroll = (deltaAccumulator >= scrollThreshold)

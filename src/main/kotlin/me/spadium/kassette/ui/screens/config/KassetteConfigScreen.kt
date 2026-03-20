@@ -2,7 +2,7 @@ package me.spadium.kassette.ui.screens.config
 
 import me.spadium.kassette.config.MainConfig
 import me.spadium.kassette.ui.widgets.LayoutListWidget
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
 import net.minecraft.client.gui.layouts.LinearLayout
@@ -51,8 +51,8 @@ class KassetteConfigScreen : Screen {
         layout.arrangeElements()
     }
 
-    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        super.render(context, mouseX, mouseY, deltaTicks)
+    override fun extractRenderState(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.extractRenderState(context, mouseX, mouseY, deltaTicks)
     }
 
     override fun onClose() {

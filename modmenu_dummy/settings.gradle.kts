@@ -6,4 +6,8 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    plugins {
+        id("net.fabricmc.fabric-loom") version loom_version
+    }
 }
