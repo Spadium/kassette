@@ -1,7 +1,7 @@
 package me.spadium.kassette.ui.widgets
 
 import me.spadium.kassette.media.MediaManager
-import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
 import net.minecraft.client.gui.narration.NarrationElementOutput
@@ -38,8 +38,8 @@ class ProgressBarWidget : AbstractWidget {
         this.maxValue = maxValue
     }
 
-    override fun extractWidgetRenderState(
-        context: GuiGraphicsExtractor,
+    override fun renderWidget(
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float

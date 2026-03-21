@@ -5,7 +5,7 @@ import me.spadium.kassette.media.MediaManager
 import me.spadium.kassette.ui.widgets.MarqueeTextWidget
 import me.spadium.kassette.ui.widgets.ProgressBarWidget
 import me.spadium.kassette.util.KassetteUtils
-import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.ImageWidget
 import net.minecraft.client.gui.components.SpriteIconButton
 import net.minecraft.client.gui.components.Tooltip
@@ -126,8 +126,8 @@ class ExtendedMediaInfoScreen : Screen {
         containerWidget.arrangeElements()
     }
 
-    override fun extractBackground(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        super.extractBackground(context, mouseX, mouseY, deltaTicks)
+    override fun renderBackground(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.renderBackground(context, mouseX, mouseY, deltaTicks)
         context.blit(
             RenderPipelines.GUI_TEXTURED,
             Identifier.fromNamespaceAndPath("kassette", "textures/gui/ext_info_background.png"),
@@ -135,15 +135,15 @@ class ExtendedMediaInfoScreen : Screen {
         )
     }
 
-    override fun extractRenderState(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         if (savedInfo != MediaManager.provider.info) {
             savedInfo = MediaManager.provider.info.copy()
             progressBarFgColor = KassetteUtils.getAverageColor(savedInfo.coverArt)
             progressBar.foregroundColor = progressBarFgColor
             rebuildWidgets()
         }
-        context.text(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
-        super.extractRenderState(context, mouseX, mouseY, deltaTicks)
+        context.drawString(font, title, centeredX + 6, centeredY + 6, 0xff3f3f3f.toInt(), false)
+        super.render(context, mouseX, mouseY, deltaTicks)
     }
 
     private fun renderTab() {

@@ -1,7 +1,7 @@
 package me.spadium.kassette.ui.toasts
 
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.toasts.Toast
 import net.minecraft.client.gui.components.toasts.ToastManager
 import net.minecraft.network.chat.Component
@@ -36,8 +36,8 @@ class WarningToast : Toast {
         return 96
     }
 
-    override fun extractRenderState(
-        context: GuiGraphicsExtractor,
+    override fun render(
+        context: GuiGraphics,
         textRenderer: Font,
         startTime: Long
     ) {
@@ -45,22 +45,22 @@ class WarningToast : Toast {
             0, 0, width(), height(), 0xFFDD9900.toInt()
         )
 
-        context.text(
+        context.drawString(
             textRenderer, Component.literal("Warning"),
             4, 4, 0xFFFFFFFF.toInt(), false
         )
-        context.textWithWordWrap(
+        context.drawWordWrap(
             textRenderer, message,
             4, (4 + (textRenderer.lineHeight * 1.5)).toInt(), (width() - 16),
             0xFFFFFFFF.toInt(), false
         )
-        context.textWithWordWrap(
+        context.drawWordWrap(
             textRenderer, message,
             4, (4 + (textRenderer.lineHeight * 1.5)).toInt(), (width() - 16),
             0xFFFFFFFF.toInt(), false
         )
 
-        context.outline(
+        context.renderOutline(
             0, 0, width(), height(), 0xFFBBBBBB.toInt()
         )
     }

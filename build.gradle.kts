@@ -56,6 +56,8 @@ dependencies {
 	include(implementation("org.apache.httpcomponents.core5:httpcore5:5.3.4")!!)
 	include(implementation("org.apache.httpcomponents.core5:httpcore5-h2:5.3.4")!!)
 	include(implementation("com.neovisionaries:nv-i18n:1.29")!!)
+    include(implementation("com.github.hypfvieh:dbus-java-core:5.2.0")!!)
+    include(implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:5.2.0")!!)
     // something something annotations, something something i am an overachiever
     include(implementation("io.github.classgraph:classgraph:4.8.181")!!)
 }

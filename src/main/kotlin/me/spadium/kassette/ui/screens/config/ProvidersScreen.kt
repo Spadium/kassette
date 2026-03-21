@@ -4,7 +4,7 @@ import me.spadium.kassette.config.MainConfig
 import me.spadium.kassette.media.MediaManager
 import me.spadium.kassette.ui.widgets.LayoutListWidget
 import me.spadium.kassette.util.KassetteUtils
-import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
 import net.minecraft.client.gui.layouts.LinearLayout
@@ -70,8 +70,8 @@ class ProvidersScreen: Screen {
         layout.arrangeElements()
     }
 
-    override fun extractRenderState(context: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
-        super.extractRenderState(context, mouseX, mouseY, deltaTicks)
+    override fun render(context: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.render(context, mouseX, mouseY, deltaTicks)
 //        clearAndInit()
     }
 

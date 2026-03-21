@@ -2,7 +2,7 @@ package me.spadium.kassette.ui.widgets
 
 import me.spadium.kassette.Kassette
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.ContainerObjectSelectionList
 import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
@@ -61,8 +61,8 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
             return children
         }
 
-        override fun extractContent(
-            guiGraphics: GuiGraphicsExtractor,
+        override fun renderContent(
+            guiGraphics: GuiGraphics,
             mouseX: Int,
             mouseY: Int,
             hovered: Boolean,
@@ -70,7 +70,7 @@ class LayoutListWidget : ContainerObjectSelectionList<LayoutListWidget.LayoutEle
         ) {
             layout.setPosition(x, y)
             layout.visitWidgets {
-                it.extractRenderState(
+                it.render(
                     guiGraphics, mouseX, mouseY, a
                 )
             }

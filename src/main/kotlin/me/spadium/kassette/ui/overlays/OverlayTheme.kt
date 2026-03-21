@@ -1,7 +1,7 @@
 package me.spadium.kassette.ui.overlays
 
 import net.minecraft.client.DeltaTracker
-import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphics
 
 abstract class OverlayTheme {
 
@@ -9,5 +9,5 @@ abstract class OverlayTheme {
 
     }
 
-    abstract fun render(context: GuiGraphicsExtractor, tickCounter: DeltaTracker)
+    abstract fun render(context: GuiGraphics, tickCounter: DeltaTracker)
 }
