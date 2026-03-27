@@ -2,6 +2,7 @@ package me.spadium.kassette
 
 import com.mojang.blaze3d.platform.InputConstants
 import kotlinx.coroutines.runBlocking
+import me.spadium.kassette.commands.KassetteCommand
 import me.spadium.kassette.config.Config
 import me.spadium.kassette.config.MainConfig
 import me.spadium.kassette.media.AccountMediaProvider
@@ -68,19 +69,20 @@ open class Kassette : ClientModInitializer {
             }
         })
 
-        ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
-            dispatcher.register(ClientCommands.literal("kassette")
-                .then(ClientCommands.literal("reload").executes({ c ->
-                    Config.reloadAll()
-                    return@executes 1
-                })).then(ClientCommands.literal("config").executes { c ->
-                    val client = Minecraft.getInstance()
-                    client.execute {
-                        client.setScreen(ConfigScreen(null))
-                    }
-                    return@executes 1
-                }).then(ClientCommands.literal("provider")))
-        }
+//        ClientCommandRegistrationCallback.EVENT.register { dispatcher, registryAccess ->
+//            dispatcher.register(ClientCommands.literal("kassette")
+//                .then(ClientCommands.literal("reload").executes({ c ->
+//                    Config.reloadAll()
+//                    return@executes 1
+//                })).then(ClientCommands.literal("config").executes { c ->
+//                    val client = Minecraft.getInstance()
+//                    client.execute {
+//                        client.setScreen(ConfigScreen(null))
+//                    }
+//                    return@executes 1
+//                }).then(ClientCommands.literal("provider")))
+//        }
+        ClientCommandRegistrationCallback.EVENT.register(KassetteCommand())
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
             OverlayManager
